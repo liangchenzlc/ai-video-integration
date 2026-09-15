@@ -1,0 +1,666 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI Video Integration T01 Runtime API",
+    "version": "1.0.0",
+    "description": "Normative design contract; no running backend is claimed. Runtime port is injected by Electron main. Production documentation routes are disabled."
+  },
+  "security": [
+    {
+      "RuntimeBearer": []
+    }
+  ],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getRuntimeHealth",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "description": "Generate a UUIDv4 when absent; reject invalid values and generate a fresh ID for the error."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Runtime response",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                },
+                "example": {
+                  "requestId": "11111111-1111-4111-8111-111111111111",
+                  "data": {
+                    "status": "ready",
+                    "runtimeId": "22222222-2222-4222-8222-222222222222",
+                    "generation": 1,
+                    "apiVersion": 1,
+                    "controlVersion": 1,
+                    "backendVersion": "0.1.0",
+                    "uptimeMs": 120
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "GET body is not allowed",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid runtime bearer",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Rejected Host or Origin",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown route",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request ID or query",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Sanitized internal error",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Backend not ready",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/capabilities": {
+      "get": {
+        "operationId": "getRuntimeCapabilities",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "description": "Generate a UUIDv4 when absent; reject invalid values and generate a fresh ID for the error."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Runtime response",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapabilitiesResponse"
+                },
+                "example": {
+                  "requestId": "11111111-1111-4111-8111-111111111111",
+                  "data": {
+                    "runtimeId": "22222222-2222-4222-8222-222222222222",
+                    "generation": 1,
+                    "capabilities": [
+                      {
+                        "id": "runtime",
+                        "enabled": true,
+                        "reasonCode": "AVAILABLE"
+                      },
+                      {
+                        "id": "projects",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "credentials",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "story",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "visualAssets",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "storyboard",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "video",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "audio",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "timeline",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "checks",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "exports",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      },
+                      {
+                        "id": "costs",
+                        "enabled": false,
+                        "reasonCode": "NOT_IMPLEMENTED"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "GET body is not allowed",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid runtime bearer",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Rejected Host or Origin",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown route",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request ID or query",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Sanitized internal error",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Backend not ready",
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "$ref": "#/components/schemas/Uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "RuntimeBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "32-byte random token, base64url without padding"
+      }
+    },
+    "schemas": {
+      "Uuid": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      },
+      "Generation": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 2147483647
+      },
+      "Version": {
+        "type": "string",
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      },
+      "ErrorCode": {
+        "type": "string",
+        "enum": [
+          "AUTH_REQUIRED",
+          "AUTH_INVALID",
+          "HOST_REJECTED",
+          "ORIGIN_REJECTED",
+          "REQUEST_INVALID",
+          "NOT_FOUND",
+          "METHOD_NOT_ALLOWED",
+          "BACKEND_NOT_READY",
+          "INTERNAL_ERROR"
+        ]
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message",
+          "affectedIds",
+          "recoverableAction"
+        ],
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "affectedIds": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          "recoverableAction": {
+            "type": "string",
+            "enum": [
+              "none",
+              "retry_connection",
+              "restart_backend",
+              "repair_installation"
+            ]
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "error"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        }
+      },
+      "HealthData": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "runtimeId",
+          "generation",
+          "apiVersion",
+          "controlVersion",
+          "backendVersion",
+          "uptimeMs"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ready"
+          },
+          "runtimeId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "generation": {
+            "$ref": "#/components/schemas/Generation"
+          },
+          "apiVersion": {
+            "type": "integer",
+            "const": 1
+          },
+          "controlVersion": {
+            "type": "integer",
+            "const": 1
+          },
+          "backendVersion": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "uptimeMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "Capability": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "enabled",
+          "reasonCode"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "runtime",
+              "projects",
+              "credentials",
+              "story",
+              "visualAssets",
+              "storyboard",
+              "video",
+              "audio",
+              "timeline",
+              "checks",
+              "exports",
+              "costs"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "reasonCode": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "NOT_IMPLEMENTED"
+            ]
+          }
+        }
+      },
+      "CapabilitiesData": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "runtimeId",
+          "generation",
+          "capabilities"
+        ],
+        "properties": {
+          "runtimeId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "generation": {
+            "$ref": "#/components/schemas/Generation"
+          },
+          "capabilities": {
+            "type": "array",
+            "minItems": 12,
+            "maxItems": 12,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Capability"
+            }
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/HealthData"
+          }
+        }
+      },
+      "CapabilitiesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CapabilitiesData"
+          }
+        }
+      }
+    }
+  }
+}

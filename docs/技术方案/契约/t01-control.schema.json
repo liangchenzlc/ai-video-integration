@@ -1,0 +1,449 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ai-video-integration:t01:control:1",
+  "title": "T01 control frame, excluding LF framing",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/initFrame"
+    },
+    {
+      "$ref": "#/$defs/bootedFrame"
+    },
+    {
+      "$ref": "#/$defs/readyFrame"
+    },
+    {
+      "$ref": "#/$defs/stopFrame"
+    },
+    {
+      "$ref": "#/$defs/stop_ackFrame"
+    },
+    {
+      "$ref": "#/$defs/stoppedFrame"
+    },
+    {
+      "$ref": "#/$defs/errorFrame"
+    }
+  ],
+  "$defs": {
+    "Uuid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "initFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocolVersion",
+        "runtimeId",
+        "generation",
+        "seq",
+        "type",
+        "payload"
+      ],
+      "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "type": {
+          "type": "string",
+          "const": "init"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tokenB64Url",
+            "appDataDir",
+            "mode",
+            "expectedApiVersion",
+            "expectedBackendVersion"
+          ],
+          "properties": {
+            "tokenB64Url": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{43}$"
+            },
+            "appDataDir": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "mode": {
+              "enum": [
+                "development",
+                "production"
+              ]
+            },
+            "expectedApiVersion": {
+              "const": 1
+            },
+            "expectedBackendVersion": {
+              "$ref": "#/$defs/Version"
+            }
+          }
+        }
+      }
+    },
+    "bootedFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocolVersion",
+        "runtimeId",
+        "generation",
+        "seq",
+        "type",
+        "payload"
+      ],
+      "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "type": {
+          "type": "string",
+          "const": "booted"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "supervisorPid",
+            "apiPid"
+          ],
+          "properties": {
+            "supervisorPid": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "apiPid": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "readyFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocolVersion",
+        "runtimeId",
+        "generation",
+        "seq",
+        "type",
+        "payload"
+      ],
+      "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "type": {
+          "type": "string",
+          "const": "ready"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "host",
+            "port",
+            "apiPid",
+            "apiVersion",
+            "backendVersion"
+          ],
+          "properties": {
+            "host": {
+              "const": "127.0.0.1"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "apiPid": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "apiVersion": {
+              "const": 1
+            },
+            "backendVersion": {
+              "$ref": "#/$defs/Version"
+            }
+          }
+        }
+      }
+    },
+    "stopFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocolVersion",
+        "runtimeId",
+        "generation",
+        "seq",
+        "type",
+        "payload"
+      ],
+      "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "type": {
+          "type": "string",
+          "const": "stop"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reason"
+          ],
+          "properties": {
+            "reason": {
+              "enum": [
+                "app_exit",
+                "user_restart"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "stop_ackFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocolVersion",
+        "runtimeId",
+        "generation",
+        "seq",
+        "type",
+        "payload"
+      ],
+      "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "type": {
+          "type": "string",
+          "const": "stop_ack"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "forSeq"
+          ],
+          "properties": {
+            "forSeq": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        }
+      }
+    },
+    "stoppedFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocolVersion",
+        "runtimeId",
+        "generation",
+        "seq",
+        "type",
+        "payload"
+      ],
+      "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "type": {
+          "type": "string",
+          "const": "stopped"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reason",
+            "forced",
+            "activeJobProcesses"
+          ],
+          "properties": {
+            "reason": {
+              "enum": [
+                "app_exit",
+                "user_restart"
+              ]
+            },
+            "forced": {
+              "type": "boolean"
+            },
+            "activeJobProcesses": {
+              "type": "integer",
+              "const": 0
+            }
+          }
+        }
+      }
+    },
+    "errorFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocolVersion",
+        "runtimeId",
+        "generation",
+        "seq",
+        "type",
+        "payload"
+      ],
+      "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "type": {
+          "type": "string",
+          "const": "error"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "INIT_TIMEOUT",
+                "PROTOCOL_INVALID",
+                "JOB_SETUP_FAILED",
+                "API_SPAWN_FAILED",
+                "API_EXITED",
+                "START_TIMEOUT",
+                "STOP_TIMEOUT",
+                "BIND_FAILED",
+                "BACKEND_ALREADY_RUNNING",
+                "INTERNAL_ERROR"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        }
+      }
+    }
+  }
+}

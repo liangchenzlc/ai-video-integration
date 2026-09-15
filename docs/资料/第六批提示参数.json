@@ -1,0 +1,83 @@
+{
+  "batch": "20260914-06",
+  "execution_dates": [
+    "2026-09-14",
+    "2026-09-15"
+  ],
+  "maximum_calls": 6,
+  "actual_calls": 4,
+  "additional_paid_budget_cny": 0,
+  "items": [
+    {
+      "id": "c01-right-single",
+      "test_id": "V03-C01-right-single-reference",
+      "model": "qwen-image-2.0",
+      "parameters": {
+        "size": "1024*1536",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      },
+      "reference_sources": [
+        ".local/model-testing/runs/20260914-04/c01-r3-front/response.json"
+      ],
+      "reference_roles": "Single identity reference, not a collage.",
+      "prompt": "Edit this single character into a right-front three-quarter view, nose pointing to the RIGHT side of the image. Output exactly ONE woman, full body, standing with empty hands. Keep the SAME adult face, normal-sized brown eyes, chin-to-neck-length black bob, mustard jacket, teal apron with one chest pocket, charcoal trousers and brown shoes. Hair ends at the neck and never rests on the shoulders. Her anatomical LEFT hair stays tucked behind the left ear; her anatomical RIGHT hair falls naturally beside the near cheek. Preserve the clean flat 2D animation style and plain blue-grey background. Change only the view angle. Do not add a second person, comparison panel, jewelry, hair accessories, long hair, large doll eyes or distressed texture.",
+      "output": "docs/资料/图片/阿禾右前方修订.png",
+      "quality_result": "单人改善_发长别发及比例未通过"
+    },
+    {
+      "id": "c02-text",
+      "test_id": "V06-C02-text-only-correction",
+      "model": "qwen-image-2.0",
+      "parameters": {
+        "size": "1536*1024",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      },
+      "reference_sources": [],
+      "reference_roles": "Original text-only asset baseline; no human style reference.",
+      "prompt": "原创二维动画机械猫角色设定图。只画一只矮小的铜棕色四足机械猫，正面略俯视，浅蓝灰纯色背景，完整显示四只脚与短尾。方形额头、圆角方形机械脸，两只琥珀色玻璃眼灯，朴素铜棕金属壳、机械关节，没有毛发。耳朵必须不对称：画面左边那只耳朵顶端缺一个小三角；画面右边那只耳朵完整，这是猫自身右耳缺角。短尾只有三节，长度短于一条后腿，贴近后臀，不拉长。背部中央有一个空的圆角方形接收槽，槽口朝上，深灰槽内完全暗，不发光，没有光晕，也没有装灯。机位略高使空槽可看见。清楚的二维动画线稿，平涂铜棕色和柔和阴影，轻纸感，无写实3D高光。无人物、无灯、无文字、多视图或其他动物。",
+      "output": "docs/资料/图片/机械猫修订.png",
+      "quality_result": "缺耳空槽改善_短尾等待修_临时配套参考"
+    },
+    {
+      "id": "l01-dry-plate",
+      "test_id": "V07-L01-dry-background-layer",
+      "model": "qwen-image-2.0",
+      "parameters": {
+        "size": "1008*1792",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      },
+      "reference_sources": [
+        ".local/model-testing/runs/20260914-05/l01-text-control/response.json"
+      ],
+      "reference_roles": "Empty environment editing target. Preserve structure, remove baked-in precipitation for a separate local foreground rain layer.",
+      "prompt": "编辑图1这张空场景，只清理雨水元素，为后期单独合成前景雨层制作干净底图。完整保留左侧同一扇关闭木门和门框、右侧同一个工具箱、后方蓝灰暗墙、顶部伸出的屋檐、地面台阶斜向边界、原机位构图和二维画风。删除画面所有竖向雨丝、悬空水滴、飞溅和圆形雨纹，包括檐下与墙前的雨线。檐下平台地面应干净干燥，不要圆圈、水洼或镜面反光；只在台阶外侧最前缘保留湿润深色地面及轻微静态反光。这是同一雨夜故事的分层背景，不是把故事改为晴天，保留夜色光照，不画太阳。画面仍为空，无人无猫无灯，无新增门窗、道具或文字。只清除雨滴和檐内积水，不改变已有空间布局。",
+      "output": "docs/资料/图片/场景清雨失败.png",
+      "quality_result": "未通过_雨丝水花和檐下积水仍在"
+    },
+    {
+      "id": "lamp-fit",
+      "test_id": "V06-static-lamp-socket-fit",
+      "model": "qwen-image-2.0",
+      "parameters": {
+        "size": "1536*1024",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      },
+      "reference_sources": [
+        ".local/model-testing/runs/20260914-06/c02-text/response.json",
+        ".local/model-testing/runs/20260914-05/p01-text-control/response.json"
+      ],
+      "reference_roles": "Image 1 is the provisional cat geometry. Image 2 is the single lamp identity. Static fit study only, not an action sequence or approved shot.",
+      "prompt": "Create ONE static 2D animation prop fitting study on a plain blue-grey background. Use exactly the single copper mechanical cat from image 1 and exactly the single portable lamp from image 2. Keep the cat pose, body size, four legs, short segmented tail and the notch on its anatomical RIGHT ear (far ear on the LEFT side of the picture). Seat the BOTTOM EDGE of the lamp body securely INSIDE the cat's EXISTING dark back socket. The lamp stands vertically, its warm-white rounded-square front panel faces forward toward the cat's head direction, and its short black handle remains fully visible and accessible above. Scale the lamp to fit the existing socket; do not enlarge or rebuild the cat torso or socket. Show a clear overlap at contact: the socket's near rim hides the very bottom of the lamp, no gap, no floating and no penetration into the torso. Keep the original simple thin dark lamp frame, one panel, one short handle, no new stand or base. The socket itself stays dark. This is a STATIC geometry study BEFORE the story's light transfer; it does not prove an insertion or release action. No human, hands, second cat, second lamp, loose spare lamp, cables, labels, comparison panels, new accessories or photorealism.",
+      "output": "docs/资料/图片/猫灯静态配套.png",
+      "quality_result": "落座候选_槽边和画风漂移_无动作视频"
+    }
+  ]
+}

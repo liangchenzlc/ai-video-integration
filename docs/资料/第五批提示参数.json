@@ -1,0 +1,100 @@
+{
+  "batch": "20260914-05",
+  "provider": "aliyun_bailian",
+  "purpose": "Research reproduction; credentials and signed URLs omitted.",
+  "items": [
+    {
+      "id": "c01-right",
+      "test_id": "V03-C01-r3-right-threequarter",
+      "model": "qwen-image-2.0",
+      "reference_role": "Both images are identity and costume references of the same character; change only the viewing angle.",
+      "reference_outputs": [
+        ".local/model-testing/runs/20260914-04/c01-r3-front/response.json",
+        ".local/model-testing/runs/20260914-04/c01-r3-threequarter/response.json"
+      ],
+      "prompt": "图1和图2是同一位原创角色阿禾的正面和左前方参考。生成同一个人的右前方四分之三全身视角：镜头位于人物自身右前方约40度，鼻尖朝向画面右侧。保留同一位约25岁成年年轻女性修理师的脸、自然成人比例、杏眼、鼻梁和下颌，不放大眼睛，不变成儿童。她黑色齐颈短发，人物自身左侧头发别到左耳后；近镜的自身右侧头发自然垂下，部分遮住右耳，发尾不超过颈部。严格保持图1的芥末黄翻领长袖外套、深青色围裙及胸前单个方形口袋、深炭灰长裤、棕色平底鞋、双手空手自然下垂。保持同样清晰二维轮廓、平涂柔和阴影、轻微纸感、浅蓝灰背景和均匀光照。只改变观察角度，不增加发饰或首饰，不改变发型长度、衣服设计、姿态或人物身份。单人完整全身，不裁切头脚，不要简单镜像原图，无文字分格。",
+      "parameters": {
+        "size": "1024*1536",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      }
+    },
+    {
+      "id": "c02-cat",
+      "test_id": "V06-C02-reference",
+      "model": "qwen-image-2.0",
+      "reference_role": "Image 1 is style only; do not draw the human.",
+      "reference_outputs": [
+        ".local/model-testing/runs/20260914-04/c01-r3-front/response.json"
+      ],
+      "prompt": "图1仅作为二维动画线条、克制平涂、柔和阴影和轻纸感画风参考，不画图中的人。为原创短片《雨夜借光》画一只小型四足机械猫小栓的独立资产图，浅蓝灰纯色背景。猫全身完整入画，三分之四前上方视角，能够同时看见脸、四条腿、背部和短尾巴。铜棕色金属外壳，方形额面和圆角方形机械脸，两个琥珀色眼灯，短而分节的机械尾巴，四条短机械腿与四只脚，无毛发。猫自身右耳顶端缺一小块，另一耳完整；右耳是正面观察时画面左边那只，缺角必须清楚。背部中央有一个空的、朝上的圆角方形接收槽，供后续放入一个小型方灯；接收槽清楚可见但不发光，没有灯装在背上。它像正常小猫大小的矮小机械伙伴，亲和朴素，不做人形机器人，不双足站立，不穿衣服，无武器、项圈、文字或额外猫。干净清楚的二维动画资产图，不使用写实3D金属渲染。",
+      "parameters": {
+        "size": "1536*1024",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      }
+    },
+    {
+      "id": "p01-lamp",
+      "test_id": "V06-P01-reference",
+      "model": "qwen-image-2.0",
+      "reference_role": "Image 1 is style only; do not draw the human.",
+      "reference_outputs": [
+        ".local/model-testing/runs/20260914-04/c01-r3-front/response.json"
+      ],
+      "prompt": "图1仅提供二维动画线条、平涂柔和阴影和轻纸感画风，不画人物。制作原创动画道具P01的单物件资产图：一个可由成年女性单手拎起的小型便携灯，圆角正方形灯体，厚度较薄，深灰朴素外框，正面整块暖白色发光面，顶端一个黑色短提环。三分之四正前上方视角，同时看清正方形发光面、灯体厚度、短提环和完整底边。灯体下面是平整的短矩形底座，能竖直放入机械猫背部的接收槽；没有电线、插头、外伸电极和复杂设备。浅蓝灰纯色背景，温暖克制的微弱光晕，不用强光遮住轮廓。全图只有这一个完整便携灯，不出现手、猫、人物、其他灯、文字或标志。明确保留二维动画质感，不做写实产品摄影。",
+      "parameters": {
+        "size": "1024*1024",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      }
+    },
+    {
+      "id": "l01-awning",
+      "test_id": "V07-L01-reference",
+      "model": "qwen-image-2.0",
+      "reference_role": "Image 1 is style only; do not draw the human.",
+      "reference_outputs": [
+        ".local/model-testing/runs/20260914-04/c01-r3-front/response.json"
+      ],
+      "prompt": "参考图1的清晰二维动画轮廓、克制平涂、柔和阴影和轻微纸感，绘制原创短片《雨夜借光》的空场景参考图，竖屏9:16。夜晚，从小修理铺屋檐外向店门方向观看：画面左侧固定为旧修理铺的门框和关闭的木门，右侧靠后有一个低矮的深色封闭工具箱，后方是朴素暗墙，顶部可见伸出的屋檐下表面和外沿。中间与前景地面留出两个角色蹲坐互动的完整空位，没有杂物遮挡。蓝灰夜色，柔和可辨的环境光，屋檐以内地面干燥，屋檐外沿和画面最前缘的地面湿润反光；雨丝只在屋檐外落下，不穿过屋顶落在干燥区域。空间结构清楚，视角固定，不要室内房间视角。画面没有人、没有猫、没有便携灯，没有发光眼睛，没有广告字、招牌文字、其他工具或额外门窗。保持温暖故事所需的安静夜景，不做恐怖场景或写实摄影。",
+      "parameters": {
+        "size": "1008*1792",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      }
+    },
+    {
+      "id": "p01-text-control",
+      "test_id": "V06-P01-text-only-control",
+      "model": "qwen-image-2.0",
+      "reference_role": "No image references; test whether excluding human style reference removes unwanted hands.",
+      "reference_outputs": [],
+      "prompt": "单个原创二维动画便携灯道具设定图。浅蓝灰纯色背景，画面中心只有一盏灯，独立摆放，没有任何人或手。灯体是小型圆角正方形厚板，正面一整块暖白发光面，四边深灰色简单外框，顶端一个黑色短提环，底部平整，没有底座、支架、电线或插头，整体能竖直放进一个圆角方形槽。三分之四正前上方视角，完整看清短提环、正方形面板和薄厚度。光晕克制，不要强光遮挡形状。清晰二维动画线条，平涂加柔和阴影，轻微纸感，朴素温暖，和蓝灰夜色的二维动画搭配。单个完整物件，不放在人物手中，不画猫、人体、手指、工具、桌面或场景，不出现文字或多视图分格，不做写实产品照片。",
+      "parameters": {
+        "size": "1024*1024",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      }
+    },
+    {
+      "id": "l01-text-control",
+      "test_id": "V07-L01-text-only-control",
+      "model": "qwen-image-2.0",
+      "reference_role": "No image references; empty location only, test whether excluding human style reference removes unwanted characters.",
+      "reference_outputs": [],
+      "prompt": "原创二维动画的纯空场景背景图，竖屏9:16。画面绝对没有人物、没有人形剪影、没有动物或机械猫。安静雨夜的小修理铺屋檐下，从屋檐外向关闭的店门观看。左侧固定是一个朴素木门及门框，右后方暗墙边只有一个矮小封闭工具箱。画面上方是伸出的屋檐与下表面，后方蓝灰暗墙，中下部留出宽敞干净的干燥地面，不摆杂物，供之后另外合成角色使用。雨只落在屋檐外沿和最前缘的室外湿地面，檐下区域干燥；用地面的明暗边界清楚区分屋檐覆盖区和室外雨区。柔和冷蓝灰夜色，门框处极微弱暖色反光，不增加灯具和灯笼，整体安静温暖不恐怖。清晰二维动画轮廓、克制平涂、柔和阴影、轻纸感，避免写实或浓重斑驳纹理。一个门框、一个工具箱、顶部屋檐、后方墙、空地，不增加额外门窗、招牌、文字或广告。不画人或手，不画便携灯，不把空地填满。",
+      "parameters": {
+        "size": "1008*1792",
+        "n": 1,
+        "prompt_extend": false,
+        "watermark": false
+      }
+    }
+  ]
+}
