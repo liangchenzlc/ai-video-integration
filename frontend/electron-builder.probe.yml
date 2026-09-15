@@ -1,0 +1,18 @@
+appId: local.ai-video-integration.packaging-probe
+productName: AI Video Probe
+electronVersion: 44.3.0
+electronDist: node_modules/electron/dist
+directories:
+  app: probe
+  output: ../release/t01-a
+files:
+  - index.cjs
+  - package.json
+asar: true
+extraResources:
+  - from: ../backend/dist/avi_probe
+    to: backend
+win:
+  target: dir
+  signAndEditExecutable: false
+npmRebuild: false

@@ -1,1 +1,16 @@
 .local/
+__pycache__/
+*.pyc
+.tools/
+.cache/
+.venv/
+node_modules/
+frontend/out/
+frontend/test-results/
+frontend/playwright-report/
+backend/build/
+backend/dist/
+release/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/

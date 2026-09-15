@@ -1,0 +1,429 @@
+{
+  "provenance": "synthetic",
+  "description": "Virtual media IDs/hashes are test data, not physical model outputs.",
+  "typedExamples": [
+    {
+      "schema": "StoryPayload",
+      "value": {
+        "sourceText": "阿禾左手将一盏灯放入机械猫背部空槽，松手并撤离。",
+        "sourceHash": "12b53be755b031a6506b3e66e3e6bab8367f34b911142fbbbbfa8768467fea84",
+        "inputType": "script",
+        "approvalLevel": "scenes",
+        "brief": "七镜头流程夹具；不证明效果。",
+        "outline": [
+          "发现",
+          "借光",
+          "回应"
+        ],
+        "requirements": [
+          {
+            "id": "0000000a-0000-4000-8000-00000000000a",
+            "text": "左手放灯后松手撤离，灯留在猫背。",
+            "category": "action",
+            "source": {
+              "sourceHash": "12b53be755b031a6506b3e66e3e6bab8367f34b911142fbbbbfa8768467fea84",
+              "startCodePoint": 0,
+              "endCodePoint": 24
+            },
+            "required": true,
+            "decision": "keep",
+            "decisionReason": ""
+          }
+        ],
+        "scenes": [
+          {
+            "id": "00000014-0000-4000-8000-000000000014",
+            "title": "屋檐下",
+            "action": "借光",
+            "plannedMs": 30000,
+            "locationAssetId": null
+          }
+        ],
+        "dialogues": [],
+        "adaptationNotes": []
+      }
+    },
+    {
+      "schema": "ShotPayload",
+      "value": {
+        "shotId": "000000cb-0000-4000-8000-0000000000cb",
+        "purpose": "看清灯从左手转移到猫背",
+        "sceneId": "00000014-0000-4000-8000-000000000014",
+        "assetRevisionIds": [],
+        "requirementIds": [
+          "0000000a-0000-4000-8000-00000000000a"
+        ],
+        "startState": "左手握单个灯，猫背空槽",
+        "events": [
+          {
+            "id": "00000028-0000-4000-8000-000000000028",
+            "text": "靠近、落座、松指、撤离",
+            "time": {
+              "startMs": 0,
+              "endMs": 5000
+            },
+            "requirementIds": [
+              "0000000a-0000-4000-8000-00000000000a"
+            ],
+            "carrier": "visual",
+            "observer": "audience"
+          }
+        ],
+        "endState": "手离开，单个灯留猫背",
+        "camera": "固定近景，同侧轴线",
+        "subjectHand": "left",
+        "plannedMs": 5000,
+        "dialogueIds": [],
+        "references": [],
+        "videoMediaId": "0000012f-0000-4000-8000-00000000012f",
+        "pickupOfShotId": null,
+        "use": "original"
+      }
+    },
+    {
+      "schema": "TimelinePayload",
+      "value": {
+        "width": 720,
+        "height": 1280,
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "durationMs": 30000,
+        "tracks": [
+          {
+            "id": "0000001e-0000-4000-8000-00000000001e",
+            "kind": "video",
+            "order": 0,
+            "muted": false
+          }
+        ],
+        "clips": [
+          {
+            "id": "00000064-0000-4000-8000-000000000064",
+            "trackId": "0000001e-0000-4000-8000-00000000001e",
+            "shotId": "000000c8-0000-4000-8000-0000000000c8",
+            "mediaId": "0000012c-0000-4000-8000-00000000012c",
+            "contentRevisionId": null,
+            "startMs": 0,
+            "inMs": 0,
+            "outMs": 4000,
+            "durationMs": 4000,
+            "gainDb": 0,
+            "linkedClipIds": [],
+            "keyframes": []
+          },
+          {
+            "id": "00000065-0000-4000-8000-000000000065",
+            "trackId": "0000001e-0000-4000-8000-00000000001e",
+            "shotId": "000000c9-0000-4000-8000-0000000000c9",
+            "mediaId": "0000012d-0000-4000-8000-00000000012d",
+            "contentRevisionId": null,
+            "startMs": 4000,
+            "inMs": 0,
+            "outMs": 4000,
+            "durationMs": 4000,
+            "gainDb": 0,
+            "linkedClipIds": [],
+            "keyframes": []
+          },
+          {
+            "id": "00000066-0000-4000-8000-000000000066",
+            "trackId": "0000001e-0000-4000-8000-00000000001e",
+            "shotId": "000000ca-0000-4000-8000-0000000000ca",
+            "mediaId": "0000012e-0000-4000-8000-00000000012e",
+            "contentRevisionId": null,
+            "startMs": 8000,
+            "inMs": 0,
+            "outMs": 4000,
+            "durationMs": 4000,
+            "gainDb": 0,
+            "linkedClipIds": [],
+            "keyframes": []
+          },
+          {
+            "id": "00000067-0000-4000-8000-000000000067",
+            "trackId": "0000001e-0000-4000-8000-00000000001e",
+            "shotId": "000000cb-0000-4000-8000-0000000000cb",
+            "mediaId": "0000012f-0000-4000-8000-00000000012f",
+            "contentRevisionId": null,
+            "startMs": 12000,
+            "inMs": 0,
+            "outMs": 5000,
+            "durationMs": 5000,
+            "gainDb": 0,
+            "linkedClipIds": [],
+            "keyframes": []
+          },
+          {
+            "id": "00000068-0000-4000-8000-000000000068",
+            "trackId": "0000001e-0000-4000-8000-00000000001e",
+            "shotId": "000000cc-0000-4000-8000-0000000000cc",
+            "mediaId": "00000130-0000-4000-8000-000000000130",
+            "contentRevisionId": null,
+            "startMs": 17000,
+            "inMs": 0,
+            "outMs": 5000,
+            "durationMs": 5000,
+            "gainDb": 0,
+            "linkedClipIds": [],
+            "keyframes": []
+          },
+          {
+            "id": "00000069-0000-4000-8000-000000000069",
+            "trackId": "0000001e-0000-4000-8000-00000000001e",
+            "shotId": "000000cd-0000-4000-8000-0000000000cd",
+            "mediaId": "00000131-0000-4000-8000-000000000131",
+            "contentRevisionId": null,
+            "startMs": 22000,
+            "inMs": 0,
+            "outMs": 4000,
+            "durationMs": 4000,
+            "gainDb": 0,
+            "linkedClipIds": [],
+            "keyframes": []
+          },
+          {
+            "id": "0000006a-0000-4000-8000-00000000006a",
+            "trackId": "0000001e-0000-4000-8000-00000000001e",
+            "shotId": "000000ce-0000-4000-8000-0000000000ce",
+            "mediaId": "00000132-0000-4000-8000-000000000132",
+            "contentRevisionId": null,
+            "startMs": 26000,
+            "inMs": 0,
+            "outMs": 4000,
+            "durationMs": 4000,
+            "gainDb": 0,
+            "linkedClipIds": [],
+            "keyframes": []
+          }
+        ],
+        "transitions": [],
+        "burnSubtitles": true
+      }
+    },
+    {
+      "schema": "Media",
+      "value": {
+        "id": "0000012c-0000-4000-8000-00000000012c",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000001",
+        "byteLength": 1024,
+        "mime": "video/mp4",
+        "durationMs": 4000,
+        "width": 720,
+        "height": 1280,
+        "availability": "available",
+        "provenance": "synthetic"
+      }
+    },
+    {
+      "schema": "Media",
+      "value": {
+        "id": "0000012d-0000-4000-8000-00000000012d",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000002",
+        "byteLength": 1024,
+        "mime": "video/mp4",
+        "durationMs": 4000,
+        "width": 720,
+        "height": 1280,
+        "availability": "available",
+        "provenance": "synthetic"
+      }
+    },
+    {
+      "schema": "Media",
+      "value": {
+        "id": "0000012e-0000-4000-8000-00000000012e",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000003",
+        "byteLength": 1024,
+        "mime": "video/mp4",
+        "durationMs": 4000,
+        "width": 720,
+        "height": 1280,
+        "availability": "available",
+        "provenance": "synthetic"
+      }
+    },
+    {
+      "schema": "Media",
+      "value": {
+        "id": "0000012f-0000-4000-8000-00000000012f",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000004",
+        "byteLength": 1024,
+        "mime": "video/mp4",
+        "durationMs": 5000,
+        "width": 720,
+        "height": 1280,
+        "availability": "available",
+        "provenance": "synthetic"
+      }
+    },
+    {
+      "schema": "Media",
+      "value": {
+        "id": "00000130-0000-4000-8000-000000000130",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000005",
+        "byteLength": 1024,
+        "mime": "video/mp4",
+        "durationMs": 5000,
+        "width": 720,
+        "height": 1280,
+        "availability": "available",
+        "provenance": "synthetic"
+      }
+    },
+    {
+      "schema": "Media",
+      "value": {
+        "id": "00000131-0000-4000-8000-000000000131",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000006",
+        "byteLength": 1024,
+        "mime": "video/mp4",
+        "durationMs": 4000,
+        "width": 720,
+        "height": 1280,
+        "availability": "available",
+        "provenance": "synthetic"
+      }
+    },
+    {
+      "schema": "Media",
+      "value": {
+        "id": "00000132-0000-4000-8000-000000000132",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000007",
+        "byteLength": 1024,
+        "mime": "video/mp4",
+        "durationMs": 4000,
+        "width": 720,
+        "height": 1280,
+        "availability": "available",
+        "provenance": "synthetic"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "V04-02",
+      "module": "T04",
+      "kind": "recovery",
+      "input": {
+        "callState": "submitting",
+        "remoteId": null,
+        "restart": true
+      },
+      "expected": {
+        "state": "result_unknown",
+        "submitCountAfterRestart": 0,
+        "reservedReleased": false
+      }
+    },
+    {
+      "id": "V04-03",
+      "module": "T04",
+      "kind": "recovery",
+      "input": {
+        "callState": "running",
+        "remoteId": "synthetic-remote-01",
+        "restart": true
+      },
+      "expected": {
+        "state": "running",
+        "submitCountAfterRestart": 0,
+        "nextAction": "query_original"
+      }
+    },
+    {
+      "id": "V04-05",
+      "module": "T04",
+      "kind": "cost",
+      "input": {
+        "reservedMicroCny": 1200000,
+        "settlementsMicroCny": [
+          1100000,
+          1100000
+        ],
+        "remainingWorkMicroCny": 2000000,
+        "reworkMicroCny": 500000
+      },
+      "expected": {
+        "chargedMicroCny": 1100000,
+        "reservedMicroCny": 0,
+        "forecastMicroCny": 3600000
+      }
+    },
+    {
+      "id": "V08-01",
+      "module": "T08",
+      "kind": "timing",
+      "input": {
+        "speechMs": 5200,
+        "beforeMs": 600,
+        "afterMs": 600,
+        "plannedMs": 6000
+      },
+      "expected": {
+        "requiredMs": 6400,
+        "shortageMs": 400,
+        "suitable": false
+      }
+    },
+    {
+      "id": "V09-01",
+      "module": "T09",
+      "kind": "timeline",
+      "input": {
+        "clipDurationsMs": [
+          4000,
+          4000,
+          4000,
+          5000,
+          5000,
+          4000,
+          4000
+        ],
+        "fps": 24
+      },
+      "expected": {
+        "durationMs": 30000,
+        "frames": 720
+      }
+    },
+    {
+      "id": "V09-02",
+      "module": "T09",
+      "kind": "replacement",
+      "input": {
+        "requiredMs": 5000,
+        "availableMs": 3000
+      },
+      "expected": {
+        "shortageMs": 2000,
+        "canPreserveEdit": false
+      }
+    },
+    {
+      "id": "V12-01",
+      "module": "T12",
+      "kind": "issue",
+      "input": {
+        "severity": "blocking",
+        "action": "accept_deviation"
+      },
+      "expected": {
+        "accepted": false
+      }
+    },
+    {
+      "id": "V14-01",
+      "module": "T14",
+      "kind": "novice",
+      "input": {
+        "participants": 5,
+        "independentCompletions": 3
+      },
+      "expected": {
+        "passed": false
+      }
+    }
+  ]
+}

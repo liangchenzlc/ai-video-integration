@@ -1,0 +1,17 @@
+appId: local.ai-video-integration
+productName: AI Video Integration
+electronVersion: 44.3.0
+electronDist: node_modules/electron/dist
+directories:
+  output: ../release/t01
+files:
+  - out/**
+  - package.json
+asar: true
+extraResources:
+  - from: ../backend/dist/avi_backend
+    to: backend
+win:
+  target: dir
+  signAndEditExecutable: false
+npmRebuild: false

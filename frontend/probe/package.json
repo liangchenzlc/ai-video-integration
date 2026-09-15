@@ -1,0 +1,8 @@
+{
+  "name": "avi-packaging-probe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Internal T01-A packaging fixture",
+  "author": "AI Video Integration",
+  "main": "index.cjs"
+}

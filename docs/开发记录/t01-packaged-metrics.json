@@ -1,0 +1,17 @@
+{
+  "packaged": true,
+  "readyMs": 2583,
+  "versions": {
+    "electron": "44.3.0",
+    "node": "24.20.0"
+  },
+  "memory": {
+    "rss": 121192448,
+    "heapTotal": 16662528,
+    "heapUsed": 11641100,
+    "external": 4223100,
+    "arrayBuffers": 0
+  },
+  "windows": 1,
+  "rendererErrors": []
+}

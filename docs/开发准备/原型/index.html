@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>AI 漫剧工作台 · G00 流程原型</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header><div><strong>AI 漫剧工作台</strong><span class="badge">流程演示 · 无真实费用</span></div><button id="settings">制作配置</button></header>
+  <div class="layout">
+    <aside aria-label="工作区导航">
+      <div class="project"><span class="eyebrow">当前项目</span><h1 id="project-name">雨夜借光</h1><p>30 秒 · 竖屏 · 24 fps</p></div>
+      <nav id="nav">
+        <button data-page="story" aria-current="page">故事</button><button data-page="visual">视觉与分镜</button><button data-page="video">镜头制作</button><button data-page="edit">声音与剪辑</button><button data-page="export">检查与导出</button><button data-page="costs">项目工具</button>
+      </nav>
+      <div class="aside-bottom"><button id="new-project">新建演示项目</button><small>研究素材用于流程走查。<br>尚未通过正式质量验收。</small></div>
+    </aside>
+    <main>
+      <div class="page-heading"><div><span class="eyebrow" id="step-label">01 / 准备制作依据</span><h2 id="page-title">把故事说清楚</h2><p id="page-intro">先确认要保留的故事，再制作角色和镜头。</p></div><span id="save-state" class="muted">演示项目 · 本页内存保存</span></div>
+      <div class="summary" aria-label="当前版本与费用"><div><small>当前采用</small><strong id="adopted">版本 1 · 已确认</strong></div><div><small>演示已花</small><strong id="spent">¥0.00</strong></div><div><small>待结算占用</small><strong id="reserved">¥0.00</strong></div><div><small>预计完工总额</small><strong id="forecast">¥6.00</strong></div></div>
+      <section id="workspace" aria-label="当前工作区"></section>
+      <p id="notice" class="notice" role="status" aria-live="polite">请选择下一步。所有操作均为本地模拟。</p>
+      <section class="review-controls" aria-label="原型走查控制"><label for="scenario">走查情景</label><select id="scenario"><option value="normal">正常完成</option><option value="unknown">提交结果未知</option><option value="download">生成成功但下载失败</option><option value="budget">预算不足</option><option value="missing">必要参考缺失</option><option value="short">新视频时长不足</option><option value="disconnected">本地服务断开</option></select><button id="reset">重置演示</button><small>这是原型测试控制，正式产品不显示此区域。</small></section>
+    </main>
+  </div>
+  <dialog id="modal" aria-labelledby="dialog-title"><div class="dialog-heading"><h2 id="dialog-title"></h2><button id="close-dialog" aria-label="关闭对话框">关闭</button></div><div id="dialog-body"></div><div id="dialog-actions" class="actions"></div></dialog>
+  <script src="./app.js"></script>
+</body>
+</html>

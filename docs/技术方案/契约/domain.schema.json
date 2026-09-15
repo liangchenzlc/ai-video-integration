@@ -1,0 +1,5266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ai-video:domain:0.1.0",
+  "$defs": {
+    "Uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "TimeRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "startMs",
+        "endMs"
+      ],
+      "properties": {
+        "startMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "endMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "Fps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "properties": {
+        "numerator": {
+          "enum": [
+            24,
+            25,
+            30
+          ]
+        },
+        "denominator": {
+          "const": 1
+        }
+      }
+    },
+    "Stage": {
+      "type": "string",
+      "enum": [
+        "story",
+        "image",
+        "video",
+        "speech",
+        "lipsync",
+        "music",
+        "sfx",
+        "check"
+      ]
+    },
+    "PipelinePhase": {
+      "type": "string",
+      "enum": [
+        "story_adaptation",
+        "story_outline",
+        "story_scene",
+        "story_dialogue",
+        "image_character",
+        "image_location",
+        "image_prop",
+        "image_keyframe",
+        "video",
+        "speech",
+        "lipsync",
+        "music",
+        "sfx",
+        "check"
+      ]
+    },
+    "SourceSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceHash",
+        "startCodePoint",
+        "endCodePoint"
+      ],
+      "properties": {
+        "sourceHash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "startCodePoint": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "endCodePoint": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "Requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "category",
+        "source",
+        "required",
+        "decision",
+        "decisionReason"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "fact",
+            "action",
+            "dialogue",
+            "sound",
+            "screenText",
+            "reveal"
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "keep",
+            "omit",
+            "replace",
+            "unresolved"
+          ]
+        },
+        "decisionReason": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 2000
+        }
+      }
+    },
+    "Dialogue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "speakerAssetId",
+        "text",
+        "delivery",
+        "requirementIds",
+        "sceneId"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "speakerAssetId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "delivery": {
+          "type": "string",
+          "enum": [
+            "visible",
+            "VO",
+            "OS"
+          ]
+        },
+        "requirementIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "sceneId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      }
+    },
+    "Scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "action",
+        "plannedMs",
+        "locationAssetId"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "plannedMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "locationAssetId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "StoryPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceText",
+        "sourceHash",
+        "inputType",
+        "approvalLevel",
+        "brief",
+        "outline",
+        "requirements",
+        "scenes",
+        "dialogues",
+        "adaptationNotes"
+      ],
+      "properties": {
+        "sourceText": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "sourceHash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "inputType": {
+          "type": "string",
+          "enum": [
+            "idea",
+            "excerpt",
+            "script"
+          ]
+        },
+        "approvalLevel": {
+          "type": "string",
+          "enum": [
+            "proposal",
+            "outline",
+            "scenes",
+            "dialogue"
+          ]
+        },
+        "brief": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "outline": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Requirement"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "scenes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Scene"
+          },
+          "minItems": 0,
+          "maxItems": 200
+        },
+        "dialogues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dialogue"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "adaptationNotes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "minItems": 0,
+          "maxItems": 200
+        }
+      }
+    },
+    "Reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mediaId",
+        "mediaHash",
+        "role",
+        "order",
+        "state",
+        "keep",
+        "ignore",
+        "crop"
+      ],
+      "properties": {
+        "mediaId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "mediaHash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "identity",
+            "style",
+            "location",
+            "prop",
+            "composition",
+            "firstFrame",
+            "keyMoment",
+            "endFrame",
+            "voiceDrive",
+            "voiceReference"
+          ]
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "imported",
+            "verified",
+            "missing",
+            "incompatible"
+          ]
+        },
+        "keep": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "crop": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "x",
+                "y",
+                "width",
+                "height"
+              ],
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "y": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "PersistentState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description",
+        "reason",
+        "fromShotId",
+        "throughShotId"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "fromShotId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "throughShotId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      }
+    },
+    "AssetPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assetType",
+        "name",
+        "identityAnchors",
+        "allowedChanges",
+        "states",
+        "references"
+      ],
+      "properties": {
+        "assetType": {
+          "type": "string",
+          "enum": [
+            "character",
+            "location",
+            "prop",
+            "style"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "identityAnchors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 1,
+          "maxItems": 50
+        },
+        "allowedChanges": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PersistentState"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 16
+        }
+      }
+    },
+    "Event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "time",
+        "requirementIds",
+        "carrier",
+        "observer"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "time": {
+          "$ref": "#/$defs/TimeRange"
+        },
+        "requirementIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "carrier": {
+          "type": "string",
+          "enum": [
+            "visual",
+            "audio",
+            "subtitle",
+            "screenText"
+          ]
+        },
+        "observer": {
+          "type": "string",
+          "enum": [
+            "physical",
+            "character",
+            "audience"
+          ]
+        }
+      }
+    },
+    "ShotPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shotId",
+        "purpose",
+        "sceneId",
+        "assetRevisionIds",
+        "requirementIds",
+        "startState",
+        "events",
+        "endState",
+        "camera",
+        "subjectHand",
+        "plannedMs",
+        "dialogueIds",
+        "references",
+        "videoMediaId",
+        "pickupOfShotId",
+        "use"
+      ],
+      "properties": {
+        "shotId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "sceneId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "assetRevisionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 30
+        },
+        "requirementIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "startState": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Event"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "endState": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "camera": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "subjectHand": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right",
+            "both",
+            "none"
+          ]
+        },
+        "plannedMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "dialogueIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 16
+        },
+        "videoMediaId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pickupOfShotId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "use": {
+          "type": "string",
+          "enum": [
+            "original",
+            "supplement",
+            "alternate"
+          ]
+        }
+      }
+    },
+    "SpeechPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dialogueId",
+        "text",
+        "speakerAssetId",
+        "mediaId",
+        "measuredMs",
+        "voicedRanges",
+        "timingMethod",
+        "voicePreset",
+        "pronunciationNotes"
+      ],
+      "properties": {
+        "dialogueId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "speakerAssetId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "mediaId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "measuredMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "voicedRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimeRange"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "timingMethod": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "provider_sentence",
+            "provider_word",
+            "estimated"
+          ]
+        },
+        "voicePreset": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "pronunciationNotes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 2000
+        }
+      }
+    },
+    "Cue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "dialogueId",
+        "text",
+        "time",
+        "differsFromDialogue"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "dialogueId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "time": {
+          "$ref": "#/$defs/TimeRange"
+        },
+        "differsFromDialogue": {
+          "type": "boolean"
+        }
+      }
+    },
+    "SubtitlePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audioRevisionId",
+        "timingMethod",
+        "cues"
+      ],
+      "properties": {
+        "audioRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timingMethod": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "provider_sentence",
+            "provider_word",
+            "estimated"
+          ]
+        },
+        "cues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Cue"
+          },
+          "minItems": 0,
+          "maxItems": 2000
+        }
+      }
+    },
+    "Keyframe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timeMs",
+        "property",
+        "value",
+        "interpolation"
+      ],
+      "properties": {
+        "timeMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "property": {
+          "type": "string",
+          "enum": [
+            "x",
+            "y",
+            "scale",
+            "opacity",
+            "volume"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": -10000,
+          "maximum": 10000
+        },
+        "interpolation": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "hold"
+          ]
+        }
+      }
+    },
+    "Clip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "trackId",
+        "shotId",
+        "mediaId",
+        "contentRevisionId",
+        "startMs",
+        "inMs",
+        "outMs",
+        "durationMs",
+        "gainDb",
+        "linkedClipIds",
+        "keyframes"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "trackId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "shotId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mediaId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contentRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "startMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "inMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "outMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "gainDb": {
+          "type": "number",
+          "minimum": -96,
+          "maximum": 12
+        },
+        "linkedClipIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "keyframes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Keyframe"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        }
+      }
+    },
+    "Track": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "order",
+        "muted"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "image",
+            "video",
+            "voice",
+            "music",
+            "sfx",
+            "subtitle"
+          ]
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "muted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "fromClipId",
+        "toClipId",
+        "type",
+        "durationMs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "fromClipId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "toClipId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "cut",
+            "dissolve",
+            "fade"
+          ]
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      }
+    },
+    "TimelinePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height",
+        "fps",
+        "durationMs",
+        "tracks",
+        "clips",
+        "transitions",
+        "burnSubtitles"
+      ],
+      "properties": {
+        "width": {
+          "enum": [
+            720,
+            1080,
+            1280,
+            1920
+          ]
+        },
+        "height": {
+          "enum": [
+            720,
+            1080,
+            1280,
+            1920
+          ]
+        },
+        "fps": {
+          "$ref": "#/$defs/Fps"
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Track"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "clips": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Clip"
+          },
+          "minItems": 0,
+          "maxItems": 5000
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Transition"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "burnSubtitles": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ObservationPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mediaId",
+        "mediaHash",
+        "method",
+        "observed",
+        "usable",
+        "problems",
+        "limitations"
+      ],
+      "properties": {
+        "mediaId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "mediaHash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "human",
+            "ai",
+            "technical"
+          ]
+        },
+        "observed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimeRange"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "usable": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimeRange"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "problems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "time",
+              "text"
+            ],
+            "properties": {
+              "time": {
+                "$ref": "#/$defs/TimeRange"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4000
+        }
+      }
+    },
+    "TypedPayload": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "content"
+          ],
+          "properties": {
+            "kind": {
+              "const": "story"
+            },
+            "content": {
+              "$ref": "#/$defs/StoryPayload"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "content"
+          ],
+          "properties": {
+            "kind": {
+              "const": "asset"
+            },
+            "content": {
+              "$ref": "#/$defs/AssetPayload"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "content"
+          ],
+          "properties": {
+            "kind": {
+              "const": "shot"
+            },
+            "content": {
+              "$ref": "#/$defs/ShotPayload"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "content"
+          ],
+          "properties": {
+            "kind": {
+              "const": "speech"
+            },
+            "content": {
+              "$ref": "#/$defs/SpeechPayload"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "content"
+          ],
+          "properties": {
+            "kind": {
+              "const": "subtitle"
+            },
+            "content": {
+              "$ref": "#/$defs/SubtitlePayload"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "content"
+          ],
+          "properties": {
+            "kind": {
+              "const": "timeline"
+            },
+            "content": {
+              "$ref": "#/$defs/TimelinePayload"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "content"
+          ],
+          "properties": {
+            "kind": {
+              "const": "observation"
+            },
+            "content": {
+              "$ref": "#/$defs/ObservationPayload"
+            }
+          }
+        }
+      ]
+    },
+    "Revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "artifactId",
+        "parentId",
+        "payload",
+        "contentHash",
+        "createdAt"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "artifactId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload": {
+          "$ref": "#/$defs/TypedPayload"
+        },
+        "contentHash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "createdAt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "revision",
+        "eventSequence",
+        "formatVersion",
+        "aspect",
+        "resolution",
+        "fps",
+        "targetMs",
+        "budgetMicroCny",
+        "savedAt",
+        "readOnly"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "eventSequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "formatVersion": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "aspect": {
+          "type": "string",
+          "enum": [
+            "16:9",
+            "9:16"
+          ]
+        },
+        "resolution": {
+          "type": "string",
+          "enum": [
+            "720p",
+            "1080p"
+          ]
+        },
+        "fps": {
+          "$ref": "#/$defs/Fps"
+        },
+        "targetMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "budgetMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "savedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "readOnly": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Media": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sha256",
+        "byteLength",
+        "mime",
+        "durationMs",
+        "width",
+        "height",
+        "availability",
+        "provenance"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Hash"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "mime": {
+          "type": "string",
+          "enum": [
+            "image/png",
+            "image/jpeg",
+            "video/mp4",
+            "audio/wav",
+            "audio/mpeg",
+            "audio/mp4"
+          ]
+        },
+        "durationMs": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "availability": {
+          "type": "string",
+          "enum": [
+            "staging",
+            "available",
+            "missing",
+            "quarantined"
+          ]
+        },
+        "provenance": {
+          "type": "string",
+          "enum": [
+            "imported",
+            "generated",
+            "derived",
+            "synthetic"
+          ]
+        }
+      }
+    },
+    "Job": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "state",
+        "progress",
+        "resultId",
+        "errorCode"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "import",
+            "probe",
+            "animatic",
+            "export",
+            "diagnostic",
+            "local_check",
+            "connection_check"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "running",
+            "succeeded",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "progress": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "resultId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "errorCode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "TaskStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "purpose",
+        "capabilityId",
+        "maxCalls",
+        "requestedMs",
+        "maxMicroCny",
+        "disclosure"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "create",
+            "revise",
+            "precheck"
+          ]
+        },
+        "capabilityId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "maxCalls": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "requestedMs": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "disclosure": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "audio",
+              "video",
+              "upload"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        }
+      }
+    },
+    "TaskPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "objectId",
+        "stage",
+        "goal",
+        "inputRevisionIds",
+        "inputMediaHashes",
+        "steps",
+        "candidates",
+        "maximumMicroCny",
+        "priceVersion",
+        "templateVersion",
+        "expiresAt",
+        "executionMode",
+        "phase"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "objectId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "stage": {
+          "$ref": "#/$defs/Stage"
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "inputRevisionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "inputMediaHashes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Hash"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TaskStep"
+          },
+          "minItems": 1,
+          "maxItems": 32
+        },
+        "candidates": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "maximumMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "priceVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "templateVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "expiresAt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "executionMode": {
+          "type": "string",
+          "enum": [
+            "synthetic",
+            "real"
+          ]
+        },
+        "phase": {
+          "$ref": "#/$defs/PipelinePhase"
+        }
+      }
+    },
+    "Task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "planId",
+        "state",
+        "eventSequence",
+        "callIds",
+        "candidateRevisionIds",
+        "observationStopped"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "planId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "running",
+            "complete",
+            "partial",
+            "result_unknown",
+            "pending_download",
+            "failed"
+          ]
+        },
+        "eventSequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "callIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "candidateRevisionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "observationStopped": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Call": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "taskId",
+        "stepId",
+        "submissionToken",
+        "remoteTaskId",
+        "state",
+        "resultMediaIds",
+        "billingState",
+        "reservedMicroCny",
+        "settledMicroCny",
+        "expiresAt"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "taskId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "stepId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "submissionToken": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "remoteTaskId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "prepared",
+            "submitting",
+            "running",
+            "result_unknown",
+            "pending_download",
+            "succeeded",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "resultMediaIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "billingState": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "settled"
+          ]
+        },
+        "reservedMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "settledMicroCny": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "CostSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "settledMicroCny",
+        "reservedMicroCny",
+        "remainingWorkMicroCny",
+        "reworkScenarioMicroCny",
+        "forecastMicroCny",
+        "budgetMicroCny",
+        "containsUnknown",
+        "estimateVersion"
+      ],
+      "properties": {
+        "settledMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "reservedMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "remainingWorkMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "reworkScenarioMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "forecastMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "budgetMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "containsUnknown": {
+          "type": "boolean"
+        },
+        "estimateVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      }
+    },
+    "CostEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "callId",
+        "state",
+        "reservedMicroCny",
+        "settledMicroCny",
+        "basis"
+      ],
+      "properties": {
+        "callId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "settled"
+          ]
+        },
+        "reservedMicroCny": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "settledMicroCny": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 2000
+        }
+      }
+    },
+    "Impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "previewId",
+        "artifactId",
+        "fromRevisionId",
+        "toRevisionId",
+        "affectedArtifactIds",
+        "affectedScopes",
+        "estimatedExtraMicroCny",
+        "requiredChecks",
+        "expiresAt"
+      ],
+      "properties": {
+        "previewId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "artifactId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "fromRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toRevisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "affectedArtifactIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "affectedScopes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "identityVisual",
+              "dialogueAudio",
+              "subtitleTiming",
+              "referenceInput",
+              "requirementCoverage",
+              "revealTiming",
+              "timelinePlacement",
+              "mix",
+              "export"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "estimatedExtraMicroCny": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requiredChecks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "expiresAt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        }
+      }
+    },
+    "Issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "ruleId",
+        "ruleVersion",
+        "artifactId",
+        "revisionId",
+        "baselineRevisionId",
+        "severity",
+        "status",
+        "message",
+        "evidence",
+        "time",
+        "method",
+        "limitations"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ruleId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "ruleVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "artifactId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "baselineRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "blocking",
+            "unknown_required",
+            "deviation",
+            "advice"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "fixing",
+            "recheck",
+            "resolved",
+            "accepted_deviation"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4000
+        },
+        "time": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TimeRange"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "local",
+            "ai",
+            "human"
+          ]
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4000
+        }
+      }
+    },
+    "Capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "providerId",
+        "modelId",
+        "region",
+        "version",
+        "stage",
+        "accountState",
+        "interfaceState",
+        "qualityState",
+        "enabled",
+        "maxReferences",
+        "supportedReferenceRoles",
+        "durationOptionsMs",
+        "supportsQuery",
+        "supportsCancel",
+        "priceSource",
+        "priceDate",
+        "restrictions",
+        "phases",
+        "supportsAudioDrive",
+        "supportsLipsync",
+        "voicePresets",
+        "maxInputBytes",
+        "maxInputCodePoints",
+        "resultLifetimeSeconds",
+        "supportsAnonymousResultDownload"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "providerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "modelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "stage": {
+          "$ref": "#/$defs/Stage"
+        },
+        "accountState": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "available",
+            "unavailable"
+          ]
+        },
+        "interfaceState": {
+          "type": "string",
+          "enum": [
+            "unverified",
+            "verified",
+            "unavailable"
+          ]
+        },
+        "qualityState": {
+          "type": "string",
+          "enum": [
+            "unverified",
+            "research_only",
+            "verified"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "maxReferences": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "supportedReferenceRoles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "minItems": 0,
+          "maxItems": 16
+        },
+        "durationOptionsMs": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "supportsQuery": {
+          "type": "boolean"
+        },
+        "supportsCancel": {
+          "type": "boolean"
+        },
+        "priceSource": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "priceDate": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PipelinePhase"
+          },
+          "minItems": 1,
+          "maxItems": 14
+        },
+        "supportsAudioDrive": {
+          "type": "boolean"
+        },
+        "supportsLipsync": {
+          "type": "boolean"
+        },
+        "voicePresets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "maxInputBytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxInputCodePoints": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resultLifetimeSeconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "supportsAnonymousResultDownload": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "providers",
+        "ffmpegConfigured",
+        "capabilities"
+      ],
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "providerId",
+              "credentialConfigured",
+              "maskedSuffix",
+              "storageConfigured"
+            ],
+            "properties": {
+              "providerId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "credentialConfigured": {
+                "type": "boolean"
+              },
+              "maskedSuffix": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 4,
+                    "maxLength": 4
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "storageConfigured": {
+                "type": "boolean"
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "ffmpegConfigured": {
+          "type": "boolean"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Capability"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        }
+      }
+    },
+    "MutationReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationId",
+        "committedRevision",
+        "resourceId",
+        "state"
+      ],
+      "properties": {
+        "operationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "committedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "resourceId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      }
+    },
+    "Operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationId",
+        "state",
+        "receipt"
+      ],
+      "properties": {
+        "operationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "committed",
+            "accepted"
+          ]
+        },
+        "receipt": {
+          "$ref": "#/$defs/MutationReceipt"
+        }
+      }
+    },
+    "Session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectId",
+        "projectSessionId",
+        "mode",
+        "project"
+      ],
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "projectSessionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "read",
+            "write"
+          ]
+        },
+        "project": {
+          "$ref": "#/$defs/Project"
+        }
+      }
+    },
+    "RightEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "mediaId",
+        "source",
+        "use",
+        "evidenceMediaIds",
+        "state",
+        "explanation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "mediaId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "use": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "evidenceMediaIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "unverified",
+            "verified",
+            "recheck"
+          ]
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4000
+        }
+      }
+    },
+    "ExportRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "timelineRevisionId",
+        "jobId",
+        "state",
+        "mediaId",
+        "inputHash"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "timelineRevisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "jobId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "complete",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "mediaId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inputHash": {
+          "$ref": "#/$defs/Hash"
+        }
+      }
+    },
+    "CheckReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revisionIds",
+        "ruleIds",
+        "outcome",
+        "issueIds",
+        "method",
+        "observedRanges",
+        "evidenceMediaIds",
+        "ruleVersion",
+        "limitations"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "revisionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "minItems": 1,
+          "maxItems": 200
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "issueIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "local",
+            "ai",
+            "human"
+          ]
+        },
+        "observedRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimeRange"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "evidenceMediaIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "ruleVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4000
+        }
+      }
+    },
+    "AcceptanceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sampleId",
+        "reviewerId",
+        "evidenceMediaIds",
+        "technical",
+        "consistency",
+        "artistic",
+        "sound",
+        "notes",
+        "provenance"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "sampleId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "reviewerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "evidenceMediaIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "technical": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unknown"
+          ]
+        },
+        "consistency": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unknown"
+          ]
+        },
+        "artistic": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unknown"
+          ]
+        },
+        "sound": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unknown"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "provenance": {
+          "type": "string",
+          "enum": [
+            "human",
+            "synthetic"
+          ]
+        }
+      }
+    },
+    "AdoptionSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectRevision",
+        "artifacts",
+        "shotOrder",
+        "requirementBindings",
+        "activeTimelineRevisionId"
+      ],
+      "properties": {
+        "projectRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "artifactId",
+              "adoptedRevisionId",
+              "confirmedRevisionId",
+              "needsUpdate"
+            ],
+            "properties": {
+              "artifactId": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "adoptedRevisionId": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Uuid"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "confirmedRevisionId": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Uuid"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "needsUpdate": {
+                "type": "boolean"
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "shotOrder": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "requirementBindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "requirementId",
+              "shotRevisionIds"
+            ],
+            "properties": {
+              "requirementId": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "shotRevisionIds": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Uuid"
+                },
+                "minItems": 0,
+                "maxItems": 1000
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "activeTimelineRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "RenderPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "compilerVersion",
+        "timelineRevisionId",
+        "timeline",
+        "mediaHashes",
+        "inputHash",
+        "videoCodec",
+        "audioCodec",
+        "purpose"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "compilerVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "timelineRevisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "timeline": {
+          "$ref": "#/$defs/TimelinePayload"
+        },
+        "mediaHashes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mediaId",
+              "sha256"
+            ],
+            "properties": {
+              "mediaId": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "sha256": {
+                "$ref": "#/$defs/Hash"
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "inputHash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "videoCodec": {
+          "const": "h264"
+        },
+        "audioCodec": {
+          "anyOf": [
+            {
+              "const": "aac"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "preview",
+            "animatic",
+            "export"
+          ]
+        }
+      }
+    },
+    "CredentialSecret": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "apiKey"
+          ],
+          "properties": {
+            "kind": {
+              "const": "api_key"
+            },
+            "apiKey": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8192
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "accessKeyId",
+            "accessKeySecret",
+            "securityToken"
+          ],
+          "properties": {
+            "kind": {
+              "const": "oss"
+            },
+            "accessKeyId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "accessKeySecret": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8192
+            },
+            "securityToken": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 16384
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "error"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message",
+            "affectedIds",
+            "recoverableAction"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "affectedIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            },
+            "recoverableAction": {
+              "type": "string",
+              "enum": [
+                "none",
+                "restart_backend",
+                "retry_connection",
+                "repair_installation",
+                "reopen_project",
+                "review_changes",
+                "configure",
+                "review_budget",
+                "locate_media",
+                "review_checks",
+                "query_operation"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "RegisterGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "grantId",
+            "path",
+            "purpose",
+            "windowId"
+          ],
+          "properties": {
+            "grantId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32767
+            },
+            "purpose": {
+              "type": "string",
+              "enum": [
+                "createProject",
+                "openProject",
+                "importMedia",
+                "exportFile",
+                "ffmpeg"
+              ]
+            },
+            "windowId": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        }
+      }
+    },
+    "MutationReceiptResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/MutationReceipt"
+        }
+      }
+    },
+    "CreateProject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "directoryGrantId",
+            "name",
+            "aspect",
+            "resolution",
+            "fps",
+            "targetMs"
+          ],
+          "properties": {
+            "directoryGrantId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "aspect": {
+              "type": "string",
+              "enum": [
+                "16:9",
+                "9:16"
+              ]
+            },
+            "resolution": {
+              "type": "string",
+              "enum": [
+                "720p",
+                "1080p"
+              ]
+            },
+            "fps": {
+              "$ref": "#/$defs/Fps"
+            },
+            "targetMs": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        }
+      }
+    },
+    "OpenProject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "directoryGrantId",
+        "requestedMode"
+      ],
+      "properties": {
+        "directoryGrantId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "requestedMode": {
+          "type": "string",
+          "enum": [
+            "read",
+            "write"
+          ]
+        }
+      }
+    },
+    "SessionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Session"
+        }
+      }
+    },
+    "ProjectResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Project"
+        }
+      }
+    },
+    "OperationResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Operation"
+        }
+      }
+    },
+    "SaveDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "draftId",
+            "artifactId",
+            "baseRevisionId",
+            "content"
+          ],
+          "properties": {
+            "draftId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "artifactId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "baseRevisionId": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "content": {
+              "$ref": "#/$defs/TypedPayload"
+            }
+          }
+        }
+      }
+    },
+    "Draft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "artifactId",
+        "baseRevisionId",
+        "content"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "artifactId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "baseRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "content": {
+          "$ref": "#/$defs/TypedPayload"
+        }
+      }
+    },
+    "DraftResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Draft"
+        }
+      }
+    },
+    "ImportMedia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fileGrantId",
+            "purpose"
+          ],
+          "properties": {
+            "fileGrantId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "purpose": {
+              "type": "string",
+              "enum": [
+                "reference",
+                "speech",
+                "video",
+                "music",
+                "sfx",
+                "evidence"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "MediaResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Media"
+        }
+      }
+    },
+    "JobResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Job"
+        }
+      }
+    },
+    "RelocateMedia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fileGrantId",
+            "expectedHash"
+          ],
+          "properties": {
+            "fileGrantId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "expectedHash": {
+              "$ref": "#/$defs/Hash"
+            }
+          }
+        }
+      }
+    },
+    "CancelJob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reason"
+          ],
+          "properties": {
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          }
+        }
+      }
+    },
+    "SettingsResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Settings"
+        }
+      }
+    },
+    "SetCredential": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "secret",
+            "persistence"
+          ],
+          "properties": {
+            "secret": {
+              "$ref": "#/$defs/CredentialSecret",
+              "writeOnly": true
+            },
+            "persistence": {
+              "type": "string",
+              "enum": [
+                "dpapi",
+                "session_only"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "DeleteCredential": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "confirmed"
+          ],
+          "properties": {
+            "confirmed": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "ConfigureTools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ffmpegGrantId"
+          ],
+          "properties": {
+            "ffmpegGrantId": {
+              "$ref": "#/$defs/Uuid"
+            }
+          }
+        }
+      }
+    },
+    "ConfigureStorage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "providerId",
+            "region",
+            "bucket",
+            "credentialRef",
+            "retentionHours"
+          ],
+          "properties": {
+            "providerId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "region": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "bucket": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "credentialRef": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "retentionHours": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 168
+            }
+          }
+        }
+      }
+    },
+    "ConfigureStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase",
+            "capabilityId"
+          ],
+          "properties": {
+            "phase": {
+              "$ref": "#/$defs/PipelinePhase"
+            },
+            "capabilityId": {
+              "$ref": "#/$defs/Uuid"
+            }
+          }
+        }
+      }
+    },
+    "ConnectionCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "capabilityId"
+          ],
+          "properties": {
+            "capabilityId": {
+              "$ref": "#/$defs/Uuid"
+            }
+          }
+        }
+      }
+    },
+    "PlanTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "objectId",
+            "stage",
+            "phase",
+            "goal",
+            "inputRevisionIds",
+            "candidates",
+            "includePrecheck",
+            "executionMode"
+          ],
+          "properties": {
+            "objectId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "stage": {
+              "$ref": "#/$defs/Stage"
+            },
+            "phase": {
+              "$ref": "#/$defs/PipelinePhase"
+            },
+            "goal": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "inputRevisionIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            },
+            "candidates": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "includePrecheck": {
+              "type": "boolean"
+            },
+            "executionMode": {
+              "type": "string",
+              "enum": [
+                "synthetic",
+                "real"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "TaskPlanResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/TaskPlan"
+        }
+      }
+    },
+    "StartTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "planId",
+            "authorizedMaximumMicroCny",
+            "disclosureAccepted"
+          ],
+          "properties": {
+            "planId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "authorizedMaximumMicroCny": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "disclosureAccepted": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "TaskResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Task"
+        }
+      }
+    },
+    "CallResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Call"
+        }
+      }
+    },
+    "RecoverCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "action"
+          ],
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "query",
+                "download",
+                "stop_waiting",
+                "cancel_remote"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "ContinueTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "confirmedUnsubmittedOnly"
+          ],
+          "properties": {
+            "confirmedUnsubmittedOnly": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "SetBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "totalMicroCny",
+            "allocations",
+            "warningPercent"
+          ],
+          "properties": {
+            "totalMicroCny": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "allocations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "stage",
+                  "limitMicroCny"
+                ],
+                "properties": {
+                  "stage": {
+                    "$ref": "#/$defs/Stage"
+                  },
+                  "limitMicroCny": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                }
+              },
+              "minItems": 0,
+              "maxItems": 8
+            },
+            "warningPercent": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        }
+      }
+    },
+    "CostSummaryResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/CostSummary"
+        }
+      }
+    },
+    "CostEntryPage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "nextCursor"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CostEntry"
+          },
+          "minItems": 0,
+          "maxItems": 200
+        },
+        "nextCursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "CostEntryPageResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/CostEntryPage"
+        }
+      }
+    },
+    "SettleCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "settledMicroCny",
+            "basis",
+            "evidenceMediaIds",
+            "reason"
+          ],
+          "properties": {
+            "settledMicroCny": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "basis": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "evidenceMediaIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          }
+        }
+      }
+    },
+    "ExternalExpense": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expenseId",
+            "category",
+            "state",
+            "amountMicroCny",
+            "basis"
+          ],
+          "properties": {
+            "expenseId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "storage",
+                "transfer",
+                "procurement"
+              ]
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "estimated",
+                "pending",
+                "settled"
+              ]
+            },
+            "amountMicroCny": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "basis": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          }
+        }
+      }
+    },
+    "RevisionPage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "nextCursor"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Revision"
+          },
+          "minItems": 0,
+          "maxItems": 200
+        },
+        "nextCursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "RevisionPageResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/RevisionPage"
+        }
+      }
+    },
+    "CreateRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "draftId"
+          ],
+          "properties": {
+            "draftId": {
+              "$ref": "#/$defs/Uuid"
+            }
+          }
+        }
+      }
+    },
+    "PreviewAdoption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "toRevisionId",
+        "expectedRevision"
+      ],
+      "properties": {
+        "toRevisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "ImpactResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Impact"
+        }
+      }
+    },
+    "AdoptRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "previewId",
+            "toRevisionId",
+            "confirm"
+          ],
+          "properties": {
+            "previewId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "toRevisionId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "confirm": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "ConfirmRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "revisionId",
+            "checkIds"
+          ],
+          "properties": {
+            "revisionId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "checkIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            }
+          }
+        }
+      }
+    },
+    "UndoAdoption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "adoptionId"
+          ],
+          "properties": {
+            "adoptionId": {
+              "$ref": "#/$defs/Uuid"
+            }
+          }
+        }
+      }
+    },
+    "CandidatePage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "nextCursor"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Revision"
+          },
+          "minItems": 0,
+          "maxItems": 200
+        },
+        "nextCursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "CandidatePageResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/CandidatePage"
+        }
+      }
+    },
+    "ReorderShots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "shotIds"
+          ],
+          "properties": {
+            "shotIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "minItems": 1,
+              "maxItems": 5000
+            }
+          }
+        }
+      }
+    },
+    "Coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unassignedRequirementIds",
+        "unresolvedRequirementIds",
+        "invalidReferenceIds"
+      ],
+      "properties": {
+        "unassignedRequirementIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "unresolvedRequirementIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "invalidReferenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        }
+      }
+    },
+    "CoverageResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/Coverage"
+        }
+      }
+    },
+    "VerifyReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "draftId",
+            "mediaId",
+            "role",
+            "matchesPurpose",
+            "note"
+          ],
+          "properties": {
+            "draftId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "mediaId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "role": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "matchesPurpose": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          }
+        }
+      }
+    },
+    "TimingRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shotRevisionId",
+        "speechRevisionIds",
+        "beforeMs",
+        "afterMs"
+      ],
+      "properties": {
+        "shotRevisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "speechRevisionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "beforeMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "afterMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "TimingResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requiredMs",
+        "plannedMs",
+        "shortageMs",
+        "method",
+        "suitable"
+      ],
+      "properties": {
+        "requiredMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "plannedMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "shortageMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "measured",
+            "estimated"
+          ]
+        },
+        "suitable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "TimingResultResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/TimingResult"
+        }
+      }
+    },
+    "RenderAnimatic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "timelineRevisionId"
+          ],
+          "properties": {
+            "timelineRevisionId": {
+              "$ref": "#/$defs/Uuid"
+            }
+          }
+        }
+      }
+    },
+    "ReplacePreview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timelineRevisionId",
+        "clipId",
+        "newMediaId"
+      ],
+      "properties": {
+        "timelineRevisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "clipId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "newMediaId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      }
+    },
+    "ReplaceResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shortageMs",
+        "affectedClipIds",
+        "requiredChecks",
+        "canPreserveEdit"
+      ],
+      "properties": {
+        "shortageMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "affectedClipIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "requiredChecks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "canPreserveEdit": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ReplaceResultResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/ReplaceResult"
+        }
+      }
+    },
+    "VideoReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shotRevisionId",
+        "speechRevisionIds",
+        "capabilityId",
+        "path"
+      ],
+      "properties": {
+        "shotRevisionId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "speechRevisionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "capabilityId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "path": {
+          "type": "string",
+          "enum": [
+            "research",
+            "production"
+          ]
+        }
+      }
+    },
+    "ReadinessResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ready",
+        "blockers",
+        "warnings"
+      ],
+      "properties": {
+        "ready": {
+          "type": "boolean"
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        }
+      }
+    },
+    "ReadinessResultResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/ReadinessResult"
+        }
+      }
+    },
+    "SaveRights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "evidence"
+          ],
+          "properties": {
+            "evidence": {
+              "$ref": "#/$defs/RightEvidence"
+            }
+          }
+        }
+      }
+    },
+    "RunLocalChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "revisionIds",
+            "ruleIds"
+          ],
+          "properties": {
+            "revisionIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            },
+            "ruleIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "minItems": 0,
+              "maxItems": 200
+            }
+          }
+        }
+      }
+    },
+    "CheckReportResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/CheckReport"
+        }
+      }
+    },
+    "IssuePage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "nextCursor"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Issue"
+          },
+          "minItems": 0,
+          "maxItems": 200
+        },
+        "nextCursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "IssuePageResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/IssuePage"
+        }
+      }
+    },
+    "DecideIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "action",
+            "reason",
+            "evidenceMediaIds"
+          ],
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "accept_deviation",
+                "request_recheck",
+                "attach_evidence"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "evidenceMediaIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Uuid"
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            }
+          }
+        }
+      }
+    },
+    "ExportFilm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "timelineRevisionId",
+            "targetGrantId",
+            "burnSubtitles",
+            "overwriteConfirmed"
+          ],
+          "properties": {
+            "timelineRevisionId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "targetGrantId": {
+              "$ref": "#/$defs/Uuid"
+            },
+            "burnSubtitles": {
+              "type": "boolean"
+            },
+            "overwriteConfirmed": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "ExportRecordResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "data"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "data": {
+          "$ref": "#/$defs/ExportRecord"
+        }
+      }
+    },
+    "CreateDiagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientOperationId",
+        "expectedRevision",
+        "payload"
+      ],
+      "properties": {
+        "clientOperationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "includeProject",
+            "includeContent",
+            "targetGrantId"
+          ],
+          "properties": {
+            "includeProject": {
+              "type": "boolean"
+            },
+            "includeContent": {
+              "type": "boolean"
+            },
+            "targetGrantId": {
+              "$ref": "#/$defs/Uuid"
+            }
+          }
+        }
+      }
+    }
+  }
+}
