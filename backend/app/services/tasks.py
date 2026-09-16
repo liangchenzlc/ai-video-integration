@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 from app.services.task_adapter import SyntheticAdapter
 from app.services.task_executor import TaskExecutor
-from app.storage import costs, task_plans, tasks
+from app.storage import candidates, costs, task_plans, tasks
 from app.storage.database import connect
 from app.storage.errors import ProjectError
 from app.storage.settings import canonical
@@ -179,6 +179,22 @@ class TaskService:
 
     def get_task(self, project_id: str, session_id: str, window_id: int, task_id: str) -> Json:
         return self.read(project_id, session_id, window_id, lambda db, _: tasks.task(db, task_id))
+
+    def list_task_candidates(
+        self,
+        project_id: str,
+        session_id: str,
+        window_id: int,
+        task_id: str,
+        cursor: str | None = None,
+        limit: int = 50,
+    ) -> Json:
+        return self.read(
+            project_id,
+            session_id,
+            window_id,
+            lambda db, _: candidates.page(db, task_id, cursor, limit),
+        )
 
     def get_call(self, project_id: str, session_id: str, window_id: int, call_id: str) -> Json:
         return self.read(project_id, session_id, window_id, lambda db, _: tasks.call(db, call_id))

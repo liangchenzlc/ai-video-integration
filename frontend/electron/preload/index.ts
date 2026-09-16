@@ -4,6 +4,8 @@ import { settingsBridge } from "./settings";
 import { tasksBridge } from "./tasks";
 import { projectsBridge } from "./projects";
 import { versionsBridge } from "./versions";
+import { storyboardBridge } from "./storyboard";
+import { productionBridge } from "./production";
 import { createBeforeLeaveBridge } from "./draft-flush";
 import {
   snapshotSchema,
@@ -45,6 +47,8 @@ const bridge: DesktopBridge = {
   settings: settingsBridge,
   tasks: tasksBridge,
   versions: versionsBridge,
+  storyboard: storyboardBridge,
+  production: productionBridge,
   getRuntimeState: () => invoke("runtime:state", snapshotSchema),
   getCapabilities: () => invoke("runtime:capabilities", capabilitySchema),
   restartBackend: (input) => {

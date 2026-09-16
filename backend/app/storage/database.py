@@ -1,3 +1,4 @@
+import json
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -82,6 +83,9 @@ def initialize_project(path: Path) -> None:
             db.execute("PRAGMA user_version=3")
             _apply_004(db)
             _apply_005(db)
+            _apply_006(db)
+            _apply_007(db)
+            _apply_008(db)
 
 
 def _apply_004(db: sqlite3.Connection) -> None:
@@ -103,6 +107,65 @@ def _apply_005(db: sqlite3.Connection) -> None:
             db.execute(statement)
             statement = ""
     db.execute("PRAGMA user_version=5")
+
+
+def _apply_006(db: sqlite3.Connection) -> None:
+    statement = ""
+    for line in (Path(__file__).parent / "migration_006.sql").read_text("utf-8").splitlines(True):
+        statement += line
+        if sqlite3.complete_statement(statement):
+            db.execute(statement)
+            statement = ""
+    db.execute("PRAGMA user_version=6")
+
+
+def _apply_007(db: sqlite3.Connection) -> None:
+    statement = ""
+    for line in (Path(__file__).parent / "migration_007.sql").read_text("utf-8").splitlines(True):
+        statement += line
+        if sqlite3.complete_statement(statement):
+            db.execute(statement)
+            statement = ""
+    # Existing v6 shot drafts predate the index; preserve their authored identity.
+    legacy = list(
+        db.execute(
+            "SELECT artifact_id,payload_json FROM drafts WHERE kind='shot' ORDER BY saved_at,id"
+        )
+    ) + list(
+        db.execute(
+            "SELECT r.artifact_id,r.payload_json FROM revisions r JOIN artifacts a "
+            "ON a.id=r.artifact_id WHERE a.kind='shot' ORDER BY r.created_at,r.id"
+        )
+    )
+    for row in legacy:
+        shot_id = json.loads(row["payload_json"])["content"].get("shotId")
+        if shot_id is None:
+            continue
+        previous = db.execute(
+            "SELECT shot_id FROM storyboard_shots WHERE artifact_id=?", (row["artifact_id"],)
+        ).fetchone()
+        if previous is not None:
+            if previous[0] != shot_id:
+                raise sqlite3.IntegrityError("Conflicting shot identity in v6 drafts")
+            continue
+        ordinal = db.execute("SELECT COALESCE(MAX(ordinal)+1,0) FROM storyboard_shots").fetchone()[
+            0
+        ]
+        db.execute(
+            "INSERT INTO storyboard_shots VALUES(?,?,?)",
+            (shot_id, row["artifact_id"], ordinal),
+        )
+    db.execute("PRAGMA user_version=7")
+
+
+def _apply_008(db: sqlite3.Connection) -> None:
+    statement = ""
+    for line in (Path(__file__).parent / "migration_008.sql").read_text("utf-8").splitlines(True):
+        statement += line
+        if sqlite3.complete_statement(statement):
+            db.execute(statement)
+            statement = ""
+    db.execute("PRAGMA user_version=8")
 
 
 def _schema(db: sqlite3.Connection) -> tuple[tuple[str, ...], ...]:
@@ -127,6 +190,12 @@ def _expected_project_schema(version: int) -> tuple[tuple[str, ...], ...]:
             _apply_004(db)
         if version >= 5:
             _apply_005(db)
+        if version >= 6:
+            _apply_006(db)
+        if version >= 7:
+            _apply_007(db)
+        if version >= 8:
+            _apply_008(db)
         return _schema(db)
     finally:
         db.close()
@@ -134,7 +203,7 @@ def _expected_project_schema(version: int) -> tuple[tuple[str, ...], ...]:
 
 def validate_project_schema(db: sqlite3.Connection) -> None:
     version = db.execute("PRAGMA user_version").fetchone()[0]
-    if version not in {2, 3, 4, 5}:
+    if version not in {2, 3, 4, 5, 6, 7, 8}:
         raise ProjectError("PROJECT_VERSION_UNSUPPORTED")
     if _schema(db) != _expected_project_schema(version):
         raise ProjectError("PROJECT_CORRUPT")
@@ -149,13 +218,19 @@ def migrate_project(path: Path, project_id: str) -> None:
             if db.execute("SELECT id FROM projects WHERE id=?", (project_id,)).fetchone() is None:
                 raise ProjectError("OBJECT_NOT_FOUND", 404)
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version == 5:
+            if version == 8:
                 return
             if version == 2:
                 db.execute((Path(__file__).parent / "migration_003.sql").read_text("utf-8"))
             if version < 4:
                 _apply_004(db)
-            _apply_005(db)
+            if version < 5:
+                _apply_005(db)
+            if version < 6:
+                _apply_006(db)
+            if version < 7:
+                _apply_007(db)
+            _apply_008(db)
             validate_project_schema(db)
     except ProjectError as error:
         if error.code == "OBJECT_NOT_FOUND":

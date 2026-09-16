@@ -9,6 +9,9 @@ import { StoryDraftEditor } from "./StoryDraftEditor";
 import { MediaLibrary } from "./MediaLibrary";
 import { TaskPanel } from "./TaskPanel";
 import { RevisionPanel } from "./RevisionPanel";
+import { ContentWorkbench } from "./ContentWorkbench";
+import { ProductionWorkbench } from "./ProductionWorkbench";
+import type { Revision } from "../../electron/shared/versions";
 import { flushSync } from "react-dom";
 import type { DraftAutosave } from "./draft-autosave";
 import type {
@@ -27,11 +30,20 @@ export function ProjectsHome({
   ready,
   runtimeId,
   onSettings,
+  onPage,
+  page,
 }: {
   ready: boolean;
   runtimeId: string | null;
   onSettings: () => void;
+  onPage: (page: string) => void;
+  page: string;
 }) {
+  const [candidateFocus, setCandidateFocus] = useState<
+    | { projectId: string; revision: Revision }
+    | { projectId: string; artifactId: string }
+    | null
+  >(null);
   const [session, setSession] = useState<ProjectSession | null>(null);
   const [recent, setRecent] = useState<RecentProject[]>([]);
   const [creating, setCreating] = useState(false);
@@ -51,28 +63,64 @@ export function ProjectsHome({
   generation.current = runtimeId;
   const locked = useRef(false);
   const editor = useRef<DraftAutosave | null>(null);
+  const contentEditor = useRef<DraftAutosave | null>(null);
+  const productionEditor = useRef<DraftAutosave | null>(null);
+  const [storyEngine, setStoryEngine] = useState<DraftAutosave | null>(null);
+  const onContentEngine = useCallback((instance: DraftAutosave | null) => {
+    contentEditor.current = instance;
+  }, []);
+  const onProductionEngine = useCallback((instance: DraftAutosave | null) => {
+    productionEditor.current = instance;
+  }, []);
   const [draftReady, setDraftReady] = useState(false);
   const sessionRef = useRef(session);
   sessionRef.current = session;
   const onEngine = useCallback((engine: DraftAutosave | null) => {
     editor.current = engine;
+    if (engine)
+      engine.onCommit = (before, after) => {
+        contentEditor.current?.advanceProjectRevision(before, after);
+        productionEditor.current?.advanceProjectRevision(before, after);
+        window.dispatchEvent(new Event("storyboard-updated"));
+      };
+    setStoryEngine(engine);
     setDraftReady(!!engine);
   }, []);
   const advanceDraftRevision = useCallback(
-    (expectedRevision: number, committedRevision: number) =>
-      editor.current?.advanceProjectRevision(
+    (expectedRevision: number, committedRevision: number) => {
+      contentEditor.current?.advanceProjectRevision(
         expectedRevision,
         committedRevision,
-      ) ?? false,
+      );
+      productionEditor.current?.advanceProjectRevision(
+        expectedRevision,
+        committedRevision,
+      );
+      return (
+        editor.current?.advanceProjectRevision(
+          expectedRevision,
+          committedRevision,
+        ) ?? false
+      );
+    },
     [],
   );
   const flush = useCallback(async () => {
-    const saved = await (editor.current?.flush() ?? Promise.resolve(true));
+    const storySaved = await (editor.current?.flush() ?? Promise.resolve(true));
+    const contentSaved =
+      storySaved &&
+      (await (contentEditor.current?.flush() ?? Promise.resolve(true)));
+    const saved =
+      contentSaved &&
+      (await (productionEditor.current?.flush() ?? Promise.resolve(true)));
     if (!saved) setMessage("草稿尚未保存，请处理保存提示后再切换或关闭项目。");
     return saved;
   }, []);
   const prepareMutation = useCallback(async () => {
-    const saved = await prepareDraftMutation(editor.current);
+    const saved =
+      (await prepareDraftMutation(editor.current)) &&
+      (await (contentEditor.current?.flush() ?? Promise.resolve(true))) &&
+      (await (productionEditor.current?.flush() ?? Promise.resolve(true)));
     if (!saved)
       setMessage("草稿仍在读取或尚未保存，请等待草稿准备完成后再操作项目。");
     return saved;
@@ -119,6 +167,33 @@ export function ProjectsHome({
       active = false;
     };
   }, [ready, runtimeId]);
+  useEffect(() => {
+    if (page !== "故事" || !session || !ready) return;
+    let active = true;
+    const focusStory = () => {
+      void window.desktop.storyboard
+        .list({ projectId: session.projectId })
+        .then((result) => {
+          if (!active || !result.ok) return;
+          const story = result.data.drafts.find(
+            (item) => item.kind === "story",
+          );
+          setCandidateFocus(
+            story
+              ? { projectId: session.projectId, artifactId: story.artifactId }
+              : null,
+          );
+        });
+    };
+    // An unsaved story can become the first persisted artifact while this page stays mounted.
+    setCandidateFocus(null);
+    focusStory();
+    window.addEventListener("storyboard-updated", focusStory);
+    return () => {
+      active = false;
+      window.removeEventListener("storyboard-updated", focusStory);
+    };
+  }, [page, ready, session]);
   async function action(work: () => Promise<void>) {
     if (locked.current || leavingRef.current || !ready) return;
     locked.current = true;
@@ -271,46 +346,146 @@ export function ProjectsHome({
         </section>
       )}
       {session && (
-        <StoryDraftEditor
-          key={`draft:${session.projectId}`}
-          session={session}
-          ready={ready}
-          locked={busy || leaving}
-          onEngine={onEngine}
-        />
+        <div hidden={page !== "故事" && page !== "项目工具" && page !== "首页"}>
+          <StoryDraftEditor
+            key={`draft:${session.projectId}`}
+            session={session}
+            ready={ready}
+            locked={busy || leaving}
+            onEngine={onEngine}
+          />
+        </div>
       )}
       {session && (
-        <RevisionPanel
-          key={`versions:${session.projectId}`}
-          session={session}
-          ready={ready}
-          locked={busy || leaving || !draftReady}
-          action={action}
-          prepareMutation={prepareMutation}
-          advanceDraftRevision={advanceDraftRevision}
-        />
+        <div hidden={page !== "视觉与分镜" && page !== "项目工具"}>
+          <ContentWorkbench
+            key={`content:${session.projectId}`}
+            session={session}
+            ready={ready}
+            locked={busy || leaving || !draftReady}
+            action={action}
+            storyEngine={storyEngine}
+            onEngine={onContentEngine}
+            onFocusArtifact={(artifactId) => {
+              setCandidateFocus({ projectId: session.projectId, artifactId });
+              requestAnimationFrame(() =>
+                document
+                  .querySelector(".revision-panel")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              );
+            }}
+          />
+        </div>
       )}
       {session && (
-        <MediaLibrary
-          key={`media:${session.projectId}`}
-          session={session}
-          ready={ready}
-          locked={busy || leaving || !draftReady}
-          action={action}
-          prepareMutation={prepareMutation}
-        />
+        <div
+          hidden={
+            !["镜头制作", "声音与剪辑", "检查与导出", "项目工具"].includes(page)
+          }
+        >
+          <ProductionWorkbench
+            key={`production:${session.projectId}`}
+            session={session}
+            ready={ready}
+            active={[
+              "镜头制作",
+              "声音与剪辑",
+              "检查与导出",
+              "项目工具",
+            ].includes(page)}
+            page={page}
+            locked={busy || leaving || !draftReady}
+            action={action}
+            onEngine={onProductionEngine}
+            storyEngine={storyEngine}
+            contentEngine={contentEditor.current}
+            onFocusArtifact={(artifactId) => {
+              setCandidateFocus({ projectId: session.projectId, artifactId });
+              requestAnimationFrame(() =>
+                document
+                  .querySelector(".revision-panel")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              );
+            }}
+            onOpenMedia={() => {
+              onPage("项目工具");
+              requestAnimationFrame(() =>
+                document
+                  .querySelector(".media-library")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              );
+            }}
+          />
+        </div>
       )}
       {session && (
-        <TaskPanel
-          key={`tasks:${session.projectId}`}
-          session={session}
-          ready={ready}
-          locked={busy || leaving || !draftReady}
-          action={action}
-          prepareMutation={prepareMutation}
-          advanceDraftRevision={advanceDraftRevision}
-          onSettings={onSettings}
-        />
+        <div
+          hidden={
+            page !== "项目工具" &&
+            page !== "故事" &&
+            page !== "视觉与分镜" &&
+            page !== "镜头制作" &&
+            page !== "声音与剪辑" &&
+            page !== "检查与导出"
+          }
+        >
+          <RevisionPanel
+            key={`versions:${session.projectId}`}
+            session={session}
+            ready={ready}
+            locked={busy || leaving || !draftReady}
+            action={action}
+            prepareMutation={prepareMutation}
+            advanceDraftRevision={advanceDraftRevision}
+            focusRevision={
+              candidateFocus?.projectId === session.projectId &&
+              "revision" in candidateFocus
+                ? candidateFocus.revision
+                : null
+            }
+            focusArtifactId={
+              candidateFocus?.projectId === session.projectId &&
+              "artifactId" in candidateFocus
+                ? candidateFocus.artifactId
+                : null
+            }
+            storyWorkspace={page === "故事"}
+          />
+        </div>
+      )}
+      {session && (
+        <div hidden={page !== "项目工具"}>
+          <MediaLibrary
+            key={`media:${session.projectId}`}
+            session={session}
+            ready={ready}
+            locked={busy || leaving || !draftReady}
+            action={action}
+            prepareMutation={prepareMutation}
+          />
+        </div>
+      )}
+      {session && (
+        <div hidden={page !== "项目工具"}>
+          <TaskPanel
+            key={`tasks:${session.projectId}`}
+            session={session}
+            ready={ready}
+            locked={busy || leaving || !draftReady}
+            action={action}
+            prepareMutation={prepareMutation}
+            advanceDraftRevision={advanceDraftRevision}
+            onSettings={onSettings}
+            onCompareCandidate={(revision) => {
+              setCandidateFocus({ projectId: session.projectId, revision });
+              requestAnimationFrame(() =>
+                document
+                  .querySelector(".revision-panel")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              );
+            }}
+          />
+        </div>
       )}
       <div className="project-actions">
         <button
@@ -327,6 +502,14 @@ export function ProjectsHome({
           打开项目
         </button>
       </div>
+      {!session &&
+        ["故事", "视觉与分镜", "镜头制作", "声音与剪辑", "检查与导出"].includes(
+          page,
+        ) && (
+          <p className="notice">
+            先创建或打开一个本地项目，再整理故事、视觉资产与分镜。
+          </p>
+        )}
       {creating && (
         <form className="project-form" onSubmit={(e) => void submit(e)}>
           <h3>创建你的项目</h3>

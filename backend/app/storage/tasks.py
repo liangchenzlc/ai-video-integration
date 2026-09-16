@@ -52,7 +52,19 @@ def task(db: sqlite3.Connection, task_id: str) -> dict[str, Any]:
                 "SELECT id FROM service_calls WHERE task_id=? ORDER BY rowid", (task_id,)
             )
         ],
-        "candidateRevisionIds": [],
+        "candidateRevisionIds": (
+            [
+                r[0]
+                for r in db.execute(
+                    "SELECT c.revision_id FROM candidate_results c JOIN service_calls s "
+                    "ON s.id=c.call_id WHERE s.task_id=? AND c.parse_state='registered' "
+                    "AND c.revision_id IS NOT NULL ORDER BY c.rowid",
+                    (task_id,),
+                )
+            ]
+            if db.execute("PRAGMA user_version").fetchone()[0] >= 6
+            else []
+        ),
     }
 
 
@@ -71,7 +83,18 @@ def call(db: sqlite3.Connection, call_id: str) -> dict[str, Any]:
         "submissionToken": row["submission_token"],
         "remoteTaskId": row["remote_task_id"],
         "state": row["state"],
-        "resultMediaIds": [],
+        "resultMediaIds": (
+            [
+                item[0]
+                for item in db.execute(
+                    "SELECT media_id FROM candidate_results WHERE call_id=? "
+                    "AND media_id IS NOT NULL ORDER BY result_ordinal",
+                    (call_id,),
+                )
+            ]
+            if db.execute("PRAGMA user_version").fetchone()[0] >= 6
+            else []
+        ),
         "billingState": row["billing_state"],
         "reservedMicroCny": row["reserved_micro_cny"],
         "settledMicroCny": row["settled_micro_cny"],
@@ -120,8 +143,12 @@ def prepare_next(
             "step": step,
             "model": model,
             "executionMode": plan["executionMode"],
+            "stage": plan["stage"],
+            "phase": plan["phase"],
             "inputMediaHashes": plan["inputMediaHashes"],
         }
+        if step["purpose"] == "create" and plan["stage"] in {"story", "image"}:
+            snapshot["resultProtocolVersion"] = "candidate-v1"
         db.execute(
             "INSERT INTO "
             "service_calls(id,task_id,step_id,ordinal,submission_token,provider_id,model_id,region,"

@@ -14,6 +14,7 @@ import {
   type ProjectSession,
 } from "../../electron/shared/projects";
 import type { MediaJob } from "../../electron/shared/media";
+import { DiagnosticsPanel } from "./DiagnosticsPanel";
 
 type Pending = {
   operationId: string;
@@ -865,6 +866,11 @@ export function SettingsPanel({
           </fieldset>
         </form>
       </section>
+      <DiagnosticsPanel
+        ready={ready}
+        active={active}
+        projectId={session?.projectId}
+      />
     </div>
   );
 }

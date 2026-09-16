@@ -14,6 +14,7 @@ export interface DraftSaveState {
   remote: Content | null;
 }
 export class DraftAutosave {
+  onCommit?: (expectedRevision: number, committedRevision: number) => void;
   snapshot: DraftSaveState;
   private sequence = 0;
   private committed = 0;
@@ -79,8 +80,8 @@ export class DraftAutosave {
       this.disposed ||
       this.running ||
       this.pending ||
-      this.snapshot.status !== "saved" ||
-      this.sequence !== this.committed ||
+      !["saved", "dirty"].includes(this.snapshot.status) ||
+      (this.snapshot.status === "saved" && this.sequence !== this.committed) ||
       this.conflictRevision !== null ||
       this.revision !== expectedRevision ||
       committedRevision !== expectedRevision + 1
@@ -189,6 +190,7 @@ export class DraftAutosave {
           });
           return false;
         }
+        const previousRevision = this.revision;
         this.revision = result.data.committedRevision;
         this.committed = pending.sequence;
         this.pending = null;
@@ -207,6 +209,7 @@ export class DraftAutosave {
           savedAt,
           message: "",
         });
+        this.onCommit?.(previousRevision, this.revision);
       } catch {
         this.update({
           status: "unknown",

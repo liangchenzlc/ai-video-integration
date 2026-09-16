@@ -19,6 +19,69 @@ import {
 import { formatYuan, parseYuan } from "./task-money";
 import { taskLabels } from "./TaskActivity";
 import { StoryPlanPreview } from "./StoryPlanPreview";
+import type { Revision } from "../../electron/shared/versions";
+
+type CandidateDescription = {
+  kind: "text" | "image";
+  title: string;
+  summary: string;
+  mediaUrl: string | null;
+};
+
+export async function loadAllTaskCandidates(
+  load: (
+    cursor?: string,
+  ) => Promise<ProjectResult<{ items: Revision[]; nextCursor: string | null }>>,
+): Promise<{ items: Revision[]; error: string | null }> {
+  const items: Revision[] = [];
+  let cursor: string | undefined;
+  do {
+    const page = await load(cursor);
+    if (!page.ok) return { items, error: page.error.message };
+    items.push(...page.data.items);
+    cursor = page.data.nextCursor ?? undefined;
+  } while (cursor);
+  return { items, error: null };
+}
+
+export function describeCandidate(
+  projectId: string,
+  payload: Revision["payload"],
+): CandidateDescription {
+  if (payload.kind === "story") {
+    const content = payload.content;
+    const summary = content.outline.length
+      ? content.outline.join("\n")
+      : content.brief;
+    return { kind: "text", title: "故事候选", summary, mediaUrl: null };
+  }
+  if (payload.kind === "asset") {
+    const content = payload.content;
+    const typeLabels = {
+      character: "角色",
+      location: "场景",
+      prop: "道具",
+      style: "风格",
+    } as const;
+    const generated = [...content.references]
+      .sort((left, right) => right.order - left.order)
+      .find((reference) => reference.state === "pending");
+    return {
+      kind: "image",
+      title: `${typeLabels[content.assetType]}图像候选：${content.name}`,
+      summary: `身份锚点：${content.identityAnchors.join("、")}`,
+      mediaUrl: generated
+        ? `avi-media://local/${projectId}/${generated.mediaId}`
+        : null,
+    };
+  }
+  return {
+    kind: "text",
+    title: `${payload.kind} 候选`,
+    summary: "请在版本对照中查看完整结构。",
+    mediaUrl: null,
+  };
+}
 const disclosureLabels = {
   text: "文字",
   image: "图片",
@@ -38,8 +101,10 @@ const stageLabels = {
 };
 const pendingSchema = z.strictObject({
   id: projectUuid,
-  kind: z.enum(["plan", "start", "other"]),
+  kind: z.enum(["plan", "start", "other", "image_input"]),
   resourceId: projectUuid.nullable(),
+  objectId: projectUuid.optional(),
+  inputSignature: z.string().max(10000).optional(),
   label: z.string(),
   expectedRevision: z.number().int().nonnegative().optional(),
 });
@@ -67,6 +132,18 @@ const callMessages: Record<string, string> = {
   CALL_RESULT_UNKNOWN: "结果尚未确认，可能已计费。请核对请求时间和原调用。",
   CALL_FAILED: "此次调用已确定失败；已有结果仍保留，费用需按依据核对。",
   DOWNLOAD_FAILED: "结果下载未完成。请恢复原结果下载，不重新生成。",
+  STRUCTURED_RESULT_INVALID:
+    "结果结构不符合固定候选协议；原始结果已保留，不会自动补写或采用。",
+  MEDIA_TOOLS_NOT_CONFIGURED:
+    "尚未配置本地 FFmpeg。配置后请恢复原结果下载，不要重新生成。",
+  RESULT_URL_REJECTED:
+    "结果地址未通过安全校验；原调用已保留，不会访问该地址或自动重试生成。",
+  RESULT_MEDIA_INVALID:
+    "结果媒体未通过格式或解码校验；原调用已保留，不会自动修复或采用。",
+  RESULT_SIZE_LIMIT:
+    "结果媒体超过允许大小；原调用已保留，不会继续下载或自动采用。",
+  MEDIA_HASH_MISMATCH:
+    "结果媒体与原记录不一致；原调用已保留，请核对来源后处理。",
 };
 export function TaskPanel({
   session,
@@ -76,6 +153,7 @@ export function TaskPanel({
   prepareMutation,
   advanceDraftRevision,
   onSettings,
+  onCompareCandidate,
 }: {
   session: ProjectSession;
   ready: boolean;
@@ -87,6 +165,7 @@ export function TaskPanel({
     committedRevision: number,
   ) => boolean;
   onSettings: () => void;
+  onCompareCandidate: (revision: Revision) => void;
 }) {
   const projectId = session.projectId;
   const bridge = window.desktop.tasks;
@@ -109,8 +188,24 @@ export function TaskPanel({
   const [warning, setWarning] = useState("80");
   const [mode, setMode] = useState<"synthetic" | "real">("synthetic");
   const [phase, setPhase] = useState<
-    "story_adaptation" | "story_outline" | "story_scene" | "story_dialogue"
+    | "story_adaptation"
+    | "story_outline"
+    | "story_scene"
+    | "story_dialogue"
+    | "image_character"
+    | "image_location"
+    | "image_prop"
   >("story_adaptation");
+  const [taskStage, setTaskStage] = useState<"story" | "image">("story");
+  const [assetName, setAssetName] = useState("门灯旅人");
+  const [assetType, setAssetType] = useState<"character" | "location" | "prop">(
+    "character",
+  );
+  const [identityAnchors, setIdentityAnchors] = useState("深色雨衣\n旧帆布包");
+  const [preparedImage, setPreparedImage] = useState<{
+    artifactId: string;
+    signature: string;
+  } | null>(null);
   const [goal, setGoal] = useState("根据当前原文与简报整理故事");
   const [candidates, setCandidates] = useState("1");
   const [precheck, setPrecheck] = useState(false);
@@ -118,6 +213,11 @@ export function TaskPanel({
   const [accepted, setAccepted] = useState(false);
   const [list, setList] = useState<TaskList>({ items: [], nextCursor: null });
   const [task, setTask] = useState<Task | null>(null);
+  const [taskPlan, setTaskPlan] = useState<TaskPlan | null>(null);
+  const [taskCandidates, setTaskCandidates] = useState<{
+    taskId: string | null;
+    items: Revision[];
+  }>({ taskId: null, items: [] });
   const [calls, setCalls] = useState<Call[]>([]);
   const [costs, setCosts] = useState<CostSummary | null>(null);
   const [entries, setEntries] = useState<
@@ -154,11 +254,32 @@ export function TaskPanel({
       const loaded = await Promise.all(
         result.data.callIds.map((callId) => bridge.call({ projectId, callId })),
       );
+      const [loadedPlan, loadedCandidates] = await Promise.all([
+        bridge.getPlan({ projectId, planId: result.data.planId }),
+        loadAllTaskCandidates((cursor) =>
+          bridge.candidates({ projectId, taskId, cursor, limit: 50 }),
+        ),
+      ]);
       if (selected.current !== taskId) return;
       setTask(result.data);
+      setTaskPlan(loadedPlan.ok ? loadedPlan.data : null);
+      setTaskCandidates((current) => {
+        const retained = current.taskId === taskId ? current.items : [];
+        const items = loadedCandidates.error
+          ? [
+              ...loadedCandidates.items,
+              ...retained.filter(
+                (known) =>
+                  !loadedCandidates.items.some((item) => item.id === known.id),
+              ),
+            ]
+          : loadedCandidates.items;
+        return { taskId, items };
+      });
       setCalls(loaded.flatMap((r) => (r.ok ? [r.data] : [])));
       const failed = loaded.find((r) => !r.ok);
       if (failed && !failed.ok) setMessage(failed.error.message);
+      if (loadedCandidates.error) setMessage(loadedCandidates.error);
     },
     [bridge, projectId],
   );
@@ -229,6 +350,17 @@ export function TaskPanel({
     }
     if (saved.kind === "other" && saved.resourceId)
       await loadTask(saved.resourceId);
+    if (
+      saved.kind === "image_input" &&
+      saved.objectId &&
+      saved.inputSignature
+    ) {
+      setPreparedImage({
+        artifactId: saved.objectId,
+        signature: saved.inputSignature,
+      });
+      setMessage("图像输入已保存。现在可以为这份固定输入生成计划。");
+    }
     setPending(null);
     await refresh(true);
     return true;
@@ -303,7 +435,93 @@ export function TaskPanel({
       setMessage(drafts.error.message);
       return;
     }
-    const draft = drafts.data.find((d) => d.kind === "story");
+    let draft = drafts.data.find((d) => d.kind === "story");
+    if (taskStage === "image") {
+      const anchors = identityAnchors
+        .split("\n")
+        .map((item) => item.trim())
+        .filter(Boolean);
+      if (!assetName.trim() || anchors.length === 0) {
+        setMessage("请填写素材名称，并至少提供一个身份锚点。");
+        return;
+      }
+      const signature = JSON.stringify({
+        assetType,
+        name: assetName.trim(),
+        anchors,
+      });
+      if (preparedImage?.signature === signature) {
+        draft = {
+          id: "",
+          artifactId: preparedImage.artifactId,
+          kind: "asset",
+          savedAt: "",
+        };
+      } else {
+        const current = await window.desktop.projects.drafts.project({
+          projectId,
+        });
+        if (!current.ok) {
+          setMessage(current.error.message);
+          return;
+        }
+        const draftId = crypto.randomUUID();
+        const artifactId = crypto.randomUUID();
+        const operationId = crypto.randomUUID();
+        const pendingImage: Pending = {
+          id: operationId,
+          kind: "image_input",
+          resourceId: null,
+          objectId: artifactId,
+          inputSignature: signature,
+          label: "保存图像输入",
+          expectedRevision: current.data.revision,
+        };
+        setPending(pendingImage);
+        let saved: Awaited<
+          ReturnType<typeof window.desktop.projects.drafts.save>
+        >;
+        try {
+          saved = await window.desktop.projects.drafts.save({
+            projectId,
+            command: {
+              clientOperationId: operationId,
+              expectedRevision: current.data.revision,
+              payload: {
+                draftId,
+                artifactId,
+                baseRevisionId: null,
+                content: {
+                  kind: "asset",
+                  content: {
+                    assetType,
+                    name: assetName.trim(),
+                    identityAnchors: anchors,
+                    allowedChanges: [],
+                    states: [],
+                    references: [],
+                  },
+                },
+              },
+            },
+          });
+        } catch {
+          setMessage("图像输入保存响应未能确认。请查询原操作，不要重新提交。");
+          return;
+        }
+        if (!saved.ok) {
+          setMessage(saved.error.message);
+          if (!uncertain.has(saved.error.code)) setPending(null);
+          return;
+        }
+        if (saved.data.operationId !== operationId) {
+          setMessage("图像输入保存回执不匹配，请查询原操作后再继续。");
+          return;
+        }
+        await complete(pendingImage, saved.data);
+        draft = { id: draftId, artifactId, kind: "asset", savedAt: "" };
+      }
+    }
     if (!draft) {
       setMessage("请先填写并保存故事原文和创作简报，再生成本地计划。");
       return;
@@ -315,7 +533,7 @@ export function TaskPanel({
           ...command,
           payload: {
             objectId: draft.artifactId,
-            stage: "story",
+            stage: taskStage,
             phase,
             goal,
             inputRevisionIds: [],
@@ -494,8 +712,30 @@ export function TaskPanel({
         }}
       >
         <fieldset disabled={blocked}>
-          <legend>为当前故事生成本地计划</legend>
+          <legend>生成冻结任务计划</legend>
           <div className="settings-fields">
+            <label>
+              结果类型
+              <select
+                value={taskStage}
+                onChange={(event) => {
+                  const value = event.target.value as typeof taskStage;
+                  setTaskStage(value);
+                  setPhase(
+                    value === "story"
+                      ? "story_adaptation"
+                      : assetType === "location"
+                        ? "image_location"
+                        : assetType === "prop"
+                          ? "image_prop"
+                          : "image_character",
+                  );
+                }}
+              >
+                <option value="story">文字故事候选</option>
+                <option value="image">图像素材候选</option>
+              </select>
+            </label>
             <label>
               执行模式
               <select
@@ -507,18 +747,63 @@ export function TaskPanel({
                 <option value="real">真实模型（需准入能力）</option>
               </select>
             </label>
-            <label>
-              故事阶段
-              <select
-                value={phase}
-                onChange={(e) => setPhase(e.target.value as typeof phase)}
-              >
-                <option value="story_adaptation">改编</option>
-                <option value="story_outline">大纲</option>
-                <option value="story_scene">场景</option>
-                <option value="story_dialogue">对白</option>
-              </select>
-            </label>
+            {taskStage === "story" && (
+              <label>
+                故事阶段
+                <select
+                  value={phase}
+                  onChange={(e) => setPhase(e.target.value as typeof phase)}
+                >
+                  <option value="story_adaptation">改编</option>
+                  <option value="story_outline">大纲</option>
+                  <option value="story_scene">场景</option>
+                  <option value="story_dialogue">对白</option>
+                </select>
+              </label>
+            )}
+            {taskStage === "image" && (
+              <>
+                <label>
+                  素材类型
+                  <select
+                    value={assetType}
+                    onChange={(event) => {
+                      const value = event.target.value as typeof assetType;
+                      setAssetType(value);
+                      setPhase(
+                        value === "location"
+                          ? "image_location"
+                          : value === "prop"
+                            ? "image_prop"
+                            : "image_character",
+                      );
+                    }}
+                  >
+                    <option value="character">角色</option>
+                    <option value="location">场景</option>
+                    <option value="prop">道具</option>
+                  </select>
+                </label>
+                <label>
+                  素材名称
+                  <input
+                    required
+                    maxLength={200}
+                    value={assetName}
+                    onChange={(event) => setAssetName(event.target.value)}
+                  />
+                </label>
+                <label>
+                  身份锚点（每行一项）
+                  <textarea
+                    required
+                    rows={3}
+                    value={identityAnchors}
+                    onChange={(event) => setIdentityAnchors(event.target.value)}
+                  />
+                </label>
+              </>
+            )}
             <label>
               本次意图
               <input
@@ -550,7 +835,10 @@ export function TaskPanel({
             包含预检（次数与上限将在计划中列出）
           </label>
           <p className="muted">
-            使用上方已保存的故事草稿。首个成功计划将固定项目模式；当前真实模型尚无准入路径。
+            {taskStage === "story"
+              ? "使用上方已保存的故事草稿。"
+              : "素材名称、类型与身份锚点会先保存为结构化草稿，再冻结进计划。"}
+            首个成功计划将固定项目模式；当前真实模型尚无准入路径。
           </p>
           <button type="submit">生成本地计划</button>
         </fieldset>
@@ -701,6 +989,55 @@ export function TaskPanel({
           <p>
             任务 {task.id} · 已保存候选 {task.candidateRevisionIds.length} 个
           </p>
+          <p className="muted">
+            {taskPlan?.executionMode === "synthetic"
+              ? "本地合成练习结果，不代表真实模型质量。"
+              : taskPlan?.executionMode === "real"
+                ? "真实服务结果"
+                : "结果来源尚待核对。"}
+            选择候选只会打开对照，不会自动采用。
+          </p>
+          {taskCandidates.taskId === task.id &&
+            taskCandidates.items.length > 0 && (
+              <section className="task-candidates" aria-label="任务候选结果">
+                {taskCandidates.items.map((candidate) => {
+                  const display = describeCandidate(
+                    projectId,
+                    candidate.payload,
+                  );
+                  return (
+                    <article key={candidate.id}>
+                      <div>
+                        <h4>{display.title}</h4>
+                        <p>{display.summary}</p>
+                        <small>
+                          来源：
+                          {taskPlan?.executionMode === "synthetic"
+                            ? "本地固定合成"
+                            : taskPlan?.executionMode === "real"
+                              ? "真实服务"
+                              : "尚待核对"}
+                          {" · "}候选 {candidate.id.slice(0, 8)}
+                        </small>
+                      </div>
+                      {display.mediaUrl && (
+                        <img
+                          src={display.mediaUrl}
+                          alt={`${display.title}缩略图`}
+                          loading="lazy"
+                        />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => onCompareCandidate(candidate)}
+                      >
+                        在版本面板中对照
+                      </button>
+                    </article>
+                  );
+                })}
+              </section>
+            )}
           {task.observationStopped && (
             <p>已停止本地等待；这不代表云端取消，也不会减少费用。</p>
           )}

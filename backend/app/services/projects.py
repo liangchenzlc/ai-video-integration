@@ -15,9 +15,13 @@ from pathlib import Path
 from typing import Any, Concatenate, cast
 from uuid import UUID, uuid4
 
+from app.services.diagnostics import DiagnosticService
+from app.services.production_audio import ProductionAudioService
+from app.services.rendering import RenderingService
+from app.services.storyboard import StoryboardService
 from app.services.tasks import TaskService
 from app.services.versions import VersionService
-from app.storage import capabilities, drafts, media, settings, tools
+from app.storage import capabilities, drafts, media, settings, storyboard, tools
 from app.storage.backup import backup_project_database
 from app.storage.database import (
     connect,
@@ -108,12 +112,17 @@ class ProjectService:
         self._media = media.MediaExecutor(self._mutex, self._media_finished)
         self._tasks = TaskService(self)
         self._versions = VersionService(self)
+        self._storyboard = StoryboardService(self)
+        self._diagnostics = DiagnosticService(self)
+        self._production_audio = ProductionAudioService(self)
+        self._rendering = RenderingService(self)
         self._application = app_data_dir / "application.sqlite3"
         self._settings = settings.SettingsStore(self._application)
         self._free_checkers = dict(free_checkers or {})
         try:
             app_data_dir.mkdir(parents=True, exist_ok=True)
             initialize_application(self._application)
+            self._diagnostics.recover()
             capabilities.initialize(self._application, capability_profiles or [])
             with connect(self._application) as db:
                 prepared = db.execute("SELECT * FROM global_operations WHERE state='prepared'")
@@ -147,11 +156,18 @@ class ProjectService:
             "openProject",
             "importMedia",
             "ffmpeg",
+            "exportFilm",
+            "diagnostic",
         }:
             raise ProjectError("GRANT_REJECTED", 403)
         is_directory = payload["purpose"] in {"createProject", "openProject"}
-        directory = checked_path(Path(payload["path"]), directory=is_directory)
-        if not is_directory and not directory.is_file():
+        saving = payload["purpose"] in {"exportFilm", "diagnostic"}
+        directory = (
+            self._save_target(Path(payload["path"]), payload["purpose"])
+            if saving
+            else checked_path(Path(payload["path"]), directory=is_directory)
+        )
+        if not is_directory and not saving and not directory.is_file():
             raise ProjectError("GRANT_REJECTED", 403)
         self._grants[identifier] = Grant(
             directory, payload["purpose"], window_id, time.monotonic() + 300
@@ -171,11 +187,33 @@ class ProjectService:
         ):
             raise ProjectError("GRANT_REJECTED", 403)
         is_directory = purpose in {"createProject", "openProject"}
-        directory = checked_path(grant.directory, directory=is_directory)
-        if not is_directory and not directory.is_file():
+        saving = purpose in {"exportFilm", "diagnostic"}
+        directory = (
+            self._save_target(grant.directory, purpose)
+            if saving
+            else checked_path(grant.directory, directory=is_directory)
+        )
+        if not is_directory and not saving and not directory.is_file():
             raise ProjectError("GRANT_REJECTED", 403)
         del self._grants[identifier]
         return directory
+
+    @staticmethod
+    def _save_target(path: Path, purpose: str) -> Path:
+        if not path.is_absolute() or path.suffix.lower() != (
+            ".mp4" if purpose == "exportFilm" else ".zip"
+        ):
+            raise ProjectError("GRANT_REJECTED", 403)
+        parent = checked_path(path.parent, directory=True)
+        target = parent / path.name
+        if target.exists() or target.is_symlink():
+            target = checked_path(target, directory=False)
+            if not target.is_file():
+                raise ProjectError("GRANT_REJECTED", 403)
+        # Reject alternate data streams and names with Windows normalization ambiguity.
+        if ":" in path.name or path.name.rstrip(" .") != path.name:
+            raise ProjectError("GRANT_REJECTED", 403)
+        return target
 
     @staticmethod
     def _receipt(operation: str, resource: str, revision: int = 1) -> Json:
@@ -383,7 +421,7 @@ class ProjectService:
             with connect(database, "ro") as db:
                 if db.execute("PRAGMA quick_check").fetchone()[0] != "ok":
                     raise ProjectError("PROJECT_CORRUPT")
-                if db.execute("PRAGMA user_version").fetchone()[0] not in {2, 3, 4, 5}:
+                if db.execute("PRAGMA user_version").fetchone()[0] not in {2, 3, 4, 5, 6, 7, 8}:
                     raise ProjectError("PROJECT_VERSION_UNSUPPORTED")
                 validate_project_schema(db)
                 if db.execute("PRAGMA foreign_key_check").fetchone():
@@ -455,7 +493,7 @@ class ProjectService:
             if lock is not None:
                 with connect(directory / DATABASE, "ro") as db:
                     version = db.execute("PRAGMA user_version").fetchone()[0]
-                if version < 5:
+                if version < 8:
                     backup_project_database(directory, project["id"])
                     migrate_project(directory / DATABASE, project["id"])
             project["readOnly"] = lock is None
@@ -467,6 +505,7 @@ class ProjectService:
             self._tasks.remember_project(directory, project["id"])
             if lock is not None:
                 self._media.recover(directory, project["id"])
+                self._rendering.recover(directory, project["id"])
                 self._tasks.executor.recover(directory, project["id"])
             return {
                 "projectId": project["id"],
@@ -478,7 +517,11 @@ class ProjectService:
             if opened_identifier is not None:
                 self._sessions.pop(opened_identifier, None)
             if lock:
-                if self._media.busy(directory) or self._tasks.executor.busy(directory):
+                if (
+                    self._media.busy(directory)
+                    or self._tasks.executor.busy(directory)
+                    or self._rendering.busy(directory)
+                ):
                     self._detached_locks[directory] = lock
                 else:
                     lock.close()
@@ -536,6 +579,20 @@ class ProjectService:
     @guarded
     def get_task(self, project_id: str, session_id: str, window_id: int, task_id: str) -> Json:
         return self._tasks.get_task(project_id, session_id, window_id, task_id)
+
+    @guarded
+    def list_task_candidates(
+        self,
+        project_id: str,
+        session_id: str,
+        window_id: int,
+        task_id: str,
+        cursor: str | None = None,
+        limit: int = 50,
+    ) -> Json:
+        return self._tasks.list_task_candidates(
+            project_id, session_id, window_id, task_id, cursor, limit
+        )
 
     @guarded
     def get_call(self, project_id: str, session_id: str, window_id: int, call_id: str) -> Json:
@@ -647,8 +704,12 @@ class ProjectService:
                 revisions.get(db, uuid(payload["baseRevisionId"]), uuid(payload["artifactId"]))
             uuid(payload["artifactId"])
             content = drafts.prepare_content(payload["content"])
+            if db.execute("PRAGMA user_version").fetchone()[0] >= 7:
+                storyboard.downgrade_changed_references(db, draft_id, content)
             saved_at = now()
             drafts.store(db, payload, canonical(content), saved_at)
+            if db.execute("PRAGMA user_version").fetchone()[0] >= 7:
+                storyboard.index_draft(db, payload["draftId"], payload["artifactId"], content)
             revision = expected + 1
             db.execute(
                 "UPDATE projects SET revision=?,saved_at=? WHERE id=?",
@@ -685,6 +746,26 @@ class ProjectService:
             return drafts.summaries(db)
 
     @guarded
+    def get_storyboard(self, project_id: str, session_id: str, window_id: int) -> Json:
+        return self._storyboard.list(project_id, session_id, window_id)
+
+    @guarded
+    def get_coverage(self, project_id: str, session_id: str, window_id: int) -> Json:
+        return self._storyboard.coverage(project_id, session_id, window_id)
+
+    @guarded
+    def reorder_shots(
+        self, project_id: str, session_id: str, window_id: int, command: Json
+    ) -> Json:
+        return self._storyboard.reorder(project_id, session_id, window_id, command)
+
+    @guarded
+    def verify_reference(
+        self, project_id: str, session_id: str, window_id: int, command: Json
+    ) -> Json:
+        return self._storyboard.verify(project_id, session_id, window_id, command)
+
+    @guarded
     def get_project_operation(
         self,
         project_id: str,
@@ -713,7 +794,11 @@ class ProjectService:
             return
         session = self._session(session_id, window_id)
         if session.lock:
-            if self._media.busy(session.directory) or self._tasks.executor.busy(session.directory):
+            if (
+                self._media.busy(session.directory)
+                or self._tasks.executor.busy(session.directory)
+                or self._rendering.busy(session.directory)
+            ):
                 self._detached_locks[session.directory] = session.lock
             else:
                 session.lock.close()
@@ -774,10 +859,15 @@ class ProjectService:
         self.reset()
         self._settings.clear()
         self._media.shutdown()
+        self._rendering.shutdown()
         self._tasks.executor.shutdown()
 
     def _media_finished(self, directory: Path) -> None:
-        if not self._media.busy(directory) and not self._tasks.executor.busy(directory):
+        if (
+            not self._media.busy(directory)
+            and not self._tasks.executor.busy(directory)
+            and not self._rendering.busy(directory)
+        ):
             lock = self._detached_locks.pop(directory, None)
             if lock:
                 lock.close()
@@ -961,7 +1051,7 @@ class ProjectService:
         result = json.loads(row["result_json"]) if row["result_json"] else {}
         return {
             "id": row["id"],
-            "kind": "connection_check",
+            "kind": row["kind"],
             "state": row["state"],
             "progress": 1 if row["state"] == "succeeded" else 0,
             "resultId": None,
@@ -1253,6 +1343,8 @@ class ProjectService:
                 (operation, digest, "cancelJob", revision, job_id, canonical(receipt), now()),
             )
         self._media.cancel(session.directory, job_id)
+        if job["kind"] in {"animatic", "export"}:
+            self._rendering.cancel(session.directory, job_id)
         return receipt
 
     @guarded

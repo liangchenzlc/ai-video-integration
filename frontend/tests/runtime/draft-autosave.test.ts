@@ -154,12 +154,19 @@ test("a known same-window project receipt advances a clean draft CAS", async () 
   engine.dispose();
 });
 
-test("a known receipt cannot advance a dirty draft or a mismatched base", () => {
-  const { engine } = setup();
+test("a known peer receipt advances a dirty draft without losing its unsaved input", async () => {
+  const { engine, save, setRevision } = setup();
   engine.edit({ sourceText: "unsaved" });
-  expect(engine.advanceProjectRevision(0, 1)).toBe(false);
+  setRevision(1);
+  expect(engine.advanceProjectRevision(0, 1)).toBe(true);
   expect(engine.advanceProjectRevision(4, 5)).toBe(false);
   expect(engine.snapshot.status).toBe("dirty");
+  expect(engine.snapshot.content.sourceText).toBe("unsaved");
+  expect(await engine.flush()).toBe(true);
+  expect(save.mock.calls[0][0].command.expectedRevision).toBe(1);
+  expect(save.mock.calls[0][0].command.payload.content.content.sourceText).toBe(
+    "unsaved",
+  );
   engine.dispose();
 });
 

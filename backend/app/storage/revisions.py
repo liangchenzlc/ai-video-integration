@@ -12,7 +12,7 @@ from uuid import uuid4
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-from app.storage import drafts
+from app.storage import drafts, storyboard
 from app.storage.errors import ProjectError
 from app.storage.semantic_scopes import changed_scopes
 from app.storage.settings import canonical
@@ -32,6 +32,10 @@ def validator() -> Draft202012Validator:
 def validate_payload(payload: Json) -> None:
     if not validator().is_valid(payload):
         raise ProjectError("VALIDATION_FAILED", 422)
+    if payload["kind"] == "timeline":
+        from app.storage.timeline import validate
+
+        validate(payload["content"])
     if (
         payload["kind"] == "story"
         and payload["content"]["sourceHash"]
@@ -147,6 +151,28 @@ def stable_references(
     db: sqlite3.Connection, payload: Json, revision_id: str | None = None
 ) -> list[tuple[str, str]]:
     content, kind = payload["content"], payload["kind"]
+    if kind == "timeline":
+        shot_ids = {clip["shotId"] for clip in content["clips"] if clip.get("shotId")}
+        if revision_id is None:
+            shot_rows = db.execute(
+                "SELECT r.id,r.payload_json FROM revisions r JOIN artifacts a "
+                "ON a.adopted_revision_id=r.id WHERE a.kind='shot'"
+            ).fetchall()
+        else:
+            shot_rows = db.execute(
+                "SELECT DISTINCT r.id,r.payload_json FROM dependencies d JOIN revisions r "
+                "ON r.id=d.from_revision_id JOIN artifacts a ON a.id=r.artifact_id "
+                "WHERE d.to_revision_id=? AND a.kind='shot'",
+                (revision_id,),
+            ).fetchall()
+        frozen = [(row[0], json.loads(row[1])["content"]["shotId"]) for row in shot_rows]
+        shot_sources = []
+        for shot_id in shot_ids:
+            matches = [rid for rid, sid in frozen if sid == shot_id]
+            if len(matches) != 1:
+                raise ProjectError("OBJECT_NOT_FOUND", 404)
+            shot_sources.append((matches[0], "timelinePlacement"))
+        return shot_sources
     if kind == "story":
         scenes = {item["id"] for item in content.get("scenes", [])}
         requirements = {item["id"] for item in content.get("requirements", [])}
@@ -228,6 +254,14 @@ def stale_inputs(db: sqlite3.Connection, revision_id: str) -> bool:
 def validate_references(
     db: sqlite3.Connection, payload: Json, revision_id: str | None = None
 ) -> None:
+    if db.execute("PRAGMA user_version").fetchone()[0] >= 8:
+        from app.storage import production_audio, timeline
+
+        production_audio.validate_formal(db, payload, revision_id)
+        if payload["kind"] == "timeline":
+            timeline.validate(payload["content"], db)
+    if db.execute("PRAGMA user_version").fetchone()[0] >= 7:
+        storyboard.validate_formal(db, payload)
     stable_references(db, payload, revision_id)
     content = payload["content"]
     if payload["kind"] == "timeline":
@@ -318,4 +352,6 @@ def create(db: sqlite3.Connection, artifact_id: str, draft_id: str) -> str:
         db.execute(
             "INSERT INTO revision_media VALUES(?,?,?,?)", (revision_id, media_id, role, ordinal)
         )
+    if db.execute("PRAGMA user_version").fetchone()[0] >= 7:
+        storyboard.freeze_reference_evidence(db, revision_id, draft_id, payload)
     return revision_id

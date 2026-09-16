@@ -48,3 +48,25 @@ test.each(invalidSources)(
     expect(html).not.toContain("<blockquote");
   },
 );
+
+test("an image task shows its structured asset identity instead of raw JSON", () => {
+  const html = renderToStaticMarkup(
+    createElement(StoryPlanPreview, {
+      input: {
+        kind: "asset",
+        payload: {
+          assetType: "character",
+          name: "门灯旅人",
+          identityAnchors: ["深色雨衣", "旧帆布包"],
+          allowedChanges: [],
+          states: [],
+          references: [],
+        },
+      },
+    }),
+  );
+  expect(html).toContain("门灯旅人");
+  expect(html).toContain("角色");
+  expect(html).toContain("深色雨衣");
+  expect(html).not.toContain("assetType");
+});

@@ -196,7 +196,18 @@ export const versionRoutes = {
         z.strictObject({
           revisionIds: z.array(projectUuid).min(1).max(1000),
           ruleIds: z
-            .array(z.enum(["structural", "references"]))
+            .array(
+              z.enum([
+                "structural",
+                "references",
+                "media.available",
+                "timeline.bounds",
+                "dialogue.timing",
+                "rights.source",
+                "audio.delivery",
+                "requirement.coverage",
+              ]),
+            )
             .min(1)
             .max(200),
         }),

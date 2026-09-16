@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import {
   projectUuid,
@@ -6,6 +6,7 @@ import {
   type ProjectSession,
 } from "../../electron/shared/projects";
 import type { MediaJob } from "../../electron/shared/media";
+import type { ProductionIndex } from "../../electron/shared/production";
 import type {
   ArtifactState,
   CheckReport,
@@ -13,11 +14,31 @@ import type {
   Revision,
 } from "../../electron/shared/versions";
 import { StoryPlanPreview } from "./StoryPlanPreview";
+import { number, rows, word } from "./production-fields";
 
 const ruleLabels: Record<string, string> = {
   structural: "内容结构",
   references: "引用关系",
+  "media.available": "素材可用性",
+  "timeline.bounds": "时间线边界",
+  "dialogue.timing": "对白时间",
+  "rights.source": "声音来源",
+  "audio.delivery": "声音交付",
+  "requirement.coverage": "要求承载",
 };
+type CheckRule = Parameters<
+  typeof window.desktop.versions.runChecks
+>[0]["command"]["payload"]["ruleIds"][number];
+const baseCheckRules: CheckRule[] = ["structural", "references"];
+const productionCheckRules: CheckRule[] = [
+  ...baseCheckRules,
+  "media.available",
+  "timeline.bounds",
+  "dialogue.timing",
+  "rights.source",
+  "audio.delivery",
+  "requirement.coverage",
+];
 const scopeLabels: Record<string, string> = {
   identityVisual: "角色视觉一致性",
   dialogueAudio: "对白音频",
@@ -37,6 +58,28 @@ const outcomeLabels: Record<CheckReport["outcome"], string> = {
 };
 const uncertainErrors = new Set(["BACKEND_UNAVAILABLE", "PROTOCOL_INVALID"]);
 
+async function productionDrafts(
+  projectId: string,
+): Promise<ProjectResult<ProductionIndex["drafts"]>> {
+  const drafts: ProductionIndex["drafts"] = [];
+  let offset = 0;
+  for (;;) {
+    const page = await window.desktop.production.index({ projectId, offset });
+    if (!page.ok) return page;
+    drafts.push(...page.data.drafts);
+    if (page.data.nextOffset === null) return { ok: true, data: drafts };
+    if (page.data.nextOffset <= offset)
+      return {
+        ok: false,
+        error: {
+          code: "PROTOCOL_INVALID",
+          message: "制作索引分页没有前进，请重试读取。",
+        },
+      };
+    offset = page.data.nextOffset;
+  }
+}
+
 export function validConfirmationReport(
   report: CheckReport | null,
   revisionId: string,
@@ -52,13 +95,117 @@ export function validConfirmationReport(
   );
 }
 
-function RevisionContent({ revision }: { revision: Revision | null }) {
+function RevisionContent({
+  revision,
+  projectId,
+}: {
+  revision: Revision | null;
+  projectId: string;
+}) {
   if (!revision)
     return <p className="version-empty">当前还没有可显示的正式版本。</p>;
+  const references =
+    revision.payload.kind === "asset" || revision.payload.kind === "shot"
+      ? revision.payload.content.references
+      : [];
+  const kind = revision.payload.kind;
+  const content = revision.payload.content as Record<string, unknown>;
+  if (["speech", "subtitle", "timeline", "observation"].includes(kind)) {
+    const cues = rows(content.cues);
+    const clips = rows(content.clips);
+    const tracks = rows(content.tracks);
+    const observed = rows(content.observed);
+    const usable = rows(content.usable);
+    const problems = rows(content.problems);
+    return (
+      <div className="version-production-preview">
+        {kind === "speech" && (
+          <>
+            <h5>配音内容</h5>
+            <p>{word(content.text) || "尚未填写台词"}</p>
+            <p>
+              实测录音全长：{number(content.measuredMs) / 1000} 秒 · 发声区间{" "}
+              {rows(content.voicedRanges).length} 处
+            </p>
+            <p>时间依据：{word(content.timingMethod) || "未记录"}</p>
+          </>
+        )}
+        {kind === "subtitle" && (
+          <>
+            <h5>字幕句段 · {cues.length}</h5>
+            <ol>
+              {cues.map((cue, i) => {
+                const time = cue.time as Record<string, unknown> | undefined;
+                return (
+                  <li key={word(cue.id) || i}>
+                    {word(cue.text) || "空白句段"} · {number(time?.startMs)}–
+                    {number(time?.endMs)} 毫秒
+                  </li>
+                );
+              })}
+            </ol>
+          </>
+        )}
+        {kind === "timeline" && (
+          <>
+            <h5>时间线结构</h5>
+            <p>
+              {tracks.length} 条轨道 · {clips.length} 个片段 · 总长{" "}
+              {number(content.durationMs) / 1000} 秒
+            </p>
+            <p>
+              画幅 {number(content.width)} × {number(content.height)} · 转场{" "}
+              {rows(content.transitions).length} 处
+            </p>
+          </>
+        )}
+        {kind === "observation" && (
+          <>
+            <h5>原片观察</h5>
+            <p>
+              观察区间 {observed.length} 处 · 可用区间 {usable.length} 处 · 问题{" "}
+              {problems.length} 处
+            </p>
+            <ol>
+              {usable.map((range, i) => (
+                <li key={i}>
+                  可用 {number(range.startMs)}–{number(range.endMs)} 毫秒
+                </li>
+              ))}
+            </ol>
+            {word(content.limitations) && (
+              <p>限制：{word(content.limitations)}</p>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
   return (
-    <StoryPlanPreview
-      input={{ kind: revision.payload.kind, payload: revision.payload.content }}
-    />
+    <>
+      <StoryPlanPreview
+        input={{
+          kind: revision.payload.kind,
+          payload: revision.payload.content,
+        }}
+      />
+      {references.length > 0 && (
+        <div className="version-media" aria-label="版本图像引用">
+          {references.map((reference) => (
+            <figure key={`${reference.mediaId}:${reference.order}`}>
+              <img
+                src={`avi-media://local/${projectId}/${reference.mediaId}`}
+                alt={`${reference.role} 图像引用`}
+                loading="lazy"
+              />
+              <figcaption>
+                {reference.role} · {reference.state}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -67,11 +214,13 @@ export function RevisionComparison({
   adopted,
   selected,
   impact,
+  projectId,
 }: {
   artifact: ArtifactState;
   adopted: Revision | null;
   selected: Revision;
   impact: Impact | null;
+  projectId: string;
 }) {
   const same = adopted?.id === selected.id;
   return (
@@ -105,14 +254,14 @@ export function RevisionComparison({
             <h4>当前采用</h4>
             <span>{adopted ? "作品正在使用" : "尚无基准"}</span>
           </header>
-          <RevisionContent revision={adopted} />
+          <RevisionContent revision={adopted} projectId={projectId} />
         </article>
         <article>
           <header>
             <h4>正在查看</h4>
             <span>{same ? "与当前采用相同" : "浏览不会改变作品"}</span>
           </header>
-          <RevisionContent revision={selected} />
+          <RevisionContent revision={selected} projectId={projectId} />
         </article>
       </div>
       {impact && impact.toRevisionId === selected.id && (
@@ -242,6 +391,9 @@ export function RevisionPanel({
   action,
   prepareMutation,
   advanceDraftRevision,
+  focusRevision,
+  focusArtifactId,
+  storyWorkspace = false,
 }: {
   session: ProjectSession;
   ready: boolean;
@@ -252,6 +404,9 @@ export function RevisionPanel({
     expectedRevision: number,
     committedRevision: number,
   ) => boolean;
+  focusRevision?: Revision | null;
+  focusArtifactId?: string | null;
+  storyWorkspace?: boolean;
 }) {
   const [artifact, setArtifact] = useState<ArtifactState | null>(null);
   const [revisions, setRevisions] = useState<Revision[]>([]);
@@ -260,6 +415,7 @@ export function RevisionPanel({
   const [draft, setDraft] = useState<{
     id: string;
     artifactId: string;
+    kind: string;
   } | null>(null);
   const [impact, setImpact] = useState<Impact | null>(null);
   const [report, setReport] = useState<CheckReport | null>(null);
@@ -280,6 +436,7 @@ export function RevisionPanel({
   const [message, setMessage] = useState("");
   const [refreshRequired, setRefreshRequired] = useState(false);
   const [loading, setLoading] = useState(true);
+  const loadGeneration = useRef(0);
 
   function retainCheckJob(value: CheckJobHandle) {
     localStorage.setItem(checkJobKey, JSON.stringify(value));
@@ -287,14 +444,16 @@ export function RevisionPanel({
   }
 
   const loadState = useCallback(
-    async (targetRevisionId?: string) => {
+    async (targetRevisionId?: string, targetArtifactId?: string) => {
+      const generation = ++loadGeneration.current;
       setLoading(true);
       const [draftsResult, projectResult] = await Promise.all([
-        window.desktop.projects.drafts.list({ projectId: session.projectId }),
+        productionDrafts(session.projectId),
         window.desktop.projects.drafts.project({
           projectId: session.projectId,
         }),
       ]);
+      if (generation !== loadGeneration.current) return;
       if (!draftsResult.ok || !projectResult.ok) {
         if (!draftsResult.ok) setMessage(draftsResult.error.message);
         else if (!projectResult.ok) setMessage(projectResult.error.message);
@@ -303,7 +462,7 @@ export function RevisionPanel({
       }
       const story = draftsResult.data.find((item) => item.kind === "story");
       setRefreshRequired(false);
-      if (!story) {
+      if (!story && !targetArtifactId) {
         setDraft(null);
         setArtifact(null);
         setRevisions([]);
@@ -311,11 +470,20 @@ export function RevisionPanel({
         setLoading(false);
         return;
       }
-      setDraft({ id: story.id, artifactId: story.artifactId });
+      const artifactId = targetArtifactId ?? story!.artifactId;
+      const target = draftsResult.data.find(
+        (item) => item.artifactId === artifactId,
+      );
+      setDraft({
+        id: target?.id ?? "",
+        artifactId,
+        kind: target?.kind ?? "story",
+      });
       const artifactResult = await window.desktop.versions.artifact({
         projectId: session.projectId,
-        artifactId: story.artifactId,
+        artifactId,
       });
+      if (generation !== loadGeneration.current) return;
       if (!artifactResult.ok) {
         if (artifactResult.error.code === "OBJECT_NOT_FOUND") {
           setArtifact(null);
@@ -341,10 +509,11 @@ export function RevisionPanel({
       do {
         const page = await window.desktop.versions.list({
           projectId: session.projectId,
-          artifactId: story.artifactId,
+          artifactId,
           cursor,
           limit: 1,
         });
+        if (generation !== loadGeneration.current) return;
         if (!page.ok) {
           setMessage(page.error.message);
           break;
@@ -383,6 +552,17 @@ export function RevisionPanel({
     // The persisted handle is recovered once per project mount. New jobs call pollCheck directly.
   }, [loadState]);
 
+  useEffect(() => {
+    if (focusRevision)
+      void loadState(focusRevision.id, focusRevision.artifactId);
+  }, [focusRevision, loadState]);
+  useEffect(() => {
+    if (focusArtifactId) void loadState(undefined, focusArtifactId);
+  }, [focusArtifactId, loadState]);
+  useEffect(() => {
+    if (focusArtifactId === null && !focusRevision) void loadState();
+  }, [focusArtifactId, focusRevision, loadState]);
+
   const selected = useMemo(
     () => revisions.find((item) => item.id === selectedId) ?? null,
     [revisions, selectedId],
@@ -392,7 +572,7 @@ export function RevisionPanel({
       revisions.find((item) => item.id === artifact?.adoptedRevisionId) ?? null,
     [artifact?.adoptedRevisionId, revisions],
   );
-  const requiredRules = impact?.requiredChecks ?? ["structural", "references"];
+  const requiredRules = impact?.requiredChecks ?? baseCheckRules;
   const canConfirmSelected = selected
     ? validConfirmationReport(report, selected.id, requiredRules)
     : false;
@@ -426,14 +606,18 @@ export function RevisionPanel({
     await action(async () => {
       if (!(await prepareMutation())) return;
       const head = await projectHead();
-      const drafts = await window.desktop.projects.drafts.list({
-        projectId: session.projectId,
-      });
-      const story = drafts.ok
-        ? drafts.data.find((item) => item.kind === "story")
+      const drafts = await productionDrafts(session.projectId);
+      const currentDraft = drafts.ok
+        ? storyWorkspace
+          ? drafts.data.find((item) => item.kind === "story")
+          : drafts.data.find((item) => item.artifactId === draft?.artifactId)
         : null;
-      if (head === null || !story) {
-        setMessage(drafts.ok ? "故事草稿尚未准备好。" : drafts.error.message);
+      if (head === null || !currentDraft) {
+        setMessage(
+          drafts.ok
+            ? "当前草稿尚未保存，或不在草稿列表中。"
+            : drafts.error.message,
+        );
         return;
       }
       const operation: PendingOperation = {
@@ -445,11 +629,11 @@ export function RevisionPanel({
       setMessage("");
       const result = await window.desktop.versions.create({
         projectId: session.projectId,
-        artifactId: story.artifactId,
+        artifactId: currentDraft.artifactId,
         command: {
           clientOperationId: operation.operationId,
           expectedRevision: head,
-          payload: { draftId: story.id },
+          payload: { draftId: currentDraft.id },
         },
       });
       if (!result.ok) return acceptFailure(result.error, operation);
@@ -466,19 +650,26 @@ export function RevisionPanel({
       advanceDraftRevision(head, receipt.committedRevision);
       setImpact(null);
       setReport(null);
-      await loadState(receipt.resourceId);
+      await loadState(receipt.resourceId, currentDraft.artifactId);
       setMessage("候选已保存。当前采用与确认状态没有改变。");
     });
   }
 
   async function loadMore() {
     if (!draft || !nextCursor) return;
+    const generation = loadGeneration.current;
+    const artifactId = draft.artifactId;
     const page = await window.desktop.versions.list({
       projectId: session.projectId,
-      artifactId: draft.artifactId,
+      artifactId,
       cursor: nextCursor,
       limit: 1,
     });
+    if (
+      generation !== loadGeneration.current ||
+      draft.artifactId !== artifactId
+    )
+      return;
     if (!page.ok) return setMessage(page.error.message);
     setRevisions((current) => [
       ...current,
@@ -537,7 +728,7 @@ export function RevisionPanel({
         setReport(result.report);
         setMessage(
           result.report.outcome === "pass"
-            ? "本地结构与引用检查已完成。"
+            ? "所选本地规则检查已完成。"
             : "本地检查已完成，请查看结果后再确认。",
         );
         setChecking(false);
@@ -571,7 +762,10 @@ export function RevisionPanel({
           expectedRevision: head,
           payload: {
             revisionIds: [selected.id],
-            ruleIds: ["structural", "references"],
+            ruleIds:
+              selected.payload.kind === "timeline"
+                ? productionCheckRules
+                : baseCheckRules,
           },
         },
       });
@@ -639,7 +833,7 @@ export function RevisionPanel({
       advanceDraftRevision(head, receipt.committedRevision);
       setLastAdoptionId(receipt.resourceId);
       setImpact(null);
-      await loadState(selected.id);
+      await loadState(selected.id, selected.artifactId);
       setMessage(
         canConfirmSelected
           ? "候选已采用并确认。"
@@ -682,7 +876,7 @@ export function RevisionPanel({
       }
       setPending(null);
       advanceDraftRevision(head, receipt.committedRevision);
-      await loadState(selected.id);
+      await loadState(selected.id, selected.artifactId);
       setMessage("当前采用版本已确认。");
     });
   }
@@ -723,7 +917,7 @@ export function RevisionPanel({
       setLastAdoptionId(null);
       setImpact(null);
       setReport(null);
-      await loadState();
+      await loadState(selectedId ?? undefined, draft?.artifactId);
       setMessage("最近一次采用已撤销；候选、素材与已有费用记录仍保留。");
     });
   }
@@ -762,14 +956,28 @@ export function RevisionPanel({
         };
         retainCheckJob(handle);
         await pollCheck(handle);
-      } else await loadState(completed.targetRevisionId);
+      } else await loadState(completed.targetRevisionId, draft?.artifactId);
     });
   }
 
   return (
-    <section className="revision-panel" aria-label="故事版本">
+    <section className="revision-panel" aria-label="版本对照与采用">
       <div className="section-heading">
-        <h2>故事版本</h2>
+        <h2>
+          {
+            (
+              {
+                story: "故事版本",
+                asset: "资产版本",
+                shot: "镜头版本",
+                speech: "配音版本",
+                subtitle: "字幕版本",
+                timeline: "时间线版本",
+                observation: "原片观察版本",
+              } as Record<string, string>
+            )[selected?.payload.kind ?? draft?.kind ?? "story"]
+          }
+        </h2>
         <span>候选、采用与确认分别记录</span>
       </div>
       <p>
@@ -798,7 +1006,9 @@ export function RevisionPanel({
           <button
             className="text-button"
             disabled={!ready || locked}
-            onClick={() => void loadState(selectedId ?? undefined)}
+            onClick={() =>
+              void loadState(selectedId ?? undefined, draft?.artifactId)
+            }
           >
             重新读取版本状态
           </button>
@@ -877,6 +1087,7 @@ export function RevisionPanel({
                   adopted={adopted}
                   selected={selected}
                   impact={impact}
+                  projectId={session.projectId}
                 />
               )}
               {report &&
@@ -906,7 +1117,9 @@ export function RevisionPanel({
                   }
                   onClick={() => void runChecks()}
                 >
-                  运行本地结构检查
+                  {selected?.payload.kind === "timeline"
+                    ? "运行成片八项本地检查"
+                    : "运行本地结构与引用检查"}
                 </button>
                 {selected &&
                   selected.id !== artifact?.adoptedRevisionId &&

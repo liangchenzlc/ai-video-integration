@@ -101,7 +101,7 @@ class MediaExecutor:
         with connect(directory / DATABASE, "ro") as db:
             self._identity(db, project_id)
             rows = db.execute(
-                "SELECT id FROM local_jobs WHERE state IN ('queued','running') "
+                "SELECT id FROM local_jobs WHERE kind='import' AND state IN ('queued','running') "
                 "ORDER BY active DESC,id"
             )
             identifiers = [row[0] for row in rows]

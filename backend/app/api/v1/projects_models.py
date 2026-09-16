@@ -31,7 +31,9 @@ class Command[T](BusinessModel):
 class GrantPayload(BusinessModel):
     grant_id: Uuid
     path: str = Field(min_length=1, max_length=32767)
-    purpose: Literal["createProject", "openProject", "importMedia", "ffmpeg"]
+    purpose: Literal[
+        "createProject", "openProject", "importMedia", "ffmpeg", "exportFilm", "diagnostic"
+    ]
     window_id: PositiveInteger
 
 

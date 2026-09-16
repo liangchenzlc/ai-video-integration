@@ -151,12 +151,21 @@ def test_exact_current_tables_and_connection_pragmas(project: Any) -> None:
             "check_runs",
             "checks",
             "task_plan_inputs",
+            "candidate_results",
+            "storyboard_shots",
+            "reference_verifications",
+            "revision_reference_verifications",
+            "rights_evidence",
+            "rights_verifications",
+            "render_plans",
+            "exports",
+            "check_decisions",
         }
         assert db.execute("PRAGMA foreign_keys").fetchone()[0] == 1
         assert db.execute("PRAGMA journal_mode").fetchone()[0] == "wal"
         assert db.execute("PRAGMA synchronous").fetchone()[0] == 2
         assert db.execute("PRAGMA busy_timeout").fetchone()[0] == 3000
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 5
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 8
 
 
 def test_missing_database_not_created(project: Any) -> None:

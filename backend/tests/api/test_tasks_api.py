@@ -34,6 +34,31 @@ def test_input_preview_rejects_private_fields_and_kind_mismatch() -> None:
 
 
 @pytest.mark.anyio
+async def test_task_candidate_route_returns_revision_page(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    context = make_context()
+    context.app_data_dir = tmp_path
+    project, session, task = (str(uuid4()) for _ in range(3))
+    calls: list[tuple[Any, ...]] = []
+
+    class Store:
+        def list_task_candidates(self, *args: Any) -> dict[str, Any]:
+            calls.append(args)
+            return {"items": [], "nextCursor": None}
+
+    monkeypatch.setattr(ProjectStore, "get", lambda _: Store())
+    headers = {"X-Window-Id": "1", "X-Project-Session": session}
+    async with client(create_app(context)) as http:
+        response = await http.get(
+            f"/api/v1/projects/{project}/tasks/{task}/candidates?limit=17", headers=headers
+        )
+    assert response.status_code == 200, (response.text, calls)
+    assert response.json()["data"] == {"items": [], "nextCursor": None}
+    assert calls == [(project, session, 1, task, None, 17)]
+
+
+@pytest.mark.anyio
 async def test_task_writes_validate_identity_money_and_disclosure_before_service(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -73,7 +73,7 @@ class VersionService:
             resource_id = action(db, project, command["payload"])
             revision = project["revision"] + 1
             receipt = self.owner._receipt(operation, resource_id, revision)
-            if name == "runLocalChecks":
+            if name in {"runLocalChecks", "renderAnimatic", "exportFilm"}:
                 receipt["state"] = "accepted"
             db.execute(
                 "UPDATE projects SET revision=?,saved_at=? WHERE id=?",

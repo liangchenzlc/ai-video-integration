@@ -205,6 +205,8 @@ def compile_plan(db: sqlite3.Connection, project: sqlite3.Row, payload: Json, ad
         "sfx": "shot",
         "check": "observation",
     }[payload["stage"]]
+    if phase == "image_keyframe":
+        expected_kind = "shot"
     if frozen["kind"] != expected_kind:
         raise ProjectError("VALIDATION_FAILED", 422)
     content = frozen["payload"]

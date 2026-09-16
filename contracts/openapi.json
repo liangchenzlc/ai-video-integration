@@ -2156,6 +2156,89 @@
         }
       }
     },
+    "/api/v1/projects/{project_id}/tasks/{task_id}/candidates": {
+      "get": {
+        "tags": [
+          "T04 tasks"
+        ],
+        "summary": "List Task Candidates",
+        "operationId": "listTaskCandidates",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Task Id"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_RevisionPage_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/projects/{project_id}/calls/{call_id}": {
       "get": {
         "tags": [
@@ -3177,6 +3260,1196 @@
           }
         }
       }
+    },
+    "/api/v1/projects/{project_id}/storyboard": {
+      "get": {
+        "tags": [
+          "T07 storyboard"
+        ],
+        "summary": "Get Storyboard",
+        "operationId": "getStoryboard",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Storyboard_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/coverage": {
+      "get": {
+        "tags": [
+          "T07 storyboard"
+        ],
+        "summary": "Coverage",
+        "operationId": "getRequirementCoverage",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Coverage_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/shot-order": {
+      "put": {
+        "tags": [
+          "T07 storyboard"
+        ],
+        "summary": "Reorder",
+        "operationId": "reorderShots",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command_ReorderShots_"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MutationReceipt_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/references/verification": {
+      "post": {
+        "tags": [
+          "T07 storyboard"
+        ],
+        "summary": "Verify",
+        "operationId": "verifyReference",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command_VerifyReference_"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MutationReceipt_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/storyboard/shots/{shot_id}/prompt": {
+      "get": {
+        "tags": [
+          "T07 storyboard"
+        ],
+        "summary": "Prompt",
+        "operationId": "previewShotPrompt",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "shot_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Shot Id"
+            }
+          },
+          {
+            "name": "phase",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "image",
+                "video"
+              ],
+              "type": "string",
+              "default": "image",
+              "title": "Phase"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_PromptPreview_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/issues": {
+      "get": {
+        "tags": [
+          "Production workspace and T13 diagnostics"
+        ],
+        "summary": "List Issues",
+        "operationId": "list_issues_api_v1_projects__project_id__issues_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_IssuePage_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/issues/{issue_id}/decisions": {
+      "post": {
+        "tags": [
+          "Production workspace and T13 diagnostics"
+        ],
+        "summary": "Decision",
+        "operationId": "decision_api_v1_projects__project_id__issues__issue_id__decisions_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Issue Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command_IssueDecision_"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MutationReceipt_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/production": {
+      "get": {
+        "tags": [
+          "Production workspace and T13 diagnostics"
+        ],
+        "summary": "Index",
+        "operationId": "index_api_v1_projects__project_id__production_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_ProductionIndex_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/diagnostics/preview": {
+      "post": {
+        "tags": [
+          "Production workspace and T13 diagnostics"
+        ],
+        "summary": "Preview",
+        "operationId": "preview_api_v1_diagnostics_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosticOptions"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_DiagnosticPreview_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/diagnostics": {
+      "post": {
+        "tags": [
+          "Production workspace and T13 diagnostics"
+        ],
+        "summary": "Diagnostic",
+        "operationId": "diagnostic_api_v1_diagnostics_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command_DiagnosticPayload_"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MutationReceipt_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/timing-checks": {
+      "post": {
+        "tags": [
+          "T08 T10 T11 production audio"
+        ],
+        "summary": "Timing",
+        "operationId": "checkTiming",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_TimingResult_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/video-readiness": {
+      "post": {
+        "tags": [
+          "T08 T10 T11 production audio"
+        ],
+        "summary": "Video Readiness",
+        "operationId": "checkVideoReadiness",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoReadiness"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_ReadinessResult_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/rights": {
+      "get": {
+        "tags": [
+          "T08 T10 T11 production audio"
+        ],
+        "summary": "Rights",
+        "operationId": "listRightsEvidence",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_RightsList_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/rights/{evidence_id}": {
+      "put": {
+        "tags": [
+          "T08 T10 T11 production audio"
+        ],
+        "summary": "Save Rights",
+        "operationId": "saveRightsEvidence",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "evidence_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Evidence Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command_SaveRights_"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MutationReceipt_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/mix/ducking": {
+      "post": {
+        "tags": [
+          "T08 T10 T11 production audio"
+        ],
+        "summary": "Ducking",
+        "operationId": "previewMusicDucking",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DuckingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_DuckingResult_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/animatics": {
+      "post": {
+        "tags": [
+          "T09 T12 rendering"
+        ],
+        "summary": "Animatic",
+        "operationId": "renderAnimatic",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command_RenderAnimatic_"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MutationReceipt_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/exports": {
+      "post": {
+        "tags": [
+          "T09 T12 rendering"
+        ],
+        "summary": "Export",
+        "operationId": "exportFilm",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command_ExportFilm_"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MutationReceipt_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/exports/{export_id}": {
+      "get": {
+        "tags": [
+          "T09 T12 rendering"
+        ],
+        "summary": "Get Export",
+        "operationId": "getExport",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "export_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Export Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_ExportRecord_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/render-plan-preview": {
+      "post": {
+        "tags": [
+          "T09 T12 rendering"
+        ],
+        "summary": "Preview",
+        "operationId": "previewRenderPlan",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenderPlanPreview"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_RenderPlan_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/render-plans/{plan_id}": {
+      "get": {
+        "tags": [
+          "T09 T12 rendering"
+        ],
+        "summary": "Get Plan",
+        "operationId": "getRenderPlan",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "plan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Plan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_RenderPlan_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/timeline/replacement-preview": {
+      "post": {
+        "tags": [
+          "T09 T12 rendering"
+        ],
+        "summary": "Replacement",
+        "operationId": "previewTimelineReplacement",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplacementPreview"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_ReplacementImpact_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/timeline/edit-preview": {
+      "post": {
+        "tags": [
+          "T09 T12 rendering"
+        ],
+        "summary": "Edit",
+        "operationId": "previewTimelineEdit",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimelineEdit"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_TimelineEditResult_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3202,6 +4475,55 @@
           "confirm"
         ],
         "title": "AdoptRevision"
+      },
+      "AdoptedSummary": {
+        "properties": {
+          "artifactId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "story",
+              "asset",
+              "shot",
+              "speech",
+              "subtitle",
+              "timeline",
+              "observation"
+            ],
+            "title": "Kind"
+          },
+          "confirmed": {
+            "type": "boolean",
+            "title": "Confirmed"
+          },
+          "needsUpdate": {
+            "type": "boolean",
+            "title": "Needsupdate"
+          },
+          "content": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Content"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "artifactId",
+          "revisionId",
+          "kind",
+          "confirmed",
+          "needsUpdate",
+          "content"
+        ],
+        "title": "AdoptedSummary"
       },
       "Allocation": {
         "properties": {
@@ -3661,6 +4983,97 @@
         ],
         "title": "CheckReport"
       },
+      "Clip": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "trackId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "shotId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mediaId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contentRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "startMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "inMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "outMs": {
+            "$ref": "#/components/schemas/PositiveInteger"
+          },
+          "durationMs": {
+            "$ref": "#/components/schemas/PositiveInteger"
+          },
+          "gainDb": {
+            "type": "number",
+            "maximum": 12.0,
+            "minimum": -96.0,
+            "title": "Gaindb"
+          },
+          "linkedClipIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Linkedclipids"
+          },
+          "keyframes": {
+            "items": {
+              "$ref": "#/components/schemas/Keyframe"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Keyframes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "trackId",
+          "shotId",
+          "mediaId",
+          "contentRevisionId",
+          "startMs",
+          "inMs",
+          "outMs",
+          "durationMs",
+          "gainDb",
+          "linkedClipIds",
+          "keyframes"
+        ],
+        "title": "Clip"
+      },
       "ClosedSession": {
         "properties": {
           "closed": {
@@ -3907,6 +5320,48 @@
         ],
         "title": "Command[DeleteCredential]"
       },
+      "Command_DiagnosticPayload_": {
+        "properties": {
+          "clientOperationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/DiagnosticPayload"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientOperationId",
+          "expectedRevision",
+          "payload"
+        ],
+        "title": "Command[DiagnosticPayload]"
+      },
+      "Command_ExportFilm_": {
+        "properties": {
+          "clientOperationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/ExportFilm"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientOperationId",
+          "expectedRevision",
+          "payload"
+        ],
+        "title": "Command[ExportFilm]"
+      },
       "Command_ExternalExpense_": {
         "properties": {
           "clientOperationId": {
@@ -3969,6 +5424,27 @@
           "payload"
         ],
         "title": "Command[ImportMedia]"
+      },
+      "Command_IssueDecision_": {
+        "properties": {
+          "clientOperationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/IssueDecision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientOperationId",
+          "expectedRevision",
+          "payload"
+        ],
+        "title": "Command[IssueDecision]"
       },
       "Command_PlanTask_": {
         "properties": {
@@ -4033,6 +5509,48 @@
         ],
         "title": "Command[RelocateMedia]"
       },
+      "Command_RenderAnimatic_": {
+        "properties": {
+          "clientOperationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/RenderAnimatic"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientOperationId",
+          "expectedRevision",
+          "payload"
+        ],
+        "title": "Command[RenderAnimatic]"
+      },
+      "Command_ReorderShots_": {
+        "properties": {
+          "clientOperationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/ReorderShots"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientOperationId",
+          "expectedRevision",
+          "payload"
+        ],
+        "title": "Command[ReorderShots]"
+      },
       "Command_RunLocalChecks_": {
         "properties": {
           "clientOperationId": {
@@ -4074,6 +5592,27 @@
           "payload"
         ],
         "title": "Command[SaveDraftPayload]"
+      },
+      "Command_SaveRights_": {
+        "properties": {
+          "clientOperationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/SaveRights"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientOperationId",
+          "expectedRevision",
+          "payload"
+        ],
+        "title": "Command[SaveRights]"
       },
       "Command_SetBudget_": {
         "properties": {
@@ -4179,6 +5718,27 @@
           "payload"
         ],
         "title": "Command[UndoAdoption]"
+      },
+      "Command_VerifyReference_": {
+        "properties": {
+          "clientOperationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/VerifyReference"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clientOperationId",
+          "expectedRevision",
+          "payload"
+        ],
+        "title": "Command[VerifyReference]"
       },
       "CompletePayload": {
         "oneOf": [
@@ -5746,6 +7306,40 @@
         ],
         "title": "ConnectionCheck"
       },
+      "ContentDraftSummary": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "artifactId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "story",
+              "asset",
+              "shot"
+            ],
+            "title": "Kind"
+          },
+          "savedAt": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Savedat"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "artifactId",
+          "kind",
+          "savedAt"
+        ],
+        "title": "ContentDraftSummary"
+      },
       "ContinueTask": {
         "properties": {
           "confirmedUnsubmittedOnly": {
@@ -5877,6 +7471,42 @@
         ],
         "title": "CostSummary"
       },
+      "Coverage": {
+        "properties": {
+          "unassignedRequirementIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Unassignedrequirementids"
+          },
+          "unresolvedRequirementIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Unresolvedrequirementids"
+          },
+          "invalidReferenceIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Invalidreferenceids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "unassignedRequirementIds",
+          "unresolvedRequirementIds",
+          "invalidReferenceIds"
+        ],
+        "title": "Coverage"
+      },
       "CreatePayload": {
         "properties": {
           "directoryGrantId": {
@@ -5987,6 +7617,127 @@
         ],
         "title": "DeleteCredential"
       },
+      "DiagnosticFile": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "description"
+        ],
+        "title": "DiagnosticFile"
+      },
+      "DiagnosticOptions": {
+        "properties": {
+          "projectId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "includeProject": {
+            "type": "boolean",
+            "title": "Includeproject"
+          },
+          "includeContent": {
+            "type": "boolean",
+            "title": "Includecontent"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "projectId",
+          "includeProject",
+          "includeContent"
+        ],
+        "title": "DiagnosticOptions"
+      },
+      "DiagnosticPayload": {
+        "properties": {
+          "projectId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "includeProject": {
+            "type": "boolean",
+            "title": "Includeproject"
+          },
+          "includeContent": {
+            "type": "boolean",
+            "title": "Includecontent"
+          },
+          "targetGrantId": {
+            "$ref": "#/components/schemas/Uuid"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "projectId",
+          "includeProject",
+          "includeContent",
+          "targetGrantId"
+        ],
+        "title": "DiagnosticPayload"
+      },
+      "DiagnosticPreview": {
+        "properties": {
+          "projectId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "includeProject": {
+            "type": "boolean",
+            "title": "Includeproject"
+          },
+          "includeContent": {
+            "type": "boolean",
+            "title": "Includecontent"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/DiagnosticFile"
+            },
+            "type": "array",
+            "title": "Files"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "projectId",
+          "includeProject",
+          "includeContent",
+          "files"
+        ],
+        "title": "DiagnosticPreview"
+      },
       "Draft": {
         "properties": {
           "id": {
@@ -6052,31 +7803,71 @@
           "observation"
         ]
       },
-      "DraftSummary": {
+      "DuckingRequest": {
         "properties": {
-          "id": {
+          "timelineRevisionId": {
             "$ref": "#/components/schemas/Uuid"
           },
-          "artifactId": {
-            "$ref": "#/components/schemas/Uuid"
+          "musicClipIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "minItems": 1,
+            "title": "Musicclipids"
           },
-          "kind": {
-            "$ref": "#/components/schemas/DraftKind"
+          "reductionDb": {
+            "type": "number",
+            "maximum": 96.0,
+            "minimum": 0.0,
+            "title": "Reductiondb"
           },
-          "savedAt": {
-            "type": "string",
-            "title": "Savedat"
+          "attackMs": {
+            "$ref": "#/components/schemas/SafeInteger",
+            "le": 10000
+          },
+          "releaseMs": {
+            "$ref": "#/components/schemas/SafeInteger",
+            "le": 10000
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "id",
-          "artifactId",
-          "kind",
-          "savedAt"
+          "timelineRevisionId",
+          "musicClipIds",
+          "reductionDb",
+          "attackMs",
+          "releaseMs"
         ],
-        "title": "DraftSummary"
+        "title": "DuckingRequest"
+      },
+      "DuckingResult": {
+        "properties": {
+          "timeline": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Timeline"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Warnings"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timeline",
+          "warnings"
+        ],
+        "title": "DuckingResult"
       },
       "Envelope_ArtifactState_": {
         "properties": {
@@ -6197,6 +7988,40 @@
         ],
         "title": "Envelope[CostSummary]"
       },
+      "Envelope_Coverage_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Coverage"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[Coverage]"
+      },
+      "Envelope_DiagnosticPreview_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DiagnosticPreview"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[DiagnosticPreview]"
+      },
       "Envelope_Draft_": {
         "properties": {
           "requestId": {
@@ -6214,6 +8039,40 @@
         ],
         "title": "Envelope[Draft]"
       },
+      "Envelope_DuckingResult_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DuckingResult"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[DuckingResult]"
+      },
+      "Envelope_ExportRecord_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ExportRecord"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[ExportRecord]"
+      },
       "Envelope_Impact_": {
         "properties": {
           "requestId": {
@@ -6230,6 +8089,23 @@
           "data"
         ],
         "title": "Envelope[Impact]"
+      },
+      "Envelope_IssuePage_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/IssuePage"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[IssuePage]"
       },
       "Envelope_Job_": {
         "properties": {
@@ -6333,6 +8209,23 @@
         ],
         "title": "Envelope[PrivateDirectory]"
       },
+      "Envelope_ProductionIndex_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ProductionIndex"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[ProductionIndex]"
+      },
       "Envelope_Project_": {
         "properties": {
           "requestId": {
@@ -6350,6 +8243,74 @@
         ],
         "title": "Envelope[Project]"
       },
+      "Envelope_PromptPreview_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PromptPreview"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[PromptPreview]"
+      },
+      "Envelope_ReadinessResult_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ReadinessResult"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[ReadinessResult]"
+      },
+      "Envelope_RenderPlan_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RenderPlan"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[RenderPlan]"
+      },
+      "Envelope_ReplacementImpact_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ReplacementImpact"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[ReplacementImpact]"
+      },
       "Envelope_RevisionPage_": {
         "properties": {
           "requestId": {
@@ -6366,6 +8327,23 @@
           "data"
         ],
         "title": "Envelope[RevisionPage]"
+      },
+      "Envelope_RightsList_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RightsList"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[RightsList]"
       },
       "Envelope_Session_": {
         "properties": {
@@ -6418,6 +8396,23 @@
         ],
         "title": "Envelope[Settings]"
       },
+      "Envelope_Storyboard_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Storyboard"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[Storyboard]"
+      },
       "Envelope_TaskPage_": {
         "properties": {
           "requestId": {
@@ -6469,6 +8464,40 @@
         ],
         "title": "Envelope[Task]"
       },
+      "Envelope_TimelineEditResult_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TimelineEditResult"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[TimelineEditResult]"
+      },
+      "Envelope_TimingResult_": {
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TimingResult"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "title": "Envelope[TimingResult]"
+      },
       "Envelope_list_DraftSummary__": {
         "properties": {
           "requestId": {
@@ -6476,7 +8505,7 @@
           },
           "data": {
             "items": {
-              "$ref": "#/components/schemas/DraftSummary"
+              "$ref": "#/components/schemas/app__api__v1__projects_models__DraftSummary"
             },
             "type": "array",
             "title": "Data"
@@ -6645,6 +8674,82 @@
           "real"
         ]
       },
+      "ExportFilm": {
+        "properties": {
+          "timelineRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "targetGrantId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "burnSubtitles": {
+            "type": "boolean",
+            "title": "Burnsubtitles"
+          },
+          "overwriteConfirmed": {
+            "type": "boolean",
+            "title": "Overwriteconfirmed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timelineRevisionId",
+          "targetGrantId",
+          "burnSubtitles",
+          "overwriteConfirmed"
+        ],
+        "title": "ExportFilm"
+      },
+      "ExportRecord": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "timelineRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "complete",
+              "failed",
+              "cancelled"
+            ],
+            "title": "State"
+          },
+          "mediaId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inputHash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Inputhash"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "timelineRevisionId",
+          "jobId",
+          "state",
+          "mediaId",
+          "inputHash"
+        ],
+        "title": "ExportRecord"
+      },
       "ExternalExpense": {
         "properties": {
           "expenseId": {
@@ -6736,7 +8841,9 @@
               "createProject",
               "openProject",
               "importMedia",
-              "ffmpeg"
+              "ffmpeg",
+              "exportFilm",
+              "diagnostic"
             ],
             "title": "Purpose"
           },
@@ -6951,6 +9058,174 @@
         ],
         "title": "InputPreview"
       },
+      "Issue": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "ruleId": {
+            "type": "string",
+            "title": "Ruleid"
+          },
+          "ruleVersion": {
+            "type": "string",
+            "title": "Ruleversion"
+          },
+          "artifactId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "baselineRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "blocking",
+              "unknown_required",
+              "deviation",
+              "advice"
+            ],
+            "title": "Severity"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "fixing",
+              "recheck",
+              "resolved",
+              "accepted_deviation"
+            ],
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence"
+          },
+          "time": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "local",
+              "ai",
+              "human"
+            ],
+            "title": "Method"
+          },
+          "limitations": {
+            "type": "string",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "ruleId",
+          "ruleVersion",
+          "artifactId",
+          "revisionId",
+          "baselineRevisionId",
+          "severity",
+          "status",
+          "message",
+          "evidence",
+          "time",
+          "method",
+          "limitations"
+        ],
+        "title": "Issue"
+      },
+      "IssueDecision": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "accept_deviation",
+              "request_recheck",
+              "attach_evidence"
+            ],
+            "title": "Action"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Reason"
+          },
+          "evidenceMediaIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Evidencemediaids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "action",
+          "reason",
+          "evidenceMediaIds"
+        ],
+        "title": "IssueDecision"
+      },
+      "IssuePage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "title": "IssuePage"
+      },
       "Job": {
         "properties": {
           "id": {
@@ -7022,6 +9297,47 @@
         "title": "Job"
       },
       "JsonValue": {},
+      "Keyframe": {
+        "properties": {
+          "timeMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "property": {
+            "type": "string",
+            "enum": [
+              "x",
+              "y",
+              "scale",
+              "opacity",
+              "volume"
+            ],
+            "title": "Property"
+          },
+          "value": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Value"
+          },
+          "interpolation": {
+            "type": "string",
+            "enum": [
+              "linear",
+              "hold"
+            ],
+            "title": "Interpolation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timeMs",
+          "property",
+          "value",
+          "interpolation"
+        ],
+        "title": "Keyframe"
+      },
       "Media": {
         "properties": {
           "id": {
@@ -7112,6 +9428,25 @@
           "provenance"
         ],
         "title": "Media"
+      },
+      "MediaHash": {
+        "properties": {
+          "mediaId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mediaId",
+          "sha256"
+        ],
+        "title": "MediaHash"
       },
       "MediaPage": {
         "properties": {
@@ -7435,6 +9770,45 @@
         ],
         "title": "PrivateDirectory"
       },
+      "ProductionIndex": {
+        "properties": {
+          "drafts": {
+            "items": {
+              "$ref": "#/components/schemas/app__api__v1__production__DraftSummary"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Drafts"
+          },
+          "adopted": {
+            "items": {
+              "$ref": "#/components/schemas/AdoptedSummary"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Adopted"
+          },
+          "nextOffset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextoffset"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "drafts",
+          "adopted",
+          "nextOffset"
+        ],
+        "title": "ProductionIndex"
+      },
       "Project": {
         "properties": {
           "id": {
@@ -7529,6 +9903,64 @@
         ],
         "title": "Project"
       },
+      "PromptPreview": {
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Templateid"
+          },
+          "templateVersion": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Templateversion"
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 100000,
+            "title": "Prompt"
+          },
+          "sourceRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Sourcerevisionids"
+          },
+          "blockers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Blockers"
+          },
+          "reusableVideoMediaId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "templateId",
+          "templateVersion",
+          "prompt",
+          "sourceRevisionIds",
+          "blockers",
+          "reusableVideoMediaId"
+        ],
+        "title": "PromptPreview"
+      },
       "ProtocolVersion": {
         "type": "integer",
         "const": 1
@@ -7573,6 +10005,38 @@
           "storageConfigured"
         ],
         "title": "ProviderSummary"
+      },
+      "ReadinessResult": {
+        "properties": {
+          "ready": {
+            "type": "boolean",
+            "title": "Ready"
+          },
+          "blockers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Blockers"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Warnings"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ready",
+          "blockers",
+          "warnings"
+        ],
+        "title": "ReadinessResult"
       },
       "RecentProject": {
         "properties": {
@@ -7628,6 +10092,21 @@
           "repair_installation"
         ]
       },
+      "ReferenceRole": {
+        "type": "string",
+        "enum": [
+          "identity",
+          "style",
+          "location",
+          "prop",
+          "composition",
+          "firstFrame",
+          "keyMoment",
+          "endFrame",
+          "voiceDrive",
+          "voiceReference"
+        ]
+      },
       "RelocateMedia": {
         "properties": {
           "fileGrantId": {
@@ -7646,6 +10125,191 @@
           "expectedHash"
         ],
         "title": "RelocateMedia"
+      },
+      "RenderAnimatic": {
+        "properties": {
+          "timelineRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timelineRevisionId"
+        ],
+        "title": "RenderAnimatic"
+      },
+      "RenderPlan": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "compilerVersion": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Compilerversion"
+          },
+          "timelineRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "timeline": {
+            "$ref": "#/components/schemas/TimelinePayload"
+          },
+          "mediaHashes": {
+            "items": {
+              "$ref": "#/components/schemas/MediaHash"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Mediahashes"
+          },
+          "inputHash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Inputhash"
+          },
+          "videoCodec": {
+            "type": "string",
+            "const": "h264",
+            "title": "Videocodec"
+          },
+          "audioCodec": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "aac"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audiocodec"
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "preview",
+              "animatic",
+              "export"
+            ],
+            "title": "Purpose"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "compilerVersion",
+          "timelineRevisionId",
+          "timeline",
+          "mediaHashes",
+          "inputHash",
+          "videoCodec",
+          "audioCodec",
+          "purpose"
+        ],
+        "title": "RenderPlan"
+      },
+      "RenderPlanPreview": {
+        "properties": {
+          "timelineRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "burnSubtitles": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Burnsubtitles"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timelineRevisionId"
+        ],
+        "title": "RenderPlanPreview"
+      },
+      "ReorderShots": {
+        "properties": {
+          "shotIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "minItems": 1,
+            "title": "Shotids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "shotIds"
+        ],
+        "title": "ReorderShots"
+      },
+      "ReplacementImpact": {
+        "properties": {
+          "shortageMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "affectedClipIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Affectedclipids"
+          },
+          "requiredChecks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Requiredchecks"
+          },
+          "canPreserveEdit": {
+            "type": "boolean",
+            "title": "Canpreserveedit"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "shortageMs",
+          "affectedClipIds",
+          "requiredChecks",
+          "canPreserveEdit"
+        ],
+        "title": "ReplacementImpact"
+      },
+      "ReplacementPreview": {
+        "properties": {
+          "timelineRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "clipId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "newMediaId": {
+            "$ref": "#/components/schemas/Uuid"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timelineRevisionId",
+          "clipId",
+          "newMediaId"
+        ],
+        "title": "ReplacementPreview"
       },
       "Revision": {
         "properties": {
@@ -7718,6 +10382,79 @@
           "nextCursor"
         ],
         "title": "RevisionPage"
+      },
+      "RightEvidence": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "mediaId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Source"
+          },
+          "use": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Use"
+          },
+          "evidenceMediaIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Evidencemediaids"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "unverified",
+              "verified",
+              "recheck"
+            ],
+            "title": "State"
+          },
+          "explanation": {
+            "type": "string",
+            "maxLength": 4000,
+            "title": "Explanation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "mediaId",
+          "source",
+          "use",
+          "evidenceMediaIds",
+          "state",
+          "explanation"
+        ],
+        "title": "RightEvidence"
+      },
+      "RightsList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RightEvidence"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "RightsList"
       },
       "RuleId": {
         "type": "string",
@@ -7794,6 +10531,19 @@
           "content"
         ],
         "title": "SaveDraftPayload"
+      },
+      "SaveRights": {
+        "properties": {
+          "evidence": {
+            "$ref": "#/components/schemas/RightEvidence"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "evidence"
+        ],
+        "title": "SaveRights"
       },
       "SemanticScope": {
         "type": "string",
@@ -8113,6 +10863,50 @@
           "persistence"
         ],
         "title": "StorageProfile"
+      },
+      "Storyboard": {
+        "properties": {
+          "drafts": {
+            "items": {
+              "$ref": "#/components/schemas/ContentDraftSummary"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Drafts"
+          },
+          "shotIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Shotids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "drafts",
+          "shotIds"
+        ],
+        "title": "Storyboard"
+      },
+      "SubtitleSplit": {
+        "properties": {
+          "clipId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "splitMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "clipId",
+          "splitMs"
+        ],
+        "title": "SubtitleSplit"
       },
       "Task": {
         "properties": {
@@ -8451,6 +11245,251 @@
         ],
         "title": "TaskSummary"
       },
+      "TimelineEdit": {
+        "properties": {
+          "timeline": {
+            "$ref": "#/components/schemas/TimelinePayload"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "move",
+              "split",
+              "trim"
+            ],
+            "title": "Action"
+          },
+          "clipId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "startMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SafeInteger"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "splitMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SafeInteger"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SafeInteger"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PositiveInteger"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "durationMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PositiveInteger"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timeline",
+          "action",
+          "clipId"
+        ],
+        "title": "TimelineEdit"
+      },
+      "TimelineEditResult": {
+        "properties": {
+          "timeline": {
+            "$ref": "#/components/schemas/TimelinePayload"
+          },
+          "affectedClipIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Affectedclipids"
+          },
+          "subtitleSplitPreview": {
+            "items": {
+              "$ref": "#/components/schemas/SubtitleSplit"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Subtitlesplitpreview"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "timeline",
+          "affectedClipIds",
+          "subtitleSplitPreview"
+        ],
+        "title": "TimelineEditResult"
+      },
+      "TimelinePayload": {
+        "properties": {
+          "width": {
+            "type": "integer",
+            "enum": [
+              720,
+              1080,
+              1280,
+              1920
+            ],
+            "title": "Width"
+          },
+          "height": {
+            "type": "integer",
+            "enum": [
+              720,
+              1080,
+              1280,
+              1920
+            ],
+            "title": "Height"
+          },
+          "fps": {
+            "$ref": "#/components/schemas/Fps"
+          },
+          "durationMs": {
+            "$ref": "#/components/schemas/PositiveInteger"
+          },
+          "tracks": {
+            "items": {
+              "$ref": "#/components/schemas/Track"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Tracks"
+          },
+          "clips": {
+            "items": {
+              "$ref": "#/components/schemas/Clip"
+            },
+            "type": "array",
+            "maxItems": 5000,
+            "title": "Clips"
+          },
+          "transitions": {
+            "items": {
+              "$ref": "#/components/schemas/Transition"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Transitions"
+          },
+          "burnSubtitles": {
+            "type": "boolean",
+            "title": "Burnsubtitles"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "width",
+          "height",
+          "fps",
+          "durationMs",
+          "tracks",
+          "clips",
+          "transitions",
+          "burnSubtitles"
+        ],
+        "title": "TimelinePayload"
+      },
+      "TimingRequest": {
+        "properties": {
+          "shotRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "speechRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Speechrevisionids"
+          },
+          "beforeMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "afterMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "shotRevisionId",
+          "speechRevisionIds",
+          "beforeMs",
+          "afterMs"
+        ],
+        "title": "TimingRequest"
+      },
+      "TimingResult": {
+        "properties": {
+          "requiredMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "plannedMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "shortageMs": {
+            "$ref": "#/components/schemas/SafeInteger"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "estimated"
+            ],
+            "title": "Method"
+          },
+          "suitable": {
+            "type": "boolean",
+            "title": "Suitable"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requiredMs",
+          "plannedMs",
+          "shortageMs",
+          "method",
+          "suitable"
+        ],
+        "title": "TimingResult"
+      },
       "ToolSummary": {
         "properties": {
           "version": {
@@ -8481,6 +11520,78 @@
           "subtitles"
         ],
         "title": "ToolSummary"
+      },
+      "Track": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "image",
+              "video",
+              "voice",
+              "music",
+              "sfx",
+              "subtitle"
+            ],
+            "title": "Kind"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SafeInteger",
+            "le": 100
+          },
+          "muted": {
+            "type": "boolean",
+            "title": "Muted"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "order",
+          "muted"
+        ],
+        "title": "Track"
+      },
+      "Transition": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "fromClipId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "toClipId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "cut",
+              "dissolve",
+              "fade"
+            ],
+            "title": "Type"
+          },
+          "durationMs": {
+            "$ref": "#/components/schemas/SafeInteger",
+            "le": 10000
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "fromClipId",
+          "toClipId",
+          "type",
+          "durationMs"
+        ],
+        "title": "Transition"
       },
       "UndoAdoption": {
         "properties": {
@@ -8540,9 +11651,77 @@
         ],
         "title": "ValidationError"
       },
+      "VerifyReference": {
+        "properties": {
+          "draftId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "mediaId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ReferenceRole"
+          },
+          "matchesPurpose": {
+            "type": "boolean",
+            "title": "Matchespurpose"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "draftId",
+          "mediaId",
+          "role",
+          "matchesPurpose",
+          "note"
+        ],
+        "title": "VerifyReference"
+      },
       "Version": {
         "type": "string",
         "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      },
+      "VideoReadiness": {
+        "properties": {
+          "shotRevisionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "speechRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Speechrevisionids"
+          },
+          "capabilityId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "path": {
+            "type": "string",
+            "enum": [
+              "research",
+              "production"
+            ],
+            "title": "Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "shotRevisionId",
+          "speechRevisionIds",
+          "capabilityId",
+          "path"
+        ],
+        "title": "VideoReadiness"
       },
       "app__api__v1__models__Capability": {
         "properties": {
@@ -8570,6 +11749,68 @@
           "reasonCode"
         ],
         "title": "Capability"
+      },
+      "app__api__v1__production__DraftSummary": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "artifactId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "story",
+              "asset",
+              "shot",
+              "speech",
+              "subtitle",
+              "timeline",
+              "observation"
+            ],
+            "title": "Kind"
+          },
+          "savedAt": {
+            "type": "string",
+            "title": "Savedat"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "artifactId",
+          "kind",
+          "savedAt"
+        ],
+        "title": "DraftSummary"
+      },
+      "app__api__v1__projects_models__DraftSummary": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "artifactId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/DraftKind"
+          },
+          "savedAt": {
+            "type": "string",
+            "title": "Savedat"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "artifactId",
+          "kind",
+          "savedAt"
+        ],
+        "title": "DraftSummary"
       },
       "app__api__v1__settings_models__Capability": {
         "properties": {

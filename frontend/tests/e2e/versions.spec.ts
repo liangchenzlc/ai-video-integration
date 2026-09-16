@@ -55,9 +55,9 @@ test("candidate browsing stays read-only; adopt, local check, confirm and latest
     await page
       .getByRole("button", { name: "保存为新候选", exact: true })
       .click();
-    await expect(page.getByRole("region", { name: "故事版本" })).toContainText(
-      "候选已保存",
-    );
+    await expect(
+      page.getByRole("region", { name: "版本对照与采用" }),
+    ).toContainText("候选已保存");
 
     const beforeAdoption = await page.evaluate(async () => {
       const current = await window.desktop.projects.current();
@@ -77,7 +77,7 @@ test("candidate browsing stays read-only; adopt, local check, confirm and latest
       beforeAdoption.ok && beforeAdoption.data.adoptedRevisionId,
     ).toBeNull();
     await page
-      .getByRole("region", { name: "故事版本" })
+      .getByRole("region", { name: "版本对照与采用" })
       .evaluate((element) => element.scrollIntoView({ block: "start" }));
     await page.screenshot({
       path: resolve(workspace, "versions-candidate.png"),
@@ -97,9 +97,9 @@ test("candidate browsing stays read-only; adopt, local check, confirm and latest
     await page
       .getByRole("button", { name: "采用并标记待审核", exact: true })
       .click();
-    await expect(page.getByRole("region", { name: "故事版本" })).toContainText(
-      "候选已采用，必要检查通过后才能确认",
-    );
+    await expect(
+      page.getByRole("region", { name: "版本对照与采用" }),
+    ).toContainText("候选已采用，必要检查通过后才能确认");
     await app.evaluate(() => {
       const http = process.getBuiltinModule(
         "http",
@@ -191,11 +191,11 @@ test("candidate browsing stays read-only; adopt, local check, confirm and latest
     await page
       .getByRole("button", { name: "确认当前采用版本", exact: true })
       .click();
-    await expect(page.getByRole("region", { name: "故事版本" })).toContainText(
-      "当前采用版本已确认",
-    );
+    await expect(
+      page.getByRole("region", { name: "版本对照与采用" }),
+    ).toContainText("当前采用版本已确认");
     await page
-      .getByRole("region", { name: "故事版本" })
+      .getByRole("region", { name: "版本对照与采用" })
       .evaluate((element) => element.scrollIntoView({ block: "start" }));
     await page.screenshot({
       path: resolve(workspace, "versions-confirmed.png"),
@@ -248,18 +248,18 @@ test("candidate browsing stays read-only; adopt, local check, confirm and latest
     await page
       .getByRole("button", { name: "撤销最近一次采用", exact: true })
       .click();
-    await expect(page.getByRole("region", { name: "故事版本" })).toContainText(
-      "最近一次采用已撤销",
-    );
+    await expect(
+      page.getByRole("region", { name: "版本对照与采用" }),
+    ).toContainText("最近一次采用已撤销");
     await page.getByRole("button", { name: "关闭项目", exact: true }).click();
     await page
       .getByRole("button", { name: "版本采用练习", exact: true })
       .click();
-    await expect(page.getByRole("region", { name: "故事版本" })).toContainText(
-      "已确认当前采用",
-    );
+    await expect(
+      page.getByRole("region", { name: "版本对照与采用" }),
+    ).toContainText("已确认当前采用");
     await page
-      .getByRole("region", { name: "故事版本" })
+      .getByRole("region", { name: "版本对照与采用" })
       .evaluate((element) => element.scrollIntoView({ block: "start" }));
     await page.screenshot({
       path: resolve(workspace, "versions-restored.png"),

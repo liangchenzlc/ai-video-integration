@@ -9,6 +9,8 @@ import { installSettingsIpc } from "./projects/settings-ipc";
 import { installTasksIpc } from "./projects/tasks-ipc";
 import { installMediaIpc } from "./projects/media-ipc";
 import { installVersionsIpc } from "./projects/versions-ipc";
+import { installStoryboardIpc } from "./projects/storyboard-ipc";
+import { installProductionIpc } from "./projects/production-ipc";
 import { serveMedia } from "./projects/media-stream";
 
 export function installIpc(
@@ -17,6 +19,18 @@ export function installIpc(
   development: boolean,
 ): () => void {
   const disposeProjects = installProjectIpc(window, supervisor, development);
+  const disposeProduction = installProductionIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
+  const disposeStoryboard = installStoryboardIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
   const disposeTasks = installTasksIpc(
     window,
     supervisor,
@@ -128,6 +142,8 @@ export function installIpc(
     disposeSettings();
     disposeTasks();
     disposeVersions();
+    disposeStoryboard();
+    disposeProduction();
     protocol.unhandle("avi-media");
     unsubscribe();
     for (const command of commands) ipcMain.removeHandler(command);

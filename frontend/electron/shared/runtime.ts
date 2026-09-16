@@ -3,6 +3,8 @@ import type { SettingsBridge } from "./settings";
 import type { ProjectsBridge } from "./projects";
 import type { TasksBridge } from "./tasks";
 import type { VersionsBridge } from "./versions";
+import type { StoryboardBridge } from "./storyboard";
+import type { ProductionBridge } from "./production";
 
 export type CapabilitiesData = components["schemas"]["CapabilitiesData"];
 export type HealthData = components["schemas"]["HealthData"];
@@ -41,6 +43,8 @@ export interface DesktopBridge {
   settings: SettingsBridge;
   tasks: TasksBridge;
   versions: VersionsBridge;
+  storyboard: StoryboardBridge;
+  production: ProductionBridge;
   getRuntimeState(): Promise<BridgeResult<RuntimeSnapshot>>;
   getCapabilities(): Promise<BridgeResult<CapabilitiesData>>;
   restartBackend(input: {

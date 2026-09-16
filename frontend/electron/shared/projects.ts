@@ -86,7 +86,9 @@ export type RecentProject = z.infer<typeof recentSchema>[number];
 export type ProjectResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: { code: string; message: string } };
+import productionMessages from "../../../backend/app/schemas/production-errors.json";
 export const projectMessages: Record<string, string> = {
+  ...productionMessages,
   PLAN_STALE: "计划已过期或输入、模型配置已改变，请重新生成本地计划。",
   CAPABILITY_MISSING:
     "当前没有已准入的真实模型能力。可在新项目选择本地练习，或查看模型设置。",

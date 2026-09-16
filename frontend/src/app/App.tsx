@@ -224,11 +224,25 @@ export function App() {
               {message}
             </p>
           )}
-          <div hidden={page !== "首页" && page !== "项目工具"}>
+          <div
+            hidden={
+              ![
+                "首页",
+                "项目工具",
+                "故事",
+                "视觉与分镜",
+                "镜头制作",
+                "声音与剪辑",
+                "检查与导出",
+              ].includes(page)
+            }
+          >
             <ProjectsHome
               ready={state === "ready"}
               runtimeId={runtime?.runtimeId ?? null}
               onSettings={() => setPage("设置")}
+              onPage={setPage}
+              page={page}
             />
           </div>
           <div hidden={page !== "设置"}>
@@ -270,7 +284,9 @@ export function App() {
                         </button>
                         <p>{p.summary}</p>
                       </div>
-                      <span className="availability">尚未开放</span>
+                      <span className="availability">
+                        {i < 5 ? "已开放" : "尚未开放"}
+                      </span>
                     </li>
                   ))}
                 </ol>
@@ -305,7 +321,13 @@ export function App() {
                 </button>
               </details>
             </>
-          ) : current && page !== "项目工具" ? (
+          ) : current &&
+            page !== "项目工具" &&
+            page !== "故事" &&
+            page !== "视觉与分镜" &&
+            page !== "镜头制作" &&
+            page !== "声音与剪辑" &&
+            page !== "检查与导出" ? (
             <>
               <div className="intro">
                 <span className="edition">{current.step}</span>

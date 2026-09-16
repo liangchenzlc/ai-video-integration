@@ -604,6 +604,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/tasks/{task_id}/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Task Candidates */
+        get: operations["listTaskCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/calls/{call_id}": {
         parameters: {
             query?: never;
@@ -877,6 +894,380 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/storyboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Storyboard */
+        get: operations["getStoryboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/coverage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Coverage */
+        get: operations["getRequirementCoverage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/shot-order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Reorder */
+        put: operations["reorderShots"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/references/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify */
+        post: operations["verifyReference"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/storyboard/shots/{shot_id}/prompt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Prompt */
+        get: operations["previewShotPrompt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/issues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Issues */
+        get: operations["list_issues_api_v1_projects__project_id__issues_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/issues/{issue_id}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decision */
+        post: operations["decision_api_v1_projects__project_id__issues__issue_id__decisions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/production": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Index */
+        get: operations["index_api_v1_projects__project_id__production_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/diagnostics/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview */
+        post: operations["preview_api_v1_diagnostics_preview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/diagnostics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Diagnostic */
+        post: operations["diagnostic_api_v1_diagnostics_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/timing-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Timing */
+        post: operations["checkTiming"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/video-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Video Readiness */
+        post: operations["checkVideoReadiness"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Rights */
+        get: operations["listRightsEvidence"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rights/{evidence_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Rights */
+        put: operations["saveRightsEvidence"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/mix/ducking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ducking */
+        post: operations["previewMusicDucking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/animatics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Animatic */
+        post: operations["renderAnimatic"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Export */
+        post: operations["exportFilm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/exports/{export_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Export */
+        get: operations["getExport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/render-plan-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview */
+        post: operations["previewRenderPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/render-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Plan */
+        get: operations["getRenderPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/timeline/replacement-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replacement */
+        post: operations["previewTimelineReplacement"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/timeline/edit-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Edit */
+        post: operations["previewTimelineEdit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -887,6 +1278,24 @@ export interface components {
             toRevisionId: components["schemas"]["Uuid"];
             /** Confirm */
             confirm: boolean;
+        };
+        /** AdoptedSummary */
+        AdoptedSummary: {
+            artifactId: components["schemas"]["Uuid"];
+            revisionId: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "story" | "asset" | "shot" | "speech" | "subtitle" | "timeline" | "observation";
+            /** Confirmed */
+            confirmed: boolean;
+            /** Needsupdate */
+            needsUpdate: boolean;
+            /** Content */
+            content: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
         };
         /** Allocation */
         Allocation: {
@@ -1004,6 +1413,24 @@ export interface components {
             /** Limitations */
             limitations: string;
         };
+        /** Clip */
+        Clip: {
+            id: components["schemas"]["Uuid"];
+            trackId: components["schemas"]["Uuid"];
+            shotId: components["schemas"]["Uuid"] | null;
+            mediaId: components["schemas"]["Uuid"] | null;
+            contentRevisionId: components["schemas"]["Uuid"] | null;
+            startMs: components["schemas"]["SafeInteger"];
+            inMs: components["schemas"]["SafeInteger"];
+            outMs: components["schemas"]["PositiveInteger"];
+            durationMs: components["schemas"]["PositiveInteger"];
+            /** Gaindb */
+            gainDb: number;
+            /** Linkedclipids */
+            linkedClipIds: components["schemas"]["Uuid"][];
+            /** Keyframes */
+            keyframes: components["schemas"]["Keyframe"][];
+        };
         /** ClosedSession */
         ClosedSession: {
             /**
@@ -1078,6 +1505,18 @@ export interface components {
             expectedRevision: components["schemas"]["SafeInteger"];
             payload: components["schemas"]["DeleteCredential"];
         };
+        /** Command[DiagnosticPayload] */
+        Command_DiagnosticPayload_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["DiagnosticPayload"];
+        };
+        /** Command[ExportFilm] */
+        Command_ExportFilm_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ExportFilm"];
+        };
         /** Command[ExternalExpense] */
         Command_ExternalExpense_: {
             clientOperationId: components["schemas"]["Uuid"];
@@ -1095,6 +1534,12 @@ export interface components {
             clientOperationId: components["schemas"]["Uuid"];
             expectedRevision: components["schemas"]["SafeInteger"];
             payload: components["schemas"]["ImportMedia"];
+        };
+        /** Command[IssueDecision] */
+        Command_IssueDecision_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["IssueDecision"];
         };
         /** Command[PlanTask] */
         Command_PlanTask_: {
@@ -1114,6 +1559,18 @@ export interface components {
             expectedRevision: components["schemas"]["SafeInteger"];
             payload: components["schemas"]["RelocateMedia"];
         };
+        /** Command[RenderAnimatic] */
+        Command_RenderAnimatic_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["RenderAnimatic"];
+        };
+        /** Command[ReorderShots] */
+        Command_ReorderShots_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ReorderShots"];
+        };
         /** Command[RunLocalChecks] */
         Command_RunLocalChecks_: {
             clientOperationId: components["schemas"]["Uuid"];
@@ -1125,6 +1582,12 @@ export interface components {
             clientOperationId: components["schemas"]["Uuid"];
             expectedRevision: components["schemas"]["SafeInteger"];
             payload: components["schemas"]["SaveDraftPayload"];
+        };
+        /** Command[SaveRights] */
+        Command_SaveRights_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["SaveRights"];
         };
         /** Command[SetBudget] */
         Command_SetBudget_: {
@@ -1155,6 +1618,12 @@ export interface components {
             clientOperationId: components["schemas"]["Uuid"];
             expectedRevision: components["schemas"]["SafeInteger"];
             payload: components["schemas"]["UndoAdoption"];
+        };
+        /** Command[VerifyReference] */
+        Command_VerifyReference_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["VerifyReference"];
         };
         CompletePayload: {
             /** @constant */
@@ -1430,6 +1899,18 @@ export interface components {
         ConnectionCheck: {
             capabilityId: components["schemas"]["Uuid"];
         };
+        /** ContentDraftSummary */
+        ContentDraftSummary: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "story" | "asset" | "shot";
+            /** Savedat */
+            savedAt: string;
+        };
         /** ContinueTask */
         ContinueTask: {
             /** Confirmedunsubmittedonly */
@@ -1466,6 +1947,15 @@ export interface components {
             containsUnknown: boolean;
             /** Estimateversion */
             estimateVersion: string;
+        };
+        /** Coverage */
+        Coverage: {
+            /** Unassignedrequirementids */
+            unassignedRequirementIds: components["schemas"]["Uuid"][];
+            /** Unresolvedrequirementids */
+            unresolvedRequirementIds: components["schemas"]["Uuid"][];
+            /** Invalidreferenceids */
+            invalidReferenceIds: components["schemas"]["Uuid"][];
         };
         /** CreatePayload */
         CreatePayload: {
@@ -1507,6 +1997,40 @@ export interface components {
             /** Confirmed */
             confirmed: boolean;
         };
+        /** DiagnosticFile */
+        DiagnosticFile: {
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+        };
+        /** DiagnosticOptions */
+        DiagnosticOptions: {
+            projectId: components["schemas"]["Uuid"] | null;
+            /** Includeproject */
+            includeProject: boolean;
+            /** Includecontent */
+            includeContent: boolean;
+        };
+        /** DiagnosticPayload */
+        DiagnosticPayload: {
+            projectId: components["schemas"]["Uuid"] | null;
+            /** Includeproject */
+            includeProject: boolean;
+            /** Includecontent */
+            includeContent: boolean;
+            targetGrantId: components["schemas"]["Uuid"];
+        };
+        /** DiagnosticPreview */
+        DiagnosticPreview: {
+            projectId: components["schemas"]["Uuid"] | null;
+            /** Includeproject */
+            includeProject: boolean;
+            /** Includecontent */
+            includeContent: boolean;
+            /** Files */
+            files: components["schemas"]["DiagnosticFile"][];
+        };
         /** Draft */
         Draft: {
             id: components["schemas"]["Uuid"];
@@ -1524,13 +2048,24 @@ export interface components {
         };
         /** @enum {string} */
         DraftKind: "story" | "asset" | "shot" | "speech" | "subtitle" | "timeline" | "observation";
-        /** DraftSummary */
-        DraftSummary: {
-            id: components["schemas"]["Uuid"];
-            artifactId: components["schemas"]["Uuid"];
-            kind: components["schemas"]["DraftKind"];
-            /** Savedat */
-            savedAt: string;
+        /** DuckingRequest */
+        DuckingRequest: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            /** Musicclipids */
+            musicClipIds: components["schemas"]["Uuid"][];
+            /** Reductiondb */
+            reductionDb: number;
+            attackMs: components["schemas"]["SafeInteger"];
+            releaseMs: components["schemas"]["SafeInteger"];
+        };
+        /** DuckingResult */
+        DuckingResult: {
+            /** Timeline */
+            timeline: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+            /** Warnings */
+            warnings: string[];
         };
         /** Envelope[ArtifactState] */
         Envelope_ArtifactState_: {
@@ -1567,15 +2102,40 @@ export interface components {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["CostSummary"];
         };
+        /** Envelope[Coverage] */
+        Envelope_Coverage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Coverage"];
+        };
+        /** Envelope[DiagnosticPreview] */
+        Envelope_DiagnosticPreview_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["DiagnosticPreview"];
+        };
         /** Envelope[Draft] */
         Envelope_Draft_: {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["Draft"];
         };
+        /** Envelope[DuckingResult] */
+        Envelope_DuckingResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["DuckingResult"];
+        };
+        /** Envelope[ExportRecord] */
+        Envelope_ExportRecord_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ExportRecord"];
+        };
         /** Envelope[Impact] */
         Envelope_Impact_: {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["Impact"];
+        };
+        /** Envelope[IssuePage] */
+        Envelope_IssuePage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["IssuePage"];
         };
         /** Envelope[Job] */
         Envelope_Job_: {
@@ -1607,15 +2167,45 @@ export interface components {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["PrivateDirectory"];
         };
+        /** Envelope[ProductionIndex] */
+        Envelope_ProductionIndex_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ProductionIndex"];
+        };
         /** Envelope[Project] */
         Envelope_Project_: {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["Project"];
         };
+        /** Envelope[PromptPreview] */
+        Envelope_PromptPreview_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["PromptPreview"];
+        };
+        /** Envelope[ReadinessResult] */
+        Envelope_ReadinessResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ReadinessResult"];
+        };
+        /** Envelope[RenderPlan] */
+        Envelope_RenderPlan_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["RenderPlan"];
+        };
+        /** Envelope[ReplacementImpact] */
+        Envelope_ReplacementImpact_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ReplacementImpact"];
+        };
         /** Envelope[RevisionPage] */
         Envelope_RevisionPage_: {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["RevisionPage"];
+        };
+        /** Envelope[RightsList] */
+        Envelope_RightsList_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["RightsList"];
         };
         /** Envelope[Session] */
         Envelope_Session_: {
@@ -1632,6 +2222,11 @@ export interface components {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["Settings"];
         };
+        /** Envelope[Storyboard] */
+        Envelope_Storyboard_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Storyboard"];
+        };
         /** Envelope[TaskPage] */
         Envelope_TaskPage_: {
             requestId: components["schemas"]["Uuid"];
@@ -1647,11 +2242,21 @@ export interface components {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["Task"];
         };
+        /** Envelope[TimelineEditResult] */
+        Envelope_TimelineEditResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["TimelineEditResult"];
+        };
+        /** Envelope[TimingResult] */
+        Envelope_TimingResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["TimingResult"];
+        };
         /** Envelope[list[DraftSummary]] */
         Envelope_list_DraftSummary__: {
             requestId: components["schemas"]["Uuid"];
             /** Data */
-            data: components["schemas"]["DraftSummary"][];
+            data: components["schemas"]["app__api__v1__projects_models__DraftSummary"][];
         };
         /** Envelope[list[Job]] */
         Envelope_list_Job__: {
@@ -1695,6 +2300,29 @@ export interface components {
         };
         /** @enum {string} */
         ExecutionMode: "synthetic" | "real";
+        /** ExportFilm */
+        ExportFilm: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            targetGrantId: components["schemas"]["Uuid"];
+            /** Burnsubtitles */
+            burnSubtitles: boolean;
+            /** Overwriteconfirmed */
+            overwriteConfirmed: boolean;
+        };
+        /** ExportRecord */
+        ExportRecord: {
+            id: components["schemas"]["Uuid"];
+            timelineRevisionId: components["schemas"]["Uuid"];
+            jobId: components["schemas"]["Uuid"];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "pending" | "complete" | "failed" | "cancelled";
+            mediaId: components["schemas"]["Uuid"] | null;
+            /** Inputhash */
+            inputHash: string;
+        };
         /** ExternalExpense */
         ExternalExpense: {
             expenseId: components["schemas"]["Uuid"];
@@ -1735,7 +2363,7 @@ export interface components {
              * Purpose
              * @enum {string}
              */
-            purpose: "createProject" | "openProject" | "importMedia" | "ffmpeg";
+            purpose: "createProject" | "openProject" | "importMedia" | "ffmpeg" | "exportFilm" | "diagnostic";
             windowId: components["schemas"]["PositiveInteger"];
         };
         /** HTTPValidationError */
@@ -1796,6 +2424,60 @@ export interface components {
                 [key: string]: components["schemas"]["JsonValue"];
             };
         };
+        /** Issue */
+        Issue: {
+            id: components["schemas"]["Uuid"];
+            /** Ruleid */
+            ruleId: string;
+            /** Ruleversion */
+            ruleVersion: string;
+            artifactId: components["schemas"]["Uuid"];
+            revisionId: components["schemas"]["Uuid"];
+            baselineRevisionId: components["schemas"]["Uuid"] | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "blocking" | "unknown_required" | "deviation" | "advice";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "fixing" | "recheck" | "resolved" | "accepted_deviation";
+            /** Message */
+            message: string;
+            /** Evidence */
+            evidence: string;
+            /** Time */
+            time: {
+                [key: string]: number;
+            } | null;
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "local" | "ai" | "human";
+            /** Limitations */
+            limitations: string;
+        };
+        /** IssueDecision */
+        IssueDecision: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "accept_deviation" | "request_recheck" | "attach_evidence";
+            /** Reason */
+            reason: string;
+            /** Evidencemediaids */
+            evidenceMediaIds: components["schemas"]["Uuid"][];
+        };
+        /** IssuePage */
+        IssuePage: {
+            /** Items */
+            items: components["schemas"]["Issue"][];
+            nextCursor: components["schemas"]["Uuid"] | null;
+        };
         /** Job */
         Job: {
             id: components["schemas"]["Uuid"];
@@ -1816,6 +2498,22 @@ export interface components {
             errorCode: string | null;
         };
         JsonValue: unknown;
+        /** Keyframe */
+        Keyframe: {
+            timeMs: components["schemas"]["SafeInteger"];
+            /**
+             * Property
+             * @enum {string}
+             */
+            property: "x" | "y" | "scale" | "opacity" | "volume";
+            /** Value */
+            value: number;
+            /**
+             * Interpolation
+             * @enum {string}
+             */
+            interpolation: "linear" | "hold";
+        };
         /** Media */
         Media: {
             id: components["schemas"]["Uuid"];
@@ -1840,6 +2538,12 @@ export interface components {
              * @enum {string}
              */
             provenance: "imported" | "generated" | "derived" | "synthetic";
+        };
+        /** MediaHash */
+        MediaHash: {
+            mediaId: components["schemas"]["Uuid"];
+            /** Sha256 */
+            sha256: string;
         };
         /** MediaPage */
         MediaPage: {
@@ -1933,6 +2637,15 @@ export interface components {
             /** Path */
             path: string;
         };
+        /** ProductionIndex */
+        ProductionIndex: {
+            /** Drafts */
+            drafts: components["schemas"]["app__api__v1__production__DraftSummary"][];
+            /** Adopted */
+            adopted: components["schemas"]["AdoptedSummary"][];
+            /** Nextoffset */
+            nextOffset: number | null;
+        };
         /** Project */
         Project: {
             id: components["schemas"]["Uuid"];
@@ -1961,6 +2674,20 @@ export interface components {
             /** Executionmode */
             executionMode?: ("synthetic" | "real") | null;
         };
+        /** PromptPreview */
+        PromptPreview: {
+            /** Templateid */
+            templateId: string;
+            /** Templateversion */
+            templateVersion: string;
+            /** Prompt */
+            prompt: string;
+            /** Sourcerevisionids */
+            sourceRevisionIds: components["schemas"]["Uuid"][];
+            /** Blockers */
+            blockers: string[];
+            reusableVideoMediaId: components["schemas"]["Uuid"] | null;
+        };
         /** @constant */
         ProtocolVersion: 1;
         ProviderId: string;
@@ -1973,6 +2700,15 @@ export interface components {
             maskedSuffix: string | null;
             /** Storageconfigured */
             storageConfigured: boolean;
+        };
+        /** ReadinessResult */
+        ReadinessResult: {
+            /** Ready */
+            ready: boolean;
+            /** Blockers */
+            blockers: string[];
+            /** Warnings */
+            warnings: string[];
         };
         /** RecentProject */
         RecentProject: {
@@ -1992,11 +2728,68 @@ export interface components {
         };
         /** @enum {string} */
         RecoveryAction: "none" | "retry_connection" | "restart_backend" | "repair_installation";
+        /** @enum {string} */
+        ReferenceRole: "identity" | "style" | "location" | "prop" | "composition" | "firstFrame" | "keyMoment" | "endFrame" | "voiceDrive" | "voiceReference";
         /** RelocateMedia */
         RelocateMedia: {
             fileGrantId: components["schemas"]["Uuid"];
             /** Expectedhash */
             expectedHash: string;
+        };
+        /** RenderAnimatic */
+        RenderAnimatic: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+        };
+        /** RenderPlan */
+        RenderPlan: {
+            id: components["schemas"]["Uuid"];
+            /** Compilerversion */
+            compilerVersion: string;
+            timelineRevisionId: components["schemas"]["Uuid"];
+            timeline: components["schemas"]["TimelinePayload"];
+            /** Mediahashes */
+            mediaHashes: components["schemas"]["MediaHash"][];
+            /** Inputhash */
+            inputHash: string;
+            /**
+             * Videocodec
+             * @constant
+             */
+            videoCodec: "h264";
+            /** Audiocodec */
+            audioCodec: "aac" | null;
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "preview" | "animatic" | "export";
+        };
+        /** RenderPlanPreview */
+        RenderPlanPreview: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            /** Burnsubtitles */
+            burnSubtitles?: boolean | null;
+        };
+        /** ReorderShots */
+        ReorderShots: {
+            /** Shotids */
+            shotIds: components["schemas"]["Uuid"][];
+        };
+        /** ReplacementImpact */
+        ReplacementImpact: {
+            shortageMs: components["schemas"]["SafeInteger"];
+            /** Affectedclipids */
+            affectedClipIds: components["schemas"]["Uuid"][];
+            /** Requiredchecks */
+            requiredChecks: string[];
+            /** Canpreserveedit */
+            canPreserveEdit: boolean;
+        };
+        /** ReplacementPreview */
+        ReplacementPreview: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            clipId: components["schemas"]["Uuid"];
+            newMediaId: components["schemas"]["Uuid"];
         };
         /** Revision */
         Revision: {
@@ -2014,6 +2807,29 @@ export interface components {
             items: components["schemas"]["Revision"][];
             nextCursor: components["schemas"]["Uuid"] | null;
         };
+        /** RightEvidence */
+        RightEvidence: {
+            id: components["schemas"]["Uuid"];
+            mediaId: components["schemas"]["Uuid"];
+            /** Source */
+            source: string;
+            /** Use */
+            use: string;
+            /** Evidencemediaids */
+            evidenceMediaIds: components["schemas"]["Uuid"][];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "unverified" | "verified" | "recheck";
+            /** Explanation */
+            explanation: string;
+        };
+        /** RightsList */
+        RightsList: {
+            /** Items */
+            items: components["schemas"]["RightEvidence"][];
+        };
         RuleId: string;
         /** RunLocalChecks */
         RunLocalChecks: {
@@ -2030,6 +2846,10 @@ export interface components {
             artifactId: components["schemas"]["Uuid"];
             baseRevisionId: components["schemas"]["Uuid"] | null;
             content: components["schemas"]["DraftContent"];
+        };
+        /** SaveRights */
+        SaveRights: {
+            evidence: components["schemas"]["RightEvidence"];
         };
         /** @enum {string} */
         SemanticScope: "identityVisual" | "dialogueAudio" | "subtitleTiming" | "referenceInput" | "requirementCoverage" | "revealTiming" | "timelinePlacement" | "mix" | "export";
@@ -2112,6 +2932,18 @@ export interface components {
             retentionHours: components["schemas"]["SafeInteger"];
             id: components["schemas"]["Uuid"];
             persistence: components["schemas"]["Persistence"];
+        };
+        /** Storyboard */
+        Storyboard: {
+            /** Drafts */
+            drafts: components["schemas"]["ContentDraftSummary"][];
+            /** Shotids */
+            shotIds: components["schemas"]["Uuid"][];
+        };
+        /** SubtitleSplit */
+        SubtitleSplit: {
+            clipId: components["schemas"]["Uuid"];
+            splitMs: components["schemas"]["SafeInteger"];
         };
         /** Task */
         Task: {
@@ -2198,6 +3030,73 @@ export interface components {
             /** Active */
             active: boolean;
         };
+        /** TimelineEdit */
+        TimelineEdit: {
+            timeline: components["schemas"]["TimelinePayload"];
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "move" | "split" | "trim";
+            clipId: components["schemas"]["Uuid"];
+            startMs?: components["schemas"]["SafeInteger"] | null;
+            splitMs?: components["schemas"]["SafeInteger"] | null;
+            inMs?: components["schemas"]["SafeInteger"] | null;
+            outMs?: components["schemas"]["PositiveInteger"] | null;
+            durationMs?: components["schemas"]["PositiveInteger"] | null;
+        };
+        /** TimelineEditResult */
+        TimelineEditResult: {
+            timeline: components["schemas"]["TimelinePayload"];
+            /** Affectedclipids */
+            affectedClipIds: components["schemas"]["Uuid"][];
+            /** Subtitlesplitpreview */
+            subtitleSplitPreview: components["schemas"]["SubtitleSplit"][];
+        };
+        /** TimelinePayload */
+        TimelinePayload: {
+            /**
+             * Width
+             * @enum {integer}
+             */
+            width: 720 | 1080 | 1280 | 1920;
+            /**
+             * Height
+             * @enum {integer}
+             */
+            height: 720 | 1080 | 1280 | 1920;
+            fps: components["schemas"]["Fps"];
+            durationMs: components["schemas"]["PositiveInteger"];
+            /** Tracks */
+            tracks: components["schemas"]["Track"][];
+            /** Clips */
+            clips: components["schemas"]["Clip"][];
+            /** Transitions */
+            transitions: components["schemas"]["Transition"][];
+            /** Burnsubtitles */
+            burnSubtitles: boolean;
+        };
+        /** TimingRequest */
+        TimingRequest: {
+            shotRevisionId: components["schemas"]["Uuid"];
+            /** Speechrevisionids */
+            speechRevisionIds: components["schemas"]["Uuid"][];
+            beforeMs: components["schemas"]["SafeInteger"];
+            afterMs: components["schemas"]["SafeInteger"];
+        };
+        /** TimingResult */
+        TimingResult: {
+            requiredMs: components["schemas"]["SafeInteger"];
+            plannedMs: components["schemas"]["SafeInteger"];
+            shortageMs: components["schemas"]["SafeInteger"];
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "measured" | "estimated";
+            /** Suitable */
+            suitable: boolean;
+        };
         /** ToolSummary */
         ToolSummary: {
             /** Version */
@@ -2208,6 +3107,30 @@ export interface components {
             aac: boolean;
             /** Subtitles */
             subtitles: boolean;
+        };
+        /** Track */
+        Track: {
+            id: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "image" | "video" | "voice" | "music" | "sfx" | "subtitle";
+            order: components["schemas"]["SafeInteger"];
+            /** Muted */
+            muted: boolean;
+        };
+        /** Transition */
+        Transition: {
+            id: components["schemas"]["Uuid"];
+            fromClipId: components["schemas"]["Uuid"];
+            toClipId: components["schemas"]["Uuid"];
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "cut" | "dissolve" | "fade";
+            durationMs: components["schemas"]["SafeInteger"];
         };
         /** UndoAdoption */
         UndoAdoption: {
@@ -2228,7 +3151,29 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /** VerifyReference */
+        VerifyReference: {
+            draftId: components["schemas"]["Uuid"];
+            mediaId: components["schemas"]["Uuid"];
+            role: components["schemas"]["ReferenceRole"];
+            /** Matchespurpose */
+            matchesPurpose: boolean;
+            /** Note */
+            note: string;
+        };
         Version: string;
+        /** VideoReadiness */
+        VideoReadiness: {
+            shotRevisionId: components["schemas"]["Uuid"];
+            /** Speechrevisionids */
+            speechRevisionIds: components["schemas"]["Uuid"][];
+            capabilityId: components["schemas"]["Uuid"];
+            /**
+             * Path
+             * @enum {string}
+             */
+            path: "research" | "production";
+        };
         /** Capability */
         app__api__v1__models__Capability: {
             id: components["schemas"]["CapabilityId"];
@@ -2239,6 +3184,26 @@ export interface components {
              * @enum {string}
              */
             reasonCode: "AVAILABLE" | "NOT_IMPLEMENTED";
+        };
+        /** DraftSummary */
+        app__api__v1__production__DraftSummary: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "story" | "asset" | "shot" | "speech" | "subtitle" | "timeline" | "observation";
+            /** Savedat */
+            savedAt: string;
+        };
+        /** DraftSummary */
+        app__api__v1__projects_models__DraftSummary: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            kind: components["schemas"]["DraftKind"];
+            /** Savedat */
+            savedAt: string;
         };
         /** Capability */
         app__api__v1__settings_models__Capability: {
@@ -3726,6 +4691,41 @@ export interface operations {
             };
         };
     };
+    listTaskCandidates: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RevisionPage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     getCall: {
         parameters: {
             query?: never;
@@ -4288,6 +5288,752 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Envelope_CheckReport_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getStoryboard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Storyboard_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRequirementCoverage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Coverage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reorderShots: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ReorderShots_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verifyReference: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_VerifyReference_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewShotPrompt: {
+        parameters: {
+            query?: {
+                phase?: "image" | "video";
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                shot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_PromptPreview_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_issues_api_v1_projects__project_id__issues_get: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_IssuePage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decision_api_v1_projects__project_id__issues__issue_id__decisions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                issue_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_IssueDecision_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    index_api_v1_projects__project_id__production_get: {
+        parameters: {
+            query?: {
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ProductionIndex_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_api_v1_diagnostics_preview_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiagnosticOptions"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_DiagnosticPreview_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    diagnostic_api_v1_diagnostics_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_DiagnosticPayload_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checkTiming: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimingRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_TimingResult_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checkVideoReadiness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VideoReadiness"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ReadinessResult_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listRightsEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RightsList_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    saveRightsEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                evidence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_SaveRights_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewMusicDucking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DuckingRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_DuckingResult_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    renderAnimatic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_RenderAnimatic_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    exportFilm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ExportFilm_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                export_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ExportRecord_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewRenderPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RenderPlanPreview"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RenderPlan_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRenderPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RenderPlan_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewTimelineReplacement: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplacementPreview"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ReplacementImpact_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewTimelineEdit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimelineEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_TimelineEditResult_"];
                 };
             };
             /** @description Validation Error */

@@ -52,6 +52,49 @@ export function StoryPlanPreview({
 }: {
   input: TaskPlan["inputPreview"];
 }) {
+  if (input.kind === "asset") {
+    const content = input.payload;
+    const assetTypes: Record<string, string> = {
+      character: "角色",
+      location: "场景",
+      prop: "道具",
+      style: "风格",
+    };
+    const anchors = strings(content.identityAnchors);
+    const changes = strings(content.allowedChanges);
+    return (
+      <div className="story-plan-preview">
+        <dl className="story-plan-metadata">
+          <div>
+            <dt>素材名称</dt>
+            <dd>{text(content.name) || "未填写"}</dd>
+          </div>
+          <div>
+            <dt>素材类型</dt>
+            <dd>{assetTypes[text(content.assetType)] ?? "未标记"}</dd>
+          </div>
+        </dl>
+        <section>
+          <h4>身份锚点</h4>
+          <ul>
+            {anchors.map((anchor, index) => (
+              <li key={index}>{anchor}</li>
+            ))}
+          </ul>
+        </section>
+        {changes.length > 0 && (
+          <section>
+            <h4>允许变化</h4>
+            <ul>
+              {changes.map((change, index) => (
+                <li key={index}>{change}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    );
+  }
   if (input.kind !== "story")
     return (
       <p>当前入口只提供故事内容预览。其他类型的输入需在对应工作区核对。</p>

@@ -23,7 +23,7 @@ const allowed: Record<string, RegExp> = {
 };
 const taskAllowed: Record<string, RegExp> = {
   GET: new RegExp(
-    `^/api/v1/(?:task-activity|projects/${uuidPattern}/(?:budget|task-plans/${uuidPattern}|tasks/${uuidPattern}|calls/${uuidPattern}|cost-summary|(?:tasks|cost-entries)(?:\\?limit=[0-9]{1,3}(?:&cursor=${uuidPattern})?)?))$`,
+    `^/api/v1/(?:task-activity|projects/${uuidPattern}/(?:budget|task-plans/${uuidPattern}|tasks/${uuidPattern}(?:/candidates\\?limit=[0-9]{1,3}(?:&cursor=${uuidPattern})?)?|calls/${uuidPattern}|cost-summary|(?:tasks|cost-entries)(?:\\?limit=[0-9]{1,3}(?:&cursor=${uuidPattern})?)?))$`,
   ),
   POST: new RegExp(
     `^/api/v1/projects/${uuidPattern}/(?:task-plans|tasks|tasks/${uuidPattern}/continue|calls/${uuidPattern}/(?:recovery|settlements))$`,
@@ -39,6 +39,22 @@ const versionAllowed: Record<string, RegExp> = {
   POST: new RegExp(
     `^/api/v1/projects/${uuidPattern}/(?:artifacts/${uuidPattern}/(?:revisions|adoption-preview|adoptions|confirmations)|adoptions/${uuidPattern}/undo|local-checks)$`,
   ),
+};
+const storyboardAllowed: Record<string, RegExp> = {
+  GET: new RegExp(
+    `^/api/v1/projects/${uuidPattern}/(?:storyboard|coverage|storyboard/shots/${uuidPattern}/prompt\\?phase=(?:image|video))$`,
+  ),
+  PUT: new RegExp(`^/api/v1/projects/${uuidPattern}/shot-order$`),
+  POST: new RegExp(`^/api/v1/projects/${uuidPattern}/references/verification$`),
+};
+const productionAllowed: Record<string, RegExp> = {
+  GET: new RegExp(
+    `^/api/v1/projects/${uuidPattern}/(?:production\\?offset=[0-9]{1,9}|rights|exports/${uuidPattern}|render-plans/${uuidPattern}|issues\\?limit=[0-9]{1,3}(?:&cursor=${uuidPattern})?)$`,
+  ),
+  POST: new RegExp(
+    `^/api/v1/(?:diagnostics(?:/preview)?|projects/${uuidPattern}/(?:timing-checks|video-readiness|mix/ducking|timeline/(?:edit-preview|replacement-preview)|render-plan-preview|animatics|exports|issues/${uuidPattern}/decisions))$`,
+  ),
+  PUT: new RegExp(`^/api/v1/projects/${uuidPattern}/rights/${uuidPattern}$`),
 };
 export async function businessRequest<T>(
   endpoint: Endpoint,
@@ -56,7 +72,9 @@ export async function businessRequest<T>(
     !(
       allowed[options.method].test(options.path) ||
       taskAllowed[options.method]?.test(options.path) ||
-      versionAllowed[options.method]?.test(options.path)
+      versionAllowed[options.method]?.test(options.path) ||
+      storyboardAllowed[options.method]?.test(options.path) ||
+      productionAllowed[options.method]?.test(options.path)
     ) ||
     !Number.isSafeInteger(options.windowId) ||
     options.windowId < 1

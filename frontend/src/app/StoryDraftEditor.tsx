@@ -1,7 +1,14 @@
-import { useEffect, useId, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import type { ProjectSession } from "../../electron/shared/projects";
 import type { Draft } from "../../electron/shared/drafts";
 import { DraftAutosave } from "./draft-autosave";
+import { StoryStructure } from "./StoryStructure";
 
 export function StoryDraftEditor({
   session,
@@ -24,9 +31,11 @@ export function StoryDraftEditor({
     void (async () => {
       try {
         const project = await bridge.project({ projectId: session.projectId });
-        const list = await bridge.list({ projectId: session.projectId });
+        const list = await window.desktop.storyboard.list({
+          projectId: session.projectId,
+        });
         if (!project.ok || !list.ok) throw new Error("load");
-        const summary = list.data.find((d) => d.kind === "story");
+        const summary = list.data.drafts.find((d) => d.kind === "story");
         let draft: Draft = {
           id: crypto.randomUUID(),
           artifactId: crypto.randomUUID(),
@@ -93,6 +102,7 @@ export function StoryDraftEditor({
       {engine && (
         <Editor
           engine={engine}
+          projectId={session.projectId}
           ready={ready}
           readOnly={session.mode === "read" || locked}
         />
@@ -103,16 +113,19 @@ export function StoryDraftEditor({
 
 function Editor({
   engine,
+  projectId,
   ready,
   readOnly,
 }: {
   engine: DraftAutosave;
+  projectId: string;
   ready: boolean;
   readOnly: boolean;
 }) {
   const state = useSyncExternalStore(engine.subscribe, () => engine.snapshot);
   const sourceId = useId();
   const briefId = useId();
+  const sourceField = useRef<HTMLTextAreaElement>(null);
   const text =
     typeof state.content.sourceText === "string"
       ? state.content.sourceText
@@ -164,6 +177,7 @@ function Editor({
         <label htmlFor={sourceId}>故事原文</label>
         <textarea
           id={sourceId}
+          ref={sourceField}
           value={text}
           readOnly={readOnly}
           rows={10}
@@ -186,6 +200,13 @@ function Editor({
           placeholder="希望观众看到什么？风格、重点或限制是什么？"
         />
       </div>
+      <StoryStructure
+        content={state.content}
+        sourceField={sourceField}
+        readOnly={readOnly}
+        projectId={projectId}
+        onEdit={(content) => engine.edit(content)}
+      />
       {state.message && (
         <p role="alert" className="notice">
           {state.message}

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { businessRequest } from "../../electron/main/projects/client";
 import { taskRoutes } from "../../electron/shared/tasks";
 import { versionRoutes } from "../../electron/shared/versions";
+import { storyboardRoutes } from "../../electron/shared/storyboard";
 
 const servers: ReturnType<typeof createServer>[] = [];
 afterEach(async () => {
@@ -132,7 +133,7 @@ test("task transport admits every fixed route and rejects path injection without
     );
     expect(result.accepted).toBe(true);
   }
-  expect(received).toHaveLength(15);
+  expect(received).toHaveLength(16);
   for (const path of [
     `/api/v1/projects/${id}/tasks?url=https://example.com`,
     `/api/v1/projects/${id}/calls/../tasks`,
@@ -148,7 +149,7 @@ test("task transport admits every fixed route and rejects path injection without
       }),
     ).rejects.toMatchObject({ code: "REQUEST_INVALID" });
   }
-  expect(received).toHaveLength(15);
+  expect(received).toHaveLength(16);
 });
 
 test("version transport admits only the fixed artifact, adoption and check routes", async () => {
@@ -180,7 +181,10 @@ test("version transport admits only the fixed artifact, adoption and check route
     backendVersion: "0.1.0",
   };
   const id = randomUUID();
-  for (const route of Object.values(versionRoutes)) {
+  for (const route of [
+    ...Object.values(versionRoutes),
+    ...Object.values(storyboardRoutes),
+  ]) {
     const buildPath = route.path as (value: Record<string, unknown>) => string;
     const result = await businessRequest(
       endpoint,
@@ -192,23 +196,26 @@ test("version transport admits only the fixed artifact, adoption and check route
           artifactId: id,
           adoptionId: id,
           checkId: id,
+          shotId: id,
+          phase: "image",
           cursor: id,
           limit: 50,
         }),
         windowId: 1,
         sessionId: id,
-        body: route.method === "POST" ? {} : undefined,
+        body: route.method !== "GET" ? {} : undefined,
         schema: z.strictObject({ accepted: z.literal(true) }),
       },
     );
     expect(result.accepted).toBe(true);
   }
-  expect(received).toHaveLength(9);
+  expect(received).toHaveLength(14);
   for (const path of [
     `/api/v1/projects/${id}/artifacts/${id}/revisions?limit=50&cursor=../private`,
     `/api/v1/projects/${id}/artifacts/${id}/../check-reports/${id}`,
     `/api/v1/projects/${id}/check-reports/${id}?include=private`,
     `/api/v1/projects/${id}/adoptions/${id}/undo/extra`,
+    `/api/v1/projects/${id}/storyboard/shots/${id}/prompt?phase=image&url=private`,
   ]) {
     await expect(
       businessRequest(endpoint, new AbortController().signal, {
@@ -220,5 +227,5 @@ test("version transport admits only the fixed artifact, adoption and check route
       }),
     ).rejects.toMatchObject({ code: "REQUEST_INVALID" });
   }
-  expect(received).toHaveLength(9);
+  expect(received).toHaveLength(14);
 });

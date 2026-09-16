@@ -26,6 +26,8 @@ BUSINESS_WRITES = {
     ("PUT", "/api/v1/settings/media-tools"),
     ("PUT", "/api/v1/settings/storage"),
     ("POST", "/api/v1/connection-checks"),
+    ("POST", "/api/v1/diagnostics"),
+    ("POST", "/api/v1/diagnostics/preview"),
 }
 _PATH_UUID = UUID_PATTERN.removeprefix("^").removesuffix("$")
 DRAFT_PATH = re.compile(rf"/api/v1/projects/{_PATH_UUID}/drafts/{_PATH_UUID}")
@@ -39,9 +41,11 @@ STAGE_MODELS_PATH = re.compile(rf"/api/v1/projects/{_PATH_UUID}/stage-models")
 # segments, so malformed secrets receive a static validation error without echoes.
 CREDENTIAL_PATH = re.compile(r"/api/v1/credentials/[^/]+")
 CREDENTIAL_DELETE_PATH = re.compile(r"/api/v1/credentials/[^/]+/delete")
-TASK_LIST_PATH = re.compile(rf"/api/v1/projects/{_PATH_UUID}/(?:tasks|cost-entries)")
+TASK_LIST_PATH = re.compile(
+    rf"/api/v1/projects/{_PATH_UUID}/(?:tasks|tasks/{_PATH_UUID}/candidates|cost-entries)"
+)
 TASK_READ_PATH = re.compile(
-    rf"/api/v1/projects/{_PATH_UUID}/(?:budget|cost-summary|task-plans/{_PATH_UUID}|tasks(?:/{_PATH_UUID})?|calls/{_PATH_UUID}|cost-entries)"
+    rf"/api/v1/projects/{_PATH_UUID}/(?:budget|cost-summary|task-plans/{_PATH_UUID}|tasks(?:/{_PATH_UUID}(?:/candidates)?)?|calls/{_PATH_UUID}|cost-entries)"
 )
 TASK_POST_PATH = re.compile(
     rf"/api/v1/projects/{_PATH_UUID}/(?:task-plans|tasks|tasks/{_PATH_UUID}/continue|calls/{_PATH_UUID}/(?:recovery|settlements))"
@@ -55,6 +59,21 @@ VERSION_READ_PATH = re.compile(
 )
 VERSION_POST_PATH = re.compile(
     rf"/api/v1/projects/{_PATH_UUID}/(?:artifacts/{_PATH_UUID}/(?:revisions|adoption-preview|adoptions|confirmations)|adoptions/{_PATH_UUID}/undo|local-checks)"
+)
+STORYBOARD_READ_PATH = re.compile(
+    rf"/api/v1/projects/{_PATH_UUID}/(?:storyboard(?:/shots/{_PATH_UUID}/prompt)?|coverage)"
+)
+STORYBOARD_PROMPT_PATH = re.compile(
+    rf"/api/v1/projects/{_PATH_UUID}/storyboard/shots/{_PATH_UUID}/prompt"
+)
+SHOT_ORDER_PATH = re.compile(rf"/api/v1/projects/{_PATH_UUID}/shot-order")
+REFERENCE_VERIFY_PATH = re.compile(rf"/api/v1/projects/{_PATH_UUID}/references/verification")
+PRODUCTION_READ_PATH = re.compile(
+    rf"/api/v1/projects/{_PATH_UUID}/(?:production|rights|issues|exports/{_PATH_UUID}|render-plans/{_PATH_UUID})"
+)
+ISSUES_PATH = re.compile(rf"/api/v1/projects/{_PATH_UUID}/issues")
+PRODUCTION_WRITE_PATH = re.compile(
+    rf"/api/v1/projects/{_PATH_UUID}/(?:timing-checks|video-readiness|mix/ducking|timeline/(?:edit-preview|replacement-preview)|render-plan-preview|animatics|exports|issues/{_PATH_UUID}/decisions|rights/{_PATH_UUID})"
 )
 
 
@@ -90,6 +109,18 @@ class RuntimeSecurity:
         draft_path = DRAFT_PATH.fullmatch(scope.get("path", "")) is not None
         business_write = (
             (scope.get("method"), scope.get("path")) in BUSINESS_WRITES
+            or (
+                scope.get("method") in {"POST", "PUT"}
+                and PRODUCTION_WRITE_PATH.fullmatch(scope.get("path", "")) is not None
+            )
+            or (
+                scope.get("method") == "PUT"
+                and SHOT_ORDER_PATH.fullmatch(scope.get("path", "")) is not None
+            )
+            or (
+                scope.get("method") == "POST"
+                and REFERENCE_VERIFY_PATH.fullmatch(scope.get("path", "")) is not None
+            )
             or (
                 scope.get("method") == "POST"
                 and VERSION_POST_PATH.fullmatch(scope.get("path", "")) is not None
@@ -134,6 +165,9 @@ class RuntimeSecurity:
         elif (
             TASK_READ_PATH.fullmatch(scope.get("path", ""))
             or VERSION_READ_PATH.fullmatch(scope.get("path", ""))
+            or STORYBOARD_READ_PATH.fullmatch(scope.get("path", ""))
+            or PRODUCTION_READ_PATH.fullmatch(scope.get("path", ""))
+            or PRODUCTION_WRITE_PATH.fullmatch(scope.get("path", ""))
             or scope.get("path") == "/api/v1/task-activity"
         ):
             response_limit = BUSINESS_LIMIT
@@ -211,6 +245,7 @@ class RuntimeSecurity:
                             MEDIA_LIST_PATH.fullmatch(scope.get("path", "")) is not None
                             or TASK_LIST_PATH.fullmatch(scope.get("path", "")) is not None
                             or REVISION_LIST_PATH.fullmatch(scope.get("path", "")) is not None
+                            or ISSUES_PATH.fullmatch(scope.get("path", "")) is not None
                         )
                         and len(query) <= 100
                         and len({key for key, _ in pairs}) == len(pairs)
@@ -224,6 +259,20 @@ class RuntimeSecurity:
                             for key, value in pairs
                         )
                     )
+                    if STORYBOARD_PROMPT_PATH.fullmatch(scope.get("path", "")):
+                        valid_query = scope.get("method") == "GET" and pairs in (
+                            [("phase", "image")],
+                            [("phase", "video")],
+                        )
+                    if re.fullmatch(
+                        rf"/api/v1/projects/{_PATH_UUID}/production", scope.get("path", "")
+                    ):
+                        valid_query = (
+                            scope.get("method") == "GET"
+                            and len(pairs) == 1
+                            and pairs[0][0] == "offset"
+                            and re.fullmatch(r"[0-9]{1,9}", pairs[0][1]) is not None
+                        )
                 except (ValueError, UnicodeError):
                     valid_query = False
                 if not valid_query:

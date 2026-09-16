@@ -74,7 +74,7 @@ def test_budget_and_plan_snapshot_replay(opened):
     assert invoke(service, session, "plan_task", command)["resourceId"] == frozen["id"]
     assert invoke(service, session, "get_budget")["executionMode"] == "synthetic"
     with connect(directory / "project.sqlite3", "ro") as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 5
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 7
         assert db.execute("SELECT count(*) FROM service_calls").fetchone()[0] == 0
 
 

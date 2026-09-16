@@ -72,6 +72,7 @@ test("comparison keeps selected, adopted and confirmed states distinct without e
       adopted: revision(oldId, "当前采用的原文"),
       selected: revision(newId, "正在查看的候选"),
       impact,
+      projectId: artifactId,
     }),
   );
   expect(html).toContain("当前采用");
@@ -85,6 +86,50 @@ test("comparison keeps selected, adopted and confirmed states distinct without e
   expect(html).not.toContain(sourceHash);
   expect(html).not.toContain(contentHash);
   expect(html).not.toContain("<pre");
+});
+
+test("image comparison renders local thumbnails for both adopted and selected references", () => {
+  const imageRevision = (id: string, mediaId: string): Revision => ({
+    id,
+    artifactId,
+    parentId: null,
+    payload: {
+      kind: "asset",
+      content: {
+        assetType: "character",
+        name: "门灯旅人",
+        identityAnchors: ["深色雨衣"],
+        allowedChanges: [],
+        states: [],
+        references: [
+          {
+            mediaId,
+            mediaHash: "c".repeat(64),
+            role: "identity",
+            order: 0,
+            state: "pending",
+            keep: [],
+            ignore: [],
+            crop: null,
+          },
+        ],
+      },
+    },
+    contentHash,
+    createdAt: "2026-09-16T08:00:00Z",
+  });
+  const html = renderToStaticMarkup(
+    createElement(RevisionComparison, {
+      artifact,
+      adopted: imageRevision(oldId, oldId),
+      selected: imageRevision(newId, newId),
+      impact: null,
+      projectId: artifactId,
+    }),
+  );
+  expect(html).toContain(`avi-media://local/${artifactId}/${oldId}`);
+  expect(html).toContain(`avi-media://local/${artifactId}/${newId}`);
+  expect(html.match(/<img/g)).toHaveLength(2);
 });
 
 test("confirmation requires a passing local report for the exact revision and every required rule", () => {

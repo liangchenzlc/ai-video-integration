@@ -6,7 +6,8 @@ import threading
 from pathlib import Path
 from typing import Any
 
-from app.storage import costs, task_plans, tasks
+from app.services import generated_media
+from app.storage import candidates, costs, task_plans, tasks
 from app.storage.database import connect
 from app.storage.errors import ProjectError
 from app.storage.settings import canonical
@@ -167,11 +168,63 @@ class TaskExecutor:
                         (remote, canonical(result) if result is not None else None, state, call_id),
                     )
                     tasks.event(db, call_id, "response", {"state": state, "remoteTaskId": remote})
+                    if (
+                        snapshot["step"]["purpose"] == "create"
+                        and snapshot.get("resultProtocolVersion") == "candidate-v1"
+                        and result is not None
+                    ):
+                        candidates.retain_raw(db, call_id, 0, result)
+                    if isinstance(result, dict) and result.get("resultType") == "image":
+                        try:
+                            candidates.validate_image_envelope(result, snapshot)
+                        except ProjectError:
+                            if (
+                                snapshot["step"]["purpose"] == "create"
+                                and snapshot.get("resultProtocolVersion") == "candidate-v1"
+                            ):
+                                candidates.invalidate(db, call_id, 0, "image")
+                            self._fail_in(
+                                db,
+                                task_id,
+                                call_id,
+                                "failed",
+                                candidates.INVALID_RESULT,
+                            )
+                            return
                     if result is None:
                         tasks.task_event(db, task_id, "result_unknown")
                         return
                 try:
-                    downloaded = adapter.download(result)
+                    media_record = None
+                    if isinstance(result, dict) and result.get("resultType") == "image":
+                        with connect(self.owner._application, "ro") as application:
+                            ffmpeg = application.execute(
+                                "SELECT ffmpeg_path FROM settings WHERE singleton=1"
+                            ).fetchone()[0]
+                        if ffmpeg is None:
+                            raise ProjectError("MEDIA_TOOLS_NOT_CONFIGURED", 422)
+                        media_record = generated_media.publish_image(
+                            directory,
+                            call_id,
+                            0,
+                            Path(ffmpeg),
+                            self.stop,
+                            synthetic=result.get("synthetic") is True,
+                            url=result.get("resultRef"),
+                        )
+                        downloaded = result
+                    else:
+                        downloaded = adapter.download(result)
+                except ProjectError as error:
+                    self._failure(
+                        directory,
+                        project_id,
+                        task_id,
+                        call_id,
+                        "pending_download",
+                        error.code,
+                    )
+                    return
                 except Exception:
                     self._failure(
                         directory,
@@ -185,10 +238,39 @@ class TaskExecutor:
                 with self.owner._mutex, connect(directory / "project.sqlite3") as db, db:
                     db.execute("BEGIN IMMEDIATE")
                     self.owner._project_row(db, project_id)
+                    if (
+                        snapshot["step"]["purpose"] == "create"
+                        and snapshot.get("resultProtocolVersion") == "candidate-v1"
+                    ):
+                        try:
+                            if (
+                                isinstance(downloaded, dict)
+                                and downloaded.get("resultType") == "image"
+                            ):
+                                assert media_record is not None
+                                media_id = generated_media.register(db, media_record)
+                                candidates.register_image_result(
+                                    db,
+                                    call_id,
+                                    0,
+                                    downloaded,
+                                    media_id,
+                                    media_record["sha256"],
+                                )
+                            else:
+                                candidates.register_text_result(db, call_id, 0, downloaded)
+                        except ProjectError:
+                            self._fail_in(
+                                db,
+                                task_id,
+                                call_id,
+                                "failed",
+                                candidates.INVALID_RESULT,
+                            )
+                            return
                     db.execute(
-                        "UPDATE service_calls SET "
-                        "state='succeeded',result_json=?,error_code=NULL WHERE id=?",
-                        (canonical(downloaded), call_id),
+                        "UPDATE service_calls SET state='succeeded',error_code=NULL WHERE id=?",
+                        (call_id,),
                     )
                     tasks.event(db, call_id, "succeeded", {"provenance": "synthetic"})
                     if action != "submit":

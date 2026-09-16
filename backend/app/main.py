@@ -1,7 +1,9 @@
 """Application factory. Importing this module never binds a port or reads user data."""
 
+import json
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -13,9 +15,13 @@ from app.api.errors import error_response
 from app.api.security import RuntimeSecurity
 from app.api.v1.media import media_router
 from app.api.v1.models import ErrorCode
+from app.api.v1.production import production_router
+from app.api.v1.production_audio import production_audio_router
 from app.api.v1.projects import ProjectStore, project_router
+from app.api.v1.rendering import rendering_router
 from app.api.v1.runtime import runtime_router
 from app.api.v1.settings import settings_router
+from app.api.v1.storyboard import storyboard_router
 from app.api.v1.tasks import tasks_router
 from app.api.v1.versions import versions_router
 from app.runtime.context import RuntimeContext
@@ -149,6 +155,11 @@ def create_app(context: RuntimeContext) -> FastAPI:
             "RECOVERY_NOT_ALLOWED": "当前状态不支持这个恢复动作，请核对原调用记录。",
             "EXECUTION_MODE_MISMATCH": "练习与真实生成不能混在同一项目，请新建对应项目。",
         }
+        messages.update(
+            json.loads(
+                (Path(__file__).parent / "schemas/production-errors.json").read_text("utf-8")
+            )
+        )
         code = error.code if error.code in messages else "STORAGE_UNAVAILABLE"
         action = "reopen_project" if code == "SESSION_EXPIRED" else "none"
         return JSONResponse(
@@ -170,4 +181,8 @@ def create_app(context: RuntimeContext) -> FastAPI:
     app.include_router(settings_router(projects))
     app.include_router(tasks_router(projects))
     app.include_router(versions_router(projects))
+    app.include_router(storyboard_router(projects))
+    app.include_router(production_router(projects))
+    app.include_router(production_audio_router(projects))
+    app.include_router(rendering_router(projects))
     return app

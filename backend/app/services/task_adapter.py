@@ -6,6 +6,45 @@ from app.storage.task_plans import CAPABILITY_ID
 
 
 class SyntheticAdapter:
+    @staticmethod
+    def _payload(request: dict[str, Any]) -> dict[str, Any]:
+        kind = request["inputPreview"]["kind"]
+        content = dict(request["inputPreview"]["payload"])
+        if kind == "story":
+            content.setdefault("inputType", "idea")
+            content.setdefault("approvalLevel", "proposal")
+            content.setdefault("outline", [])
+            content.setdefault("requirements", [])
+            content.setdefault("scenes", [])
+            content.setdefault("dialogues", [])
+            content.setdefault("adaptationNotes", [])
+        return {"kind": kind, "content": content}
+
+    @classmethod
+    def _result(cls, request: dict[str, Any]) -> dict[str, Any]:
+        if (
+            request["step"]["purpose"] == "create"
+            and request.get("stage") == "image"
+            and request["inputPreview"]["kind"] in {"asset", "shot"}
+        ):
+            return {
+                "provenance": "synthetic",
+                "resultProtocolVersion": "candidate-v1",
+                "resultType": "image",
+                "synthetic": True,
+            }
+        if request.get("stage") == "story":
+            return {
+                "provenance": "synthetic",
+                "resultProtocolVersion": "candidate-v1",
+                "payload": cls._payload(request),
+            }
+        return {
+            "provenance": "synthetic",
+            "kind": request["inputPreview"]["kind"],
+            "payload": request["inputPreview"]["payload"],
+        }
+
     def describe(self, phase: str) -> dict[str, Any]:
         return {
             "id": CAPABILITY_ID,
@@ -29,22 +68,11 @@ class SyntheticAdapter:
     def submit(self, request: dict[str, Any], submission_token: str) -> dict[str, Any]:
         return {
             "remoteTaskId": "synthetic-" + submission_token,
-            "result": {
-                "provenance": "synthetic",
-                "kind": request["inputPreview"]["kind"],
-                "payload": request["inputPreview"]["payload"],
-            },
+            "result": self._result(request),
         }
 
     def query(self, remote_task_id: str, request: dict[str, Any]) -> dict[str, Any]:
-        return {
-            "remoteTaskId": remote_task_id,
-            "result": {
-                "provenance": "synthetic",
-                "kind": request["inputPreview"]["kind"],
-                "payload": request["inputPreview"]["payload"],
-            },
-        }
+        return {"remoteTaskId": remote_task_id, "result": self._result(request)}
 
     def download(self, result: dict[str, Any]) -> dict[str, Any]:
         return result

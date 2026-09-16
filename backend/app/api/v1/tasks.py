@@ -24,6 +24,7 @@ from app.api.v1.tasks_models import (
     TaskPage,
     TaskPlan,
 )
+from app.api.v1.versions_models import RevisionPage
 
 
 def tasks_router(store: ProjectStore) -> APIRouter:
@@ -135,6 +136,31 @@ def tasks_router(store: ProjectStore) -> APIRouter:
     ) -> dict[str, Any]:
         return result(
             request, store.get().get_task(project_id, project_session(request), window, task_id)
+        )
+
+    @router.get(
+        "/projects/{project_id}/tasks/{task_id}/candidates",
+        operation_id="listTaskCandidates",
+        response_model=Envelope[RevisionPage],
+    )
+    def list_task_candidates(
+        project_id: Uuid,
+        request: Request,
+        task_id: Uuid,
+        cursor: Uuid | None = None,
+        limit: int = Query(50, ge=1, le=200),
+        window: int = Depends(window_identity),
+    ) -> dict[str, Any]:
+        return result(
+            request,
+            store.get().list_task_candidates(
+                project_id,
+                project_session(request),
+                window,
+                task_id,
+                cursor,
+                limit,
+            ),
         )
 
     @router.get(

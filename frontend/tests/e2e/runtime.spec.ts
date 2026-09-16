@@ -142,6 +142,7 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
         "projects",
         "restartBackend",
         "settings",
+        "storyboard",
         "tasks",
         "versions",
       ].sort(),
@@ -230,13 +231,16 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
       window.desktop.restartBackend({ expectedGeneration: "1" } as never),
     );
     expect(invalid.ok).toBe(false);
-    for (const name of [
-      "故事",
-      "视觉与分镜",
-      "镜头制作",
-      "声音与剪辑",
-      "检查与导出",
-    ]) {
+    for (const name of ["故事", "视觉与分镜"]) {
+      await page
+        .getByRole("navigation")
+        .getByRole("button", { name, exact: true })
+        .click();
+      await expect(
+        page.getByRole("heading", { name: "本地项目", exact: true }),
+      ).toBeVisible();
+    }
+    for (const name of ["镜头制作", "声音与剪辑", "检查与导出"]) {
       await page
         .getByRole("navigation")
         .getByRole("button", { name, exact: true })
@@ -319,7 +323,7 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
     });
     await page.screenshot({
       path: resolve(root, ".cache/desktop-screenshots/home.png"),
-      fullPage: true,
+      fullPage: false,
     });
     await writeFile(
       resolve(root, ".cache/t01-desktop-metrics.json"),

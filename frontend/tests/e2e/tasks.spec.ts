@@ -4,8 +4,12 @@ import { resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 
 test("synthetic plan is previewed before one real persistent start; lost response queries its original operation", async () => {
+  test.setTimeout(120_000);
   const workspace = resolve("../.cache/t04-desktop", randomUUID());
   const directory = resolve(workspace, "练习项目");
+  const ffmpeg = resolve(
+    "../.local/research-20260915/ffmpeg/ffmpeg-9.0.1-essentials_build/bin/ffmpeg.exe",
+  );
   await mkdir(directory, { recursive: true });
   await mkdir(resolve(workspace, "appdata"), { recursive: true });
   const env = Object.fromEntries(
@@ -51,11 +55,12 @@ test("synthetic plan is previewed before one real persistent start; lost respons
       .fill("温暖、克制，保持一个场景。");
     await expect(page.getByTestId("draft-save-status")).toContainText("已保存");
     await page.getByText("预算配置（元）", { exact: true }).click();
-    await page.getByLabel("项目总预算（元）", { exact: true }).fill("10");
+    await page.getByLabel("项目总预算（元）", { exact: true }).fill("20");
     await page.getByLabel("故事预算（元）", { exact: true }).fill("10");
+    await page.getByLabel("图像预算（元）", { exact: true }).fill("10");
     await page.getByRole("button", { name: "保存预算", exact: true }).click();
     await expect(page.getByRole("region", { name: "费用汇总" })).toContainText(
-      "¥ 10",
+      "¥ 20",
     );
     await page
       .getByRole("button", { name: "生成本地计划", exact: true })
@@ -66,13 +71,6 @@ test("synthetic plan is previewed before one real persistent start; lost respons
     await expect(
       page.getByRole("button", { name: "确认并启动任务", exact: true }),
     ).toBeDisabled();
-    await preview.evaluate((element) =>
-      element.scrollIntoView({ block: "start" }),
-    );
-    await page.screenshot({
-      path: resolve(workspace, "tasks-plan.png"),
-      fullPage: false,
-    });
     const before = await page.evaluate(async () => {
       const current = await window.desktop.projects.current();
       if (!current.ok || !current.data) throw new Error("Missing project");
@@ -86,7 +84,11 @@ test("synthetic plan is previewed before one real persistent start; lost respons
       ) as typeof import("node:http");
       const original = http.request;
       let dropped = false;
-      Object.assign(globalThis, { taskStartCount: 0 });
+      Object.assign(globalThis, {
+        taskStartCount: 0,
+        imageDraftSaveCount: 0,
+        dropNextImageDraftSave: false,
+      });
       http.request = ((
         options: import("node:http").RequestOptions,
         callback: (response: import("node:http").IncomingMessage) => void,
@@ -97,11 +99,29 @@ test("synthetic plan is previewed before one real persistent start; lost respons
         if (start)
           (globalThis as unknown as { taskStartCount: number })
             .taskStartCount++;
+        const globals = globalThis as unknown as {
+          imageDraftSaveCount: number;
+          dropNextImageDraftSave: boolean;
+        };
+        const imageDraftSave =
+          options.method === "PUT" &&
+          /\/drafts\/[0-9a-f-]+$/.test(options.path ?? "");
+        if (imageDraftSave) globals.imageDraftSaveCount++;
         const request = original(options, (response) => {
           if (start && !dropped && response.statusCode === 202) {
             dropped = true;
             response.resume();
             request.destroy(new Error("receipt intentionally lost"));
+          } else if (
+            imageDraftSave &&
+            globals.dropNextImageDraftSave &&
+            response.statusCode === 200
+          ) {
+            globals.dropNextImageDraftSave = false;
+            response.resume();
+            request.destroy(
+              new Error("image draft receipt intentionally lost"),
+            );
           } else callback(response);
         });
         return request;
@@ -126,26 +146,108 @@ test("synthetic plan is previewed before one real persistent start; lost respons
     await expect(
       page.getByRole("region", { name: "原任务详情" }),
     ).toContainText("已完成");
+    const textCandidates = page.getByRole("region", { name: "任务候选结果" });
+    await expect(textCandidates).toContainText("故事候选");
+    await expect(textCandidates).toContainText("本地固定合成");
+    await textCandidates
+      .getByRole("button", { name: "在版本面板中对照", exact: true })
+      .click();
+    const versionPanel = page.getByRole("region", { name: "版本对照与采用" });
+    await expect(versionPanel).toContainText("浏览不会改变作品");
+    await versionPanel
+      .getByRole("button", { name: "预览采用影响", exact: true })
+      .click();
+    await versionPanel
+      .getByRole("button", { name: "采用并标记待审核", exact: true })
+      .click();
+    await expect(versionPanel).toContainText("候选已采用");
+
+    await app.evaluate(() => {
+      (
+        globalThis as unknown as { dropNextImageDraftSave: boolean }
+      ).dropNextImageDraftSave = true;
+    });
+    await page.getByLabel("结果类型").selectOption("image");
+    await page.getByLabel("素材名称").fill("门灯旅人");
+    await page.getByLabel("身份锚点（每行一项）").fill("深色雨衣\n旧帆布包");
     await page
-      .getByRole("region", { name: "原任务详情" })
-      .evaluate((element) => element.scrollIntoView({ block: "start" }));
+      .getByRole("button", { name: "生成本地计划", exact: true })
+      .click();
+    await expect(page.getByText(/保存图像输入的响应尚待确认/)).toBeVisible();
+    await page.getByRole("button", { name: "查询原操作", exact: true }).click();
+    await page
+      .getByRole("button", { name: "生成本地计划", exact: true })
+      .click();
+    expect(
+      await app.evaluate(
+        () =>
+          (globalThis as unknown as { imageDraftSaveCount: number })
+            .imageDraftSaveCount,
+      ),
+    ).toBe(1);
+    await expect(preview).toContainText("门灯旅人");
+    await page
+      .getByLabel("我已核对输入、外发内容与最高费用，并接受本次披露")
+      .check();
+    await page
+      .getByRole("button", { name: "确认并启动任务", exact: true })
+      .click();
+    const imageDetail = page.getByRole("region", { name: "原任务详情" });
+    await expect(imageDetail).toBeVisible();
+    await expect(
+      imageDetail.getByRole("button", { name: "恢复原结果下载", exact: true }),
+    ).toBeVisible();
+    await app.evaluate(({ dialog }, file) => {
+      dialog.showOpenDialog = async () => ({
+        canceled: false,
+        filePaths: [file],
+      });
+    }, ffmpeg);
+    await page
+      .getByRole("region", { name: "项目素材", exact: true })
+      .getByRole("button", { name: "选择 FFmpeg", exact: true })
+      .click();
+    await expect(
+      page.getByRole("region", { name: "项目素材", exact: true }),
+    ).toContainText("FFmpeg 已配置");
+    await imageDetail
+      .getByRole("button", { name: "恢复原结果下载", exact: true })
+      .click();
+    await expect
+      .poll(async () => {
+        await imageDetail
+          .getByRole("button", { name: "查询原任务", exact: true })
+          .click();
+        return imageDetail.textContent();
+      })
+      .toContain("已完成");
+    const imageCandidates = page.getByRole("region", { name: "任务候选结果" });
+    await expect(imageCandidates).toContainText("角色图像候选：门灯旅人");
+    await expect(imageCandidates.getByRole("img")).toBeVisible();
+    await imageCandidates.evaluate((element) =>
+      element.scrollIntoView({ block: "start" }),
+    );
     await page.screenshot({
-      path: resolve(workspace, "tasks-result.png"),
+      path: resolve(workspace, "tasks-image-candidate.png"),
       fullPage: false,
     });
-    await page
-      .getByRole("region", { name: "费用汇总" })
-      .evaluate((element) => element.scrollIntoView({ block: "start" }));
-    await page.screenshot({
-      path: resolve(workspace, "tasks-costs.png"),
-      fullPage: false,
-    });
+    await imageCandidates
+      .getByRole("button", { name: "在版本面板中对照", exact: true })
+      .click();
+    await expect(versionPanel).toContainText("图像版本");
+    await versionPanel
+      .getByRole("button", { name: "预览采用影响", exact: true })
+      .click();
+    await versionPanel
+      .getByRole("button", { name: "采用并标记待审核", exact: true })
+      .click();
+    await expect(versionPanel).toContainText("候选已采用");
     expect(
       await app.evaluate(
         () =>
           (globalThis as unknown as { taskStartCount: number }).taskStartCount,
       ),
-    ).toBe(1);
+    ).toBe(2);
     const after = await page.evaluate(async () => {
       const current = await window.desktop.projects.current();
       if (!current.ok || !current.data) throw new Error("Missing project");
@@ -167,15 +269,21 @@ test("synthetic plan is previewed before one real persistent start; lost respons
       };
     });
     expect(after.mode).toBe("synthetic");
-    expect(after.tasks).toHaveLength(1);
+    expect(after.tasks).toHaveLength(2);
     expect(after.task.ok && after.task.data.callIds).toHaveLength(1);
+    const imageTask = after.tasks.find((item) => item.stage === "image");
+    expect(imageTask).toBeTruthy();
     await page.getByRole("button", { name: "关闭项目", exact: true }).click();
     await page
       .getByRole("button", { name: "任务恢复练习", exact: true })
       .click();
     await expect(page.getByRole("region", { name: "持久任务" })).toContainText(
-      after.tasks[0].id,
+      imageTask!.id,
     );
+    await page.getByRole("button", { name: new RegExp(imageTask!.id) }).click();
+    await expect(
+      page.getByRole("region", { name: "任务候选结果" }),
+    ).toContainText("门灯旅人");
     expect(errors).toEqual([]);
   } finally {
     await app.close();

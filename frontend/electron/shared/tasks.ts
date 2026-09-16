@@ -2,6 +2,7 @@ import { z } from "zod";
 import { projectUuid, receiptSchema, type ProjectResult } from "./projects";
 import { projectInputSchema } from "./drafts";
 import { phaseSchema, providerIdSchema } from "./settings";
+import { revisionPageSchema } from "./versions";
 const integer = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
 const text = z.string().min(1).max(2000);
 export const stages = [
@@ -254,6 +255,16 @@ export const taskRoutes = {
     projectInputSchema.extend({ taskId: projectUuid }),
     taskSchema,
     (i) => `${base(i)}/tasks/${i.taskId}`,
+  ),
+  candidates: route(
+    "GET",
+    projectInputSchema.extend({
+      taskId: projectUuid,
+      cursor: projectUuid.optional(),
+      limit: integer.min(1).max(200).optional(),
+    }),
+    revisionPageSchema,
+    (i) => `${base(i)}/tasks/${i.taskId}/candidates${page(i)}`,
   ),
   list: route(
     "GET",
