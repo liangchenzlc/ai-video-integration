@@ -240,10 +240,10 @@ def links_and_coverage():
                 else:
                     missing.append(f'{doc.name}: {target}')
     assert not missing, '\n'.join(missing)
-    assert len(historical) == 10, f'historical missing link count changed: {len(historical)}'
+    assert len(historical) <= 10, f'new historical missing links: {len(historical)}'
     for module in range(1, 15):
         assert list((TECH/'模块设计').glob(f'T{module:02d}-*.md')), module
-    return 'T01–T14 covered; no new broken links; 10 explicitly documented historical gaps'
+    return f'T01–T14 covered; no new broken links; {len(historical)} documented historical links absent on this machine'
 
 def t01_contract():
     spec = load('t01-http.openapi.json')

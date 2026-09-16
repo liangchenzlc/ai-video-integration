@@ -5,6 +5,9 @@ import type {
   CapabilitiesData,
 } from "../../electron/shared/runtime";
 import { safeError } from "../../electron/shared/runtime";
+import { SettingsPanel } from "./SettingsPanel";
+import { ProjectsHome } from "./ProjectsHome";
+import { TaskActivity } from "./TaskActivity";
 declare global {
   interface Window {
     desktop: DesktopBridge;
@@ -187,6 +190,11 @@ export function App() {
           </span>
         </header>
         <main id="main" tabIndex={-1}>
+          <TaskActivity
+            ready={state === "ready"}
+            runtimeId={runtime?.runtimeId ?? null}
+            onOpen={() => setPage("项目工具")}
+          />
           <section
             className={`runtime-panel ${state}`}
             aria-label="本地服务状态"
@@ -198,7 +206,7 @@ export function App() {
                 {runtime?.errorCode
                   ? safeError(runtime.errorCode).message
                   : state === "ready"
-                    ? "桌面连接已就绪。创作功能将随后续版本开放。"
+                    ? "本地服务已就绪，可以创建或打开项目。"
                     : state === "stopping"
                       ? "正在等待服务和所属进程退出，请稍候。"
                       : "启动期间可以浏览各个工作区。"}
@@ -216,6 +224,21 @@ export function App() {
               {message}
             </p>
           )}
+          <div hidden={page !== "首页" && page !== "项目工具"}>
+            <ProjectsHome
+              ready={state === "ready"}
+              runtimeId={runtime?.runtimeId ?? null}
+              onSettings={() => setPage("设置")}
+            />
+          </div>
+          <div hidden={page !== "设置"}>
+            <SettingsPanel
+              ready={state === "ready"}
+              active={page === "设置"}
+              runtimeId={runtime?.runtimeId ?? null}
+              onLocal={() => setPage("项目工具")}
+            />
+          </div>
           {page === "首页" ? (
             <>
               <div className="intro">
@@ -224,7 +247,7 @@ export function App() {
                 <p>
                   从故事到成片，每一步都可以查看、修改，再决定采用。
                   <br />
-                  当前版本已提供本地服务连接，项目与生成功能尚未开放。
+                  从本地项目开始准备，生成能力将逐步开放。
                 </p>
               </div>
               <section className="workflow" aria-labelledby="workflow-title">
@@ -252,25 +275,9 @@ export function App() {
                   ))}
                 </ol>
               </section>
-              <div className="project-note">
-                <h2>下一步，从保存第一个项目开始</h2>
-                <p>
-                  项目管理开放后，你可以创建本地项目、导入素材，并在关闭后继续创作。
-                </p>
-                <button
-                  className="text-button"
-                  onClick={() => setPage("项目工具")}
-                >
-                  查看项目工具
-                </button>
-              </div>
             </>
           ) : page === "设置" ? (
             <>
-              <div className="intro">
-                <h1>设置</h1>
-                <p>查看当前连接信息，处理本地服务问题。</p>
-              </div>
               <section className="settings-panel">
                 <h2>运行信息</h2>
                 <dl>
@@ -281,14 +288,12 @@ export function App() {
                   <dt>连接状态</dt>
                   <dd>{statusText[state]}</dd>
                   <dt>可用功能</dt>
-                  <dd>{capabilities ? "本地服务连接" : "等待服务验证"}</dd>
+                  <dd>
+                    {capabilities
+                      ? "本地服务连接、项目创建与打开"
+                      : "等待服务验证"}
+                  </dd>
                 </dl>
-              </section>
-              <section className="settings-panel">
-                <h2>模型与密钥</h2>
-                <p>
-                  尚未开放。后续可配置自己的服务商和密钥；当前版本不会发起模型调用或产生生成费用。
-                </p>
               </section>
               <details className="settings-panel">
                 <summary>连接问题与帮助</summary>
@@ -300,7 +305,7 @@ export function App() {
                 </button>
               </details>
             </>
-          ) : current ? (
+          ) : current && page !== "项目工具" ? (
             <>
               <div className="intro">
                 <span className="edition">{current.step}</span>
@@ -322,7 +327,7 @@ export function App() {
           ) : null}
         </main>
         <footer>
-          当前版本仅开放本地服务连接<span>不发起生成，不产生模型费用</span>
+          本地项目工作台<span>本地操作不产生模型费用</span>
         </footer>
       </div>
     </div>

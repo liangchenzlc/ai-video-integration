@@ -1,18 +1,18 @@
 {
   "scope": "design validation only, no product runtime or real provider tested",
-  "python": "3.12.4",
-  "sqlite": "3.45.3",
+  "python": "3.13.15",
+  "sqlite": "3.53.1",
   "passed": true,
   "results": [
     {
       "name": "contracts",
       "passed": true,
-      "detail": "56 operations; 119 schemas; all refs resolve"
+      "detail": "62 operations; 157 schemas; all refs resolve"
     },
     {
       "name": "transport_examples",
       "passed": true,
-      "detail": "91 positive shapes; 76 rejected negative shapes"
+      "detail": "97 positive shapes; 76 rejected negative shapes"
     },
     {
       "name": "domain_semantics",
@@ -32,7 +32,7 @@
     {
       "name": "links_and_module_coverage",
       "passed": true,
-      "detail": "T01–T14 covered; no new broken links; 10 explicitly documented historical gaps"
+      "detail": "T01–T14 covered; no new broken links; 0 documented historical links absent on this machine"
     }
   ]
 }

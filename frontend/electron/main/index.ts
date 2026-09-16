@@ -5,11 +5,16 @@ import { RuntimeSupervisor } from "./runtime/supervisor";
 import { launchBackend } from "./runtime/launch";
 import { installIpc } from "./ipc";
 import { allowedPage, productionCsp, developmentCsp } from "./security";
+import { confirmRendererLeave, createQuitGuard } from "./draft-flush";
 
 protocol.registerSchemesAsPrivileged([
   {
     scheme: "app",
     privileges: { standard: true, secure: true, supportFetchAPI: true },
+  },
+  {
+    scheme: "avi-media",
+    privileges: { standard: true, secure: true, stream: true },
   },
 ]);
 app.setName("AI Video Integration");
@@ -18,8 +23,13 @@ const development =
   process.env.ELECTRON_RENDERER_URL === "http://127.0.0.1:5173";
 const root = resolve(__dirname, "../../..");
 let window: BrowserWindow | undefined;
-let quitting = false;
 let supervisor: RuntimeSupervisor | undefined;
+const quitGuard = createQuitGuard({
+  confirm: () =>
+    window ? confirmRendererLeave(window, development) : Promise.resolve(true),
+  stop: () => supervisor?.stop("app_exit") ?? Promise.resolve(),
+  quit: () => app.quit(),
+});
 
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
@@ -30,14 +40,7 @@ else {
       window.focus();
     }
   });
-  app.on("before-quit", (event) => {
-    if (quitting) return;
-    event.preventDefault();
-    quitting = true;
-    void (supervisor?.stop("app_exit") ?? Promise.resolve())
-      .catch(() => {})
-      .finally(() => app.quit());
-  });
+  app.on("before-quit", quitGuard.beforeQuit);
   app.on("window-all-closed", () => app.quit());
   void app
     .whenReady()
@@ -102,6 +105,7 @@ else {
         callback({
           cancel:
             !(url.protocol === "app:" && url.host === "ui") &&
+            !(url.protocol === "avi-media:" && url.host === "local") &&
             !(
               development &&
               ["http:", "ws:"].includes(url.protocol) &&
@@ -145,12 +149,7 @@ else {
       window.webContents.on("will-attach-webview", (event) =>
         event.preventDefault(),
       );
-      window.on("close", (event) => {
-        if (!quitting) {
-          event.preventDefault();
-          app.quit();
-        }
-      });
+      window.on("close", quitGuard.beforeClose);
       supervisor = new RuntimeSupervisor({
         launch: () =>
           launchBackend(root, process.resourcesPath, app.isPackaged),

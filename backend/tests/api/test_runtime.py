@@ -99,8 +99,10 @@ async def test_health_and_capability_identity(context: RuntimeContext) -> None:
         matches_design(response.json(), "CapabilitiesResponse")
         caps = response.json()["data"]["capabilities"]
         assert [item["id"] for item in caps] == list(CAPABILITY_IDS)
-        assert [item["id"] for item in caps if item["enabled"]] == ["runtime"]
-        assert caps == EXAMPLES["capabilities"]["data"]["capabilities"]
+        assert [item["id"] for item in caps if item["enabled"]] == ["runtime", "projects"]
+        expected = copy.deepcopy(EXAMPLES["capabilities"]["data"]["capabilities"])
+        expected[1].update(enabled=True, reasonCode="AVAILABLE")
+        assert caps == expected
 
 
 @pytest.mark.anyio

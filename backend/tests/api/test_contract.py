@@ -32,7 +32,7 @@ def test_runtime_openapi_matches_design_structure() -> None:
     assert actual["info"]["version"] == DESIGN["info"]["version"]
     assert actual["security"] == DESIGN["security"]
     assert actual["components"]["securitySchemes"] == DESIGN["components"]["securitySchemes"]
-    assert set(actual["paths"]) == set(DESIGN["paths"])
+    assert set(DESIGN["paths"]) <= set(actual["paths"])
     for path, methods in DESIGN["paths"].items():
         assert set(actual["paths"][path]) == set(methods)
         for method, operation in methods.items():

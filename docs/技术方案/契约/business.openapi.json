@@ -2151,6 +2151,127 @@
         }
       }
     },
+    "/api/v1/settings/details": {
+      "get": {
+        "operationId": "getSettingsDetails",
+        "tags": [
+          "T03"
+        ],
+        "summary": "getSettingsDetails",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设计成功响应；不证明服务已实现",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/credentials/{providerId}": {
       "put": {
         "operationId": "setCredential",
@@ -2696,6 +2817,141 @@
       }
     },
     "/api/v1/projects/{projectId}/stage-models": {
+      "get": {
+        "operationId": "getStageModels",
+        "tags": [
+          "T03"
+        ],
+        "summary": "getStageModels",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Project-Session",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设计成功响应；不证明服务已实现",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StageModelsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "operationId": "configureStageModel",
         "tags": [
@@ -3539,6 +3795,280 @@
             }
           }
         }
+      },
+      "get": {
+        "operationId": "listTasks",
+        "tags": [
+          "T04"
+        ],
+        "summary": "listTasks",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Project-Session",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设计成功响应；不证明服务已实现",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskPageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/task-activity": {
+      "get": {
+        "operationId": "getTaskActivity",
+        "tags": [
+          "T04"
+        ],
+        "summary": "getTaskActivity",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设计成功响应；不证明服务已实现",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskActivityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/projects/{projectId}/tasks/{taskId}": {
@@ -4286,6 +4816,141 @@
             }
           }
         }
+      },
+      "get": {
+        "operationId": "getBudget",
+        "tags": [
+          "T04"
+        ],
+        "summary": "getBudget",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Project-Session",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设计成功响应；不证明服务已实现",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/projects/{projectId}/cost-summary": {
@@ -4884,6 +5549,151 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ExternalExpense"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/artifacts/{artifactId}": {
+      "get": {
+        "operationId": "getArtifact",
+        "tags": [
+          "T05"
+        ],
+        "summary": "getArtifact",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-Id",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "artifactId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Project-Session",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设计成功响应；不证明服务已实现",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactStateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "见共用错误与本模块规则",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
               }
             }
           }
@@ -9527,6 +10337,1134 @@
           }
         ]
       },
+      "DraftEditableStoryPayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "sourceText": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100000
+          },
+          "sourceHash": {
+            "$ref": "#/components/schemas/Hash"
+          },
+          "inputType": {
+            "type": "string",
+            "enum": [
+              "idea",
+              "excerpt",
+              "script"
+            ]
+          },
+          "approvalLevel": {
+            "type": "string",
+            "enum": [
+              "proposal",
+              "outline",
+              "scenes",
+              "dialogue"
+            ]
+          },
+          "brief": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 10000
+          },
+          "outline": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 4000
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableRequirement"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "scenes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableScene"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          },
+          "dialogues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableDialogue"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "adaptationNotes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 4000
+            },
+            "minItems": 0,
+            "maxItems": 200
+          }
+        }
+      },
+      "DraftEditableRequirement": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "fact",
+              "action",
+              "dialogue",
+              "sound",
+              "screenText",
+              "reveal"
+            ]
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DraftEditableSourceSpan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "keep",
+              "omit",
+              "replace",
+              "unresolved"
+            ]
+          },
+          "decisionReason": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          }
+        }
+      },
+      "DraftEditableSourceSpan": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "sourceHash": {
+            "$ref": "#/components/schemas/Hash"
+          },
+          "startCodePoint": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "endCodePoint": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "DraftEditableScene": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 200
+          },
+          "action": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 10000
+          },
+          "plannedMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "locationAssetId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "DraftEditableDialogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "speakerAssetId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "delivery": {
+            "type": "string",
+            "enum": [
+              "visible",
+              "VO",
+              "OS"
+            ]
+          },
+          "requirementIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "sceneId": {
+            "$ref": "#/components/schemas/Uuid"
+          }
+        }
+      },
+      "DraftEditableAssetPayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "assetType": {
+            "type": "string",
+            "enum": [
+              "character",
+              "location",
+              "prop",
+              "style"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 200
+          },
+          "identityAnchors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 2000
+            },
+            "minItems": 0,
+            "maxItems": 50
+          },
+          "allowedChanges": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 2000
+            },
+            "minItems": 0,
+            "maxItems": 50
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditablePersistentState"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableReference"
+            },
+            "minItems": 0,
+            "maxItems": 16
+          }
+        }
+      },
+      "DraftEditablePersistentState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "fromShotId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "throughShotId": {
+            "$ref": "#/components/schemas/Uuid"
+          }
+        }
+      },
+      "DraftEditableReference": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "mediaId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "mediaHash": {
+            "$ref": "#/components/schemas/Hash"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "style",
+              "location",
+              "prop",
+              "composition",
+              "firstFrame",
+              "keyMoment",
+              "endFrame",
+              "voiceDrive",
+              "voiceReference"
+            ]
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 15
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "imported",
+              "verified",
+              "missing",
+              "incompatible"
+            ]
+          },
+          "keep": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 2000
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "ignore": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 0,
+              "maxLength": 2000
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "crop": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "x": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "y": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "DraftEditableShotPayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "shotId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "sceneId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "assetRevisionIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "minItems": 0,
+            "maxItems": 30
+          },
+          "requirementIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "startState": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableEvent"
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "endState": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "camera": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 4000
+          },
+          "subjectHand": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "both",
+              "none"
+            ]
+          },
+          "plannedMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "dialogueIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "minItems": 0,
+            "maxItems": 50
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableReference"
+            },
+            "minItems": 0,
+            "maxItems": 16
+          },
+          "videoMediaId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pickupOfShotId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "use": {
+            "type": "string",
+            "enum": [
+              "original",
+              "supplement",
+              "alternate"
+            ]
+          }
+        }
+      },
+      "DraftEditableEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "time": {
+            "$ref": "#/components/schemas/DraftEditableTimeRange"
+          },
+          "requirementIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "carrier": {
+            "type": "string",
+            "enum": [
+              "visual",
+              "audio",
+              "subtitle",
+              "screenText"
+            ]
+          },
+          "observer": {
+            "type": "string",
+            "enum": [
+              "physical",
+              "character",
+              "audience"
+            ]
+          }
+        }
+      },
+      "DraftEditableTimeRange": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "startMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "endMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "DraftEditableSpeechPayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "dialogueId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "speakerAssetId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "mediaId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "measuredMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "voicedRanges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableTimeRange"
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "timingMethod": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "provider_sentence",
+              "provider_word",
+              "estimated"
+            ]
+          },
+          "voicePreset": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 200
+          },
+          "pronunciationNotes": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          }
+        }
+      },
+      "DraftEditableSubtitlePayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "audioRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timingMethod": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "provider_sentence",
+              "provider_word",
+              "estimated"
+            ]
+          },
+          "cues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableCue"
+            },
+            "minItems": 0,
+            "maxItems": 2000
+          }
+        }
+      },
+      "DraftEditableCue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "dialogueId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 500
+          },
+          "time": {
+            "$ref": "#/components/schemas/DraftEditableTimeRange"
+          },
+          "differsFromDialogue": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DraftEditableTimelinePayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "width": {
+            "enum": [
+              720,
+              1080,
+              1280,
+              1920
+            ]
+          },
+          "height": {
+            "enum": [
+              720,
+              1080,
+              1280,
+              1920
+            ]
+          },
+          "fps": {
+            "$ref": "#/components/schemas/DraftEditableFps"
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "tracks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableTrack"
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "clips": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableClip"
+            },
+            "minItems": 0,
+            "maxItems": 5000
+          },
+          "transitions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableTransition"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "burnSubtitles": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DraftEditableFps": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "numerator": {
+            "enum": [
+              24,
+              25,
+              30
+            ]
+          },
+          "denominator": {
+            "const": 1
+          }
+        }
+      },
+      "DraftEditableTrack": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "image",
+              "video",
+              "voice",
+              "music",
+              "sfx",
+              "subtitle"
+            ]
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "muted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DraftEditableClip": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "trackId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "shotId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mediaId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contentRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "startMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "inMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "outMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "gainDb": {
+            "type": "number",
+            "minimum": -96,
+            "maximum": 12
+          },
+          "linkedClipIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "keyframes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableKeyframe"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          }
+        }
+      },
+      "DraftEditableKeyframe": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "timeMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "property": {
+            "type": "string",
+            "enum": [
+              "x",
+              "y",
+              "scale",
+              "opacity",
+              "volume"
+            ]
+          },
+          "value": {
+            "type": "number",
+            "minimum": -10000,
+            "maximum": 10000
+          },
+          "interpolation": {
+            "type": "string",
+            "enum": [
+              "linear",
+              "hold"
+            ]
+          }
+        }
+      },
+      "DraftEditableTransition": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "fromClipId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "toClipId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "cut",
+              "dissolve",
+              "fade"
+            ]
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        }
+      },
+      "DraftEditableObservationPayload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "mediaId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "mediaHash": {
+            "$ref": "#/components/schemas/Hash"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "human",
+              "ai",
+              "technical"
+            ]
+          },
+          "observed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableTimeRange"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "usable": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEditableTimeRange"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "problems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [],
+              "properties": {
+                "time": {
+                  "$ref": "#/components/schemas/DraftEditableTimeRange"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 0,
+                  "maxLength": 2000
+                }
+              }
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "limitations": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 4000
+          }
+        }
+      },
+      "DraftPayload": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "content"
+            ],
+            "properties": {
+              "kind": {
+                "const": "story"
+              },
+              "content": {
+                "$ref": "#/components/schemas/DraftEditableStoryPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "content"
+            ],
+            "properties": {
+              "kind": {
+                "const": "asset"
+              },
+              "content": {
+                "$ref": "#/components/schemas/DraftEditableAssetPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "content"
+            ],
+            "properties": {
+              "kind": {
+                "const": "shot"
+              },
+              "content": {
+                "$ref": "#/components/schemas/DraftEditableShotPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "content"
+            ],
+            "properties": {
+              "kind": {
+                "const": "speech"
+              },
+              "content": {
+                "$ref": "#/components/schemas/DraftEditableSpeechPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "content"
+            ],
+            "properties": {
+              "kind": {
+                "const": "subtitle"
+              },
+              "content": {
+                "$ref": "#/components/schemas/DraftEditableSubtitlePayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "content"
+            ],
+            "properties": {
+              "kind": {
+                "const": "timeline"
+              },
+              "content": {
+                "$ref": "#/components/schemas/DraftEditableTimelinePayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "content"
+            ],
+            "properties": {
+              "kind": {
+                "const": "observation"
+              },
+              "content": {
+                "$ref": "#/components/schemas/DraftEditableObservationPayload"
+              }
+            }
+          }
+        ]
+      },
       "Revision": {
         "type": "object",
         "additionalProperties": false,
@@ -9583,7 +11521,8 @@
           "targetMs",
           "budgetMicroCny",
           "savedAt",
-          "readOnly"
+          "readOnly",
+          "executionMode"
         ],
         "properties": {
           "id": {
@@ -9650,6 +11589,20 @@
           },
           "readOnly": {
             "type": "boolean"
+          },
+          "executionMode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "synthetic",
+                  "real"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -9895,7 +11848,9 @@
           "templateVersion",
           "expiresAt",
           "executionMode",
-          "phase"
+          "phase",
+          "inputPreview",
+          "models"
         ],
         "properties": {
           "id": {
@@ -9970,8 +11925,168 @@
           },
           "phase": {
             "$ref": "#/components/schemas/PipelinePhase"
+          },
+          "inputPreview": {
+            "$ref": "#/components/schemas/TaskInputPreview"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "stepId",
+                "providerId",
+                "modelId",
+                "region",
+                "capabilityVersion"
+              ],
+              "properties": {
+                "stepId": {
+                  "$ref": "#/components/schemas/Uuid"
+                },
+                "providerId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "modelId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "region": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "capabilityVersion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              }
+            },
+            "minItems": 1,
+            "maxItems": 32
           }
         }
+      },
+      "TaskInputPreview": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "payload"
+            ],
+            "properties": {
+              "kind": {
+                "const": "story"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/DraftEditableStoryPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "payload"
+            ],
+            "properties": {
+              "kind": {
+                "const": "asset"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/DraftEditableAssetPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "payload"
+            ],
+            "properties": {
+              "kind": {
+                "const": "shot"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/DraftEditableShotPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "payload"
+            ],
+            "properties": {
+              "kind": {
+                "const": "speech"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/DraftEditableSpeechPayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "payload"
+            ],
+            "properties": {
+              "kind": {
+                "const": "subtitle"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/DraftEditableSubtitlePayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "payload"
+            ],
+            "properties": {
+              "kind": {
+                "const": "timeline"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/DraftEditableTimelinePayload"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "payload"
+            ],
+            "properties": {
+              "kind": {
+                "const": "observation"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/DraftEditableObservationPayload"
+              }
+            }
+          }
+        ]
       },
       "Task": {
         "type": "object",
@@ -10044,7 +12159,12 @@
           "billingState",
           "reservedMicroCny",
           "settledMicroCny",
-          "expiresAt"
+          "expiresAt",
+          "providerId",
+          "modelId",
+          "region",
+          "requestedAt",
+          "errorCode"
         ],
         "properties": {
           "id": {
@@ -10122,6 +12242,192 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "providerId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "modelId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "requestedAt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "errorCode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "TaskSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "planId",
+          "objectId",
+          "stage",
+          "phase",
+          "state",
+          "eventSequence",
+          "observationStopped",
+          "active"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "planId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "objectId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/Stage"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/PipelinePhase"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "complete",
+              "partial",
+              "result_unknown",
+              "pending_download",
+              "failed"
+            ]
+          },
+          "eventSequence": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "observationStopped": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TaskActivity": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "projectId",
+            "projectName",
+            "taskId",
+            "state"
+          ],
+          "properties": {
+            "projectId": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "projectName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "taskId": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "running",
+                "complete",
+                "partial",
+                "result_unknown",
+                "pending_download",
+                "failed"
+              ]
+            }
+          }
+        },
+        "minItems": 0,
+        "maxItems": 1000
+      },
+      "Budget": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "totalMicroCny",
+          "allocations",
+          "warningPercent",
+          "executionMode"
+        ],
+        "properties": {
+          "totalMicroCny": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "allocations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "stage",
+                "limitMicroCny"
+              ],
+              "properties": {
+                "stage": {
+                  "$ref": "#/components/schemas/Stage"
+                },
+                "limitMicroCny": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              }
+            },
+            "minItems": 0,
+            "maxItems": 8
+          },
+          "warningPercent": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "executionMode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "synthetic",
+                  "real"
+                ]
               },
               {
                 "type": "null"
@@ -10269,7 +12575,7 @@
               "$ref": "#/components/schemas/Uuid"
             },
             "minItems": 0,
-            "maxItems": 1000
+            "maxItems": 10000
           },
           "affectedScopes": {
             "type": "array",
@@ -10288,7 +12594,7 @@
               ]
             },
             "minItems": 0,
-            "maxItems": 1000
+            "maxItems": 9
           },
           "estimatedExtraMicroCny": {
             "anyOf": [
@@ -10307,10 +12613,10 @@
             "items": {
               "type": "string",
               "minLength": 1,
-              "maxLength": 2000
+              "maxLength": 100
             },
             "minItems": 0,
-            "maxItems": 1000
+            "maxItems": 200
           },
           "expiresAt": {
             "type": "string",
@@ -10690,6 +12996,181 @@
           }
         }
       },
+      "CredentialSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "providerId",
+          "kind",
+          "persistence",
+          "maskedSuffix"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "providerId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "api_key",
+              "oss"
+            ]
+          },
+          "persistence": {
+            "type": "string",
+            "enum": [
+              "dpapi",
+              "session_only"
+            ]
+          },
+          "maskedSuffix": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 4
+          }
+        }
+      },
+      "StorageProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "providerId",
+          "region",
+          "bucket",
+          "credentialRef",
+          "retentionHours",
+          "persistence"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "providerId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "bucket": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "credentialRef": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "retentionHours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 168
+          },
+          "persistence": {
+            "type": "string",
+            "enum": [
+              "dpapi",
+              "session_only"
+            ]
+          }
+        }
+      },
+      "SettingsDetails": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "credentials",
+          "storageProfiles",
+          "toolSummary"
+        ],
+        "properties": {
+          "credentials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CredentialSummary"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "storageProfiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StorageProfile"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "toolSummary": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "version",
+                  "h264",
+                  "aac",
+                  "subtitles"
+                ],
+                "properties": {
+                  "version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "h264": {
+                    "type": "boolean"
+                  },
+                  "aac": {
+                    "type": "boolean"
+                  },
+                  "subtitles": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "StageModels": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase",
+            "capabilityId",
+            "capabilityVersion"
+          ],
+          "properties": {
+            "phase": {
+              "$ref": "#/components/schemas/PipelinePhase"
+            },
+            "capabilityId": {
+              "$ref": "#/components/schemas/Uuid"
+            },
+            "capabilityVersion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        },
+        "minItems": 0,
+        "maxItems": 14
+      },
       "MutationReceipt": {
         "type": "object",
         "additionalProperties": false,
@@ -10919,7 +13400,7 @@
               "$ref": "#/components/schemas/Uuid"
             },
             "minItems": 0,
-            "maxItems": 1000
+            "maxItems": 2000
           },
           "method": {
             "type": "string",
@@ -11584,7 +14065,7 @@
                 ]
               },
               "content": {
-                "$ref": "#/components/schemas/TypedPayload"
+                "$ref": "#/components/schemas/DraftPayload"
               }
             }
           }
@@ -11617,7 +14098,7 @@
             ]
           },
           "content": {
-            "$ref": "#/components/schemas/TypedPayload"
+            "$ref": "#/components/schemas/DraftPayload"
           }
         }
       },
@@ -11793,6 +14274,22 @@
           },
           "data": {
             "$ref": "#/components/schemas/Settings"
+          }
+        }
+      },
+      "SettingsDetailsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SettingsDetails"
           }
         }
       },
@@ -11988,6 +14485,22 @@
           }
         }
       },
+      "StageModelsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/StageModels"
+          }
+        }
+      },
       "ConnectionCheck": {
         "type": "object",
         "additionalProperties": false,
@@ -12145,6 +14658,68 @@
                 "type": "boolean"
               }
             }
+          }
+        }
+      },
+      "TaskPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskSummary"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "TaskPageResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TaskPage"
+          }
+        }
+      },
+      "TaskActivityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TaskActivity"
           }
         }
       },
@@ -12308,6 +14883,22 @@
                 "maximum": 100
               }
             }
+          }
+        }
+      },
+      "BudgetResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Budget"
           }
         }
       },
@@ -12488,6 +15079,84 @@
           }
         }
       },
+      "ArtifactState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "adoptedRevisionId",
+          "confirmedRevisionId",
+          "needsUpdate",
+          "latestAdoptionId"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "story",
+              "asset",
+              "shot",
+              "speech",
+              "subtitle",
+              "timeline",
+              "observation"
+            ]
+          },
+          "adoptedRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "confirmedRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "needsUpdate": {
+            "type": "boolean"
+          },
+          "latestAdoptionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ArtifactStateResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "data"
+        ],
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ArtifactState"
+          }
+        }
+      },
       "RevisionPage": {
         "type": "object",
         "additionalProperties": false,
@@ -12507,9 +15176,7 @@
           "nextCursor": {
             "anyOf": [
               {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 500
+                "$ref": "#/components/schemas/Uuid"
               },
               {
                 "type": "null"
@@ -12671,7 +15338,7 @@
                 "items": {
                   "$ref": "#/components/schemas/Uuid"
                 },
-                "minItems": 0,
+                "minItems": 1,
                 "maxItems": 1000
               }
             }
@@ -13229,7 +15896,7 @@
                 "items": {
                   "$ref": "#/components/schemas/Uuid"
                 },
-                "minItems": 0,
+                "minItems": 1,
                 "maxItems": 1000
               },
               "ruleIds": {
@@ -13239,7 +15906,7 @@
                   "minLength": 1,
                   "maxLength": 100
                 },
-                "minItems": 0,
+                "minItems": 1,
                 "maxItems": 200
               }
             }

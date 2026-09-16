@@ -1,4 +1,8 @@
 import type { components } from "../../src/api/runtime-types";
+import type { SettingsBridge } from "./settings";
+import type { ProjectsBridge } from "./projects";
+import type { TasksBridge } from "./tasks";
+import type { VersionsBridge } from "./versions";
 
 export type CapabilitiesData = components["schemas"]["CapabilitiesData"];
 export type HealthData = components["schemas"]["HealthData"];
@@ -29,6 +33,14 @@ export interface SafeError {
 export type BridgeResult<T> =
   { ok: true; data: T } | { ok: false; error: SafeError };
 export interface DesktopBridge {
+  onBeforeLeave(
+    listener: () => Promise<boolean>,
+    onResume?: () => void,
+  ): () => void;
+  projects: ProjectsBridge;
+  settings: SettingsBridge;
+  tasks: TasksBridge;
+  versions: VersionsBridge;
   getRuntimeState(): Promise<BridgeResult<RuntimeSnapshot>>;
   getCapabilities(): Promise<BridgeResult<CapabilitiesData>>;
   restartBackend(input: {
@@ -42,6 +54,7 @@ export interface DesktopBridge {
   ): () => void;
 }
 const messages: Record<string, string> = {
+  DRAFT_FLUSH_FAILED: "修改尚未保存，请完成保存后再重启服务。",
   SPAWN_FAILED: "本地服务无法启动，请检查安装文件和访问权限。",
   START_TIMEOUT: "本地服务启动超时，可以尝试重启。",
   STOP_TIMEOUT: "未能确认服务已完全关闭，请退出应用后重新打开。",
@@ -71,6 +84,7 @@ export function safeError(code: string): SafeError {
               "REQUEST_INVALID",
               "RUNTIME_BUSY",
               "STALE_RUNTIME",
+              "DRAFT_FLUSH_FAILED",
             ].includes(code)
           ? "none"
           : "restart_backend",

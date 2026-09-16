@@ -7,7 +7,10 @@ function Invoke-Checked {
     if ($LASTEXITCODE -ne 0) { throw "Check failed ($LASTEXITCODE): $Executable" }
 }
 Push-Location $projectRoot
+$previousPytestRoot = $env:PYTEST_DEBUG_TEMPROOT
 try {
+    $env:PYTEST_DEBUG_TEMPROOT = Join-Path $projectRoot ('.cache/test-tmp/' + [guid]::NewGuid().ToString())
+    New-Item -ItemType Directory -Path $env:PYTEST_DEBUG_TEMPROOT -Force | Out-Null
     $projectPython = Join-Path $projectRoot 'backend/.venv/Scripts/python.exe'
     $projectNode = Join-Path $projectRoot '.tools/node/node.exe'
     Invoke-Checked 'powershell.exe' @('-NoProfile', '-File', 'scripts/check-t01-b-http.ps1')
@@ -29,4 +32,4 @@ try {
     } finally { $env:LOCALAPPDATA = $previousLocalAppData; Pop-Location }
     if ($SkipDesktop) { Write-Output 'Code checks passed; desktop acceptance explicitly NOT run.' }
     else { Write-Output 'T01 source checks and desktop tests passed. Packaged test is a separate command.' }
-} finally { Pop-Location }
+} finally { $env:PYTEST_DEBUG_TEMPROOT = $previousPytestRoot; Pop-Location }

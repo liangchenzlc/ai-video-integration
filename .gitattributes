@@ -1,2 +1,3 @@
 # Preserve the original bytes of user-provided reference assets.
+frontend/** text eol=lf
 docs/资料/零号档案资产/** -text

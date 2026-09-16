@@ -137,6 +137,15 @@
   },
   {
     "module": "T03",
+    "method": "GET",
+    "path": "/api/v1/settings/details",
+    "operationId": "getSettingsDetails",
+    "request": null,
+    "response": "SettingsDetails",
+    "status": 200
+  },
+  {
+    "module": "T03",
     "method": "PUT",
     "path": "/api/v1/credentials/{providerId}",
     "operationId": "setCredential",
@@ -169,6 +178,15 @@
     "operationId": "configureStorage",
     "request": "ConfigureStorage",
     "response": "MutationReceipt",
+    "status": 200
+  },
+  {
+    "module": "T03",
+    "method": "GET",
+    "path": "/api/v1/projects/{projectId}/stage-models",
+    "operationId": "getStageModels",
+    "request": null,
+    "response": "StageModels",
     "status": 200
   },
   {
@@ -228,6 +246,24 @@
   {
     "module": "T04",
     "method": "GET",
+    "path": "/api/v1/projects/{projectId}/tasks",
+    "operationId": "listTasks",
+    "request": null,
+    "response": "TaskPage",
+    "status": 200
+  },
+  {
+    "module": "T04",
+    "method": "GET",
+    "path": "/api/v1/task-activity",
+    "operationId": "getTaskActivity",
+    "request": null,
+    "response": "TaskActivity",
+    "status": 200
+  },
+  {
+    "module": "T04",
+    "method": "GET",
     "path": "/api/v1/projects/{projectId}/tasks/{taskId}",
     "operationId": "getTask",
     "request": null,
@@ -273,6 +309,15 @@
   {
     "module": "T04",
     "method": "GET",
+    "path": "/api/v1/projects/{projectId}/budget",
+    "operationId": "getBudget",
+    "request": null,
+    "response": "Budget",
+    "status": 200
+  },
+  {
+    "module": "T04",
+    "method": "GET",
     "path": "/api/v1/projects/{projectId}/cost-summary",
     "operationId": "getCostSummary",
     "request": null,
@@ -304,6 +349,15 @@
     "operationId": "setExternalExpense",
     "request": "ExternalExpense",
     "response": "MutationReceipt",
+    "status": 200
+  },
+  {
+    "module": "T05",
+    "method": "GET",
+    "path": "/api/v1/projects/{projectId}/artifacts/{artifactId}",
+    "operationId": "getArtifact",
+    "request": null,
+    "response": "ArtifactState",
     "status": 200
   },
   {

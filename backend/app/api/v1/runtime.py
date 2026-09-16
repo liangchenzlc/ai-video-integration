@@ -75,8 +75,10 @@ def runtime_router(context: RuntimeContext) -> APIRouter:
                 capabilities=[
                     Capability(
                         id=identity,
-                        enabled=identity == "runtime",
-                        reason_code="AVAILABLE" if identity == "runtime" else "NOT_IMPLEMENTED",
+                        enabled=identity in {"runtime", "projects"},
+                        reason_code="AVAILABLE"
+                        if identity in {"runtime", "projects"}
+                        else "NOT_IMPLEMENTED",
                     )
                     for identity in CAPABILITY_IDS
                 ],

@@ -10,7 +10,9 @@ CREATE TABLE projects (
  revision INTEGER NOT NULL DEFAULT 0 CHECK(revision>=0), event_sequence INTEGER NOT NULL DEFAULT 0 CHECK(event_sequence>=0),
  aspect TEXT NOT NULL CHECK(aspect IN ('16:9','9:16')), resolution TEXT NOT NULL CHECK(resolution IN ('720p','1080p')),
  fps_n INTEGER NOT NULL CHECK(fps_n IN (24,25,30)), fps_d INTEGER NOT NULL DEFAULT 1 CHECK(fps_d=1),
- target_ms INTEGER NOT NULL CHECK(target_ms>0), budget_micro_cny INTEGER NOT NULL DEFAULT 0 CHECK(budget_micro_cny>=0), saved_at TEXT
+ target_ms INTEGER NOT NULL CHECK(target_ms>0), budget_micro_cny INTEGER NOT NULL DEFAULT 0 CHECK(budget_micro_cny>=0), saved_at TEXT,
+ budget_warning_percent INTEGER NOT NULL DEFAULT 80 CHECK(budget_warning_percent BETWEEN 1 AND 100),
+ execution_mode TEXT CHECK(execution_mode IS NULL OR execution_mode IN ('synthetic','real'))
 ) STRICT;
 CREATE TABLE operations (
  id TEXT PRIMARY KEY, request_hash TEXT NOT NULL CHECK(length(request_hash)=64), operation_name TEXT NOT NULL,

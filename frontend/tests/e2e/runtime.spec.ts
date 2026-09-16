@@ -127,6 +127,8 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
         require: typeof (window as unknown as { require?: unknown }).require,
         process: typeof (window as unknown as { process?: unknown }).process,
         keys: Object.keys(window.desktop).sort(),
+        settingsKeys: Object.keys(window.desktop.settings).sort(),
+        versionKeys: Object.keys(window.desktop.versions).sort(),
       })),
     ).toEqual({
       require: "undefined",
@@ -135,8 +137,35 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
         "getCapabilities",
         "getRuntimeState",
         "onRuntimeStateChanged",
+        "onBeforeLeave",
         "openHelpLink",
+        "projects",
         "restartBackend",
+        "settings",
+        "tasks",
+        "versions",
+      ].sort(),
+      settingsKeys: [
+        "get",
+        "details",
+        "setCredential",
+        "deleteCredential",
+        "configureStorage",
+        "configureStage",
+        "stageModels",
+        "checkConnection",
+        "job",
+      ].sort(),
+      versionKeys: [
+        "artifact",
+        "list",
+        "create",
+        "preview",
+        "adopt",
+        "confirm",
+        "undo",
+        "runChecks",
+        "report",
       ].sort(),
     });
     const prefs = await app.evaluate(({ BrowserWindow }) => {
@@ -163,7 +192,7 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
         capabilities.data.capabilities
           .filter((x) => x.enabled)
           .map((x) => x.id),
-    ).toEqual(["runtime"]);
+    ).toEqual(["runtime", "projects"]);
     const state = await page.evaluate(() => window.desktop.getRuntimeState());
     expect(state.ok).toBe(true);
     // A second executable focuses this window and exits without another backend.
@@ -207,7 +236,6 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
       "镜头制作",
       "声音与剪辑",
       "检查与导出",
-      "项目工具",
     ]) {
       await page
         .getByRole("navigation")
@@ -217,6 +245,29 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
         page.getByRole("heading", { name: "这个工作区尚未开放" }),
       ).toBeVisible();
     }
+    await page
+      .getByRole("navigation")
+      .getByRole("button", { name: "项目工具", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: "本地项目", exact: true }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(() => Object.keys(window.desktop.projects).sort()),
+    ).toEqual(
+      [
+        "chooseDirectory",
+        "close",
+        "create",
+        "current",
+        "drafts",
+        "media",
+        "open",
+        "openRecent",
+        "operation",
+        "recent",
+      ].sort(),
+    );
     await page.getByRole("button", { name: "设置", exact: true }).click();
     await expect(page.getByRole("heading", { name: "运行信息" })).toBeVisible();
     await page
@@ -263,9 +314,11 @@ test("desktop navigation, real bridge, sandbox, restart and graceful close", asy
       .toMatchObject({ supervisor: false, api: false });
     watcher.close();
     watcher = await observe(app);
-    await mkdir(resolve(root, "docs/开发记录/截图"), { recursive: true });
+    await mkdir(resolve(root, ".cache/desktop-screenshots"), {
+      recursive: true,
+    });
     await page.screenshot({
-      path: resolve(root, "docs/开发记录/截图/T01-首页.png"),
+      path: resolve(root, ".cache/desktop-screenshots/home.png"),
       fullPage: true,
     });
     await writeFile(

@@ -56,19 +56,60 @@ S['TimelinePayload'] = obj(width={'enum': [720, 1080, 1280, 1920]}, height={'enu
 S['ObservationPayload'] = obj(mediaId=ref('Uuid'), mediaHash=ref('Hash'), method=enum('human', 'ai', 'technical'), observed=arr(ref('TimeRange')), usable=arr(ref('TimeRange')), problems=arr(obj(time=ref('TimeRange'), text=string())), limitations=string(4000, 0))
 payloads = {'story': 'StoryPayload', 'asset': 'AssetPayload', 'shot': 'ShotPayload', 'speech': 'SpeechPayload', 'subtitle': 'SubtitlePayload', 'timeline': 'TimelinePayload', 'observation': 'ObservationPayload'}
 S['TypedPayload'] = {'oneOf': [obj(kind={'const': kind}, content=ref(schema)) for kind, schema in payloads.items()]}
+
+# Drafts are editable partial values; complete artifact schemas remain unchanged.
+# Preserve structural types/IDs/enums/limits while allowing unfinished text/objects/lists.
+def draft_schema(schema):
+    value = copy.deepcopy(schema)
+    if '$ref' in value:
+        name = value['$ref'].rsplit('/', 1)[-1]
+        target = S[name]
+        if target.get('type') not in ('object', 'array'):
+            return value
+        draft_name = 'DraftEditable' + name
+        if draft_name not in S:
+            S[draft_name] = {}  # reserve before descending into references
+            S[draft_name] = draft_schema(target)
+        return ref(draft_name)
+    if value.get('type') == 'object':
+        value['required'] = []
+        value['properties'] = {name: draft_schema(child) for name, child in value['properties'].items()}
+    elif value.get('type') == 'array':
+        value['minItems'] = 0
+        value['items'] = draft_schema(value['items'])
+    elif value.get('type') == 'string' and 'pattern' not in value and 'enum' not in value:
+        value['minLength'] = 0
+    for key in ('oneOf', 'anyOf'):
+        if key in value:
+            value[key] = [draft_schema(child) for child in value[key]]
+    return value
+
+S['DraftPayload'] = {'oneOf': [obj(kind={'const': kind}, content=draft_schema(ref(schema))) for kind, schema in payloads.items()]}
 S['Revision'] = obj(id=ref('Uuid'), artifactId=ref('Uuid'), parentId=nullable(ref('Uuid')), payload=ref('TypedPayload'), contentHash=ref('Hash'), createdAt=string(40))
 S['Project'] = obj(id=ref('Uuid'), name=string(120), revision=integer(), eventSequence=integer(), formatVersion=integer(1), aspect=enum('16:9', '9:16'), resolution=enum('720p', '1080p'), fps=ref('Fps'), targetMs=integer(1), budgetMicroCny=integer(), savedAt=nullable(string(40)), readOnly=BOOL)
+S['Project']['properties']['executionMode'] = nullable(enum('synthetic', 'real'))
+S['Project']['required'].append('executionMode')
 S['Media'] = obj(id=ref('Uuid'), sha256=ref('Hash'), byteLength=integer(1), mime=enum('image/png', 'image/jpeg', 'video/mp4', 'audio/wav', 'audio/mpeg', 'audio/mp4'), durationMs=nullable(integer(1)), width=nullable(integer(1)), height=nullable(integer(1)), availability=enum('staging', 'available', 'missing', 'quarantined'), provenance=enum('imported', 'generated', 'derived', 'synthetic'))
 S['Job'] = obj(id=ref('Uuid'), kind=enum('import', 'probe', 'animatic', 'export', 'diagnostic', 'local_check'), state=enum('queued', 'running', 'succeeded', 'failed', 'cancelled'), progress={'type': 'number', 'minimum': 0, 'maximum': 1}, resultId=nullable(ref('Uuid')), errorCode=nullable(string(100)))
 S['TaskStep'] = obj(id=ref('Uuid'), purpose=enum('create', 'revise', 'precheck'), capabilityId=ref('Uuid'), maxCalls=integer(1, 16), requestedMs=nullable(integer(1)), maxMicroCny=integer(), disclosure=arr(enum('text', 'image', 'audio', 'video', 'upload')))
 S['TaskPlan'] = obj(id=ref('Uuid'), objectId=ref('Uuid'), stage=ref('Stage'), goal=string(), inputRevisionIds=arr(ref('Uuid')), inputMediaHashes=arr(ref('Hash')), steps=arr(ref('TaskStep'), 32, 1), candidates=integer(1, 8), maximumMicroCny=integer(), priceVersion=string(100), templateVersion=string(100), expiresAt=string(40), executionMode=enum('synthetic', 'real'))
 S['TaskPlan']['properties']['phase'] = ref('PipelinePhase')
 S['TaskPlan']['required'].append('phase')
+S['TaskInputPreview'] = {'oneOf': [obj(kind={'const': kind}, payload=draft_schema(ref(schema))) for kind, schema in payloads.items()]}
+S['TaskPlan']['properties']['inputPreview'] = ref('TaskInputPreview')
+S['TaskPlan']['properties']['models'] = arr(obj(stepId=ref('Uuid'), providerId=string(100), modelId=string(200), region=string(100), capabilityVersion=string(100)), 32, 1)
+S['TaskPlan']['required'] += ['inputPreview', 'models']
 S['Task'] = obj(id=ref('Uuid'), planId=ref('Uuid'), state=enum('pending', 'running', 'complete', 'partial', 'result_unknown', 'pending_download', 'failed'), eventSequence=integer(), callIds=arr(ref('Uuid')), candidateRevisionIds=arr(ref('Uuid')), observationStopped=BOOL)
 S['Call'] = obj(id=ref('Uuid'), taskId=ref('Uuid'), stepId=ref('Uuid'), submissionToken=ref('Uuid'), remoteTaskId=nullable(string(300)), state=enum('prepared', 'submitting', 'running', 'result_unknown', 'pending_download', 'succeeded', 'failed', 'cancelled'), resultMediaIds=arr(ref('Uuid')), billingState=enum('pending', 'settled'), reservedMicroCny=integer(), settledMicroCny=nullable(integer()), expiresAt=nullable(string(40)))
+for key, schema in {'providerId': string(100), 'modelId': string(200), 'region': string(100), 'requestedAt': string(40), 'errorCode': nullable(string(100))}.items():
+    S['Call']['properties'][key] = schema
+    S['Call']['required'].append(key)
+S['TaskSummary'] = obj(id=ref('Uuid'), planId=ref('Uuid'), objectId=ref('Uuid'), stage=ref('Stage'), phase=ref('PipelinePhase'), state=copy.deepcopy(S['Task']['properties']['state']), eventSequence=integer(), observationStopped=BOOL, active=BOOL)
+S['TaskActivity'] = arr(obj(projectId=ref('Uuid'), projectName=string(120), taskId=ref('Uuid'), state=copy.deepcopy(S['Task']['properties']['state'])))
+S['Budget'] = obj(totalMicroCny=integer(), allocations=arr(obj(stage=ref('Stage'), limitMicroCny=integer()), 8), warningPercent=integer(1,100), executionMode=nullable(enum('synthetic','real')))
 S['CostSummary'] = obj(settledMicroCny=integer(), reservedMicroCny=integer(), remainingWorkMicroCny=integer(), reworkScenarioMicroCny=integer(), forecastMicroCny=integer(), budgetMicroCny=integer(), containsUnknown=BOOL, estimateVersion=string(100))
 S['CostEntry'] = obj(callId=ref('Uuid'), state=enum('pending', 'settled'), reservedMicroCny=integer(), settledMicroCny=nullable(integer()), basis=string(2000, 0))
-S['Impact'] = obj(previewId=ref('Uuid'), artifactId=ref('Uuid'), fromRevisionId=nullable(ref('Uuid')), toRevisionId=ref('Uuid'), affectedArtifactIds=arr(ref('Uuid')), affectedScopes=arr(enum('identityVisual', 'dialogueAudio', 'subtitleTiming', 'referenceInput', 'requirementCoverage', 'revealTiming', 'timelinePlacement', 'mix', 'export')), estimatedExtraMicroCny=nullable(integer()), requiredChecks=arr(string()), expiresAt=string(40))
+S['Impact'] = obj(previewId=ref('Uuid'), artifactId=ref('Uuid'), fromRevisionId=nullable(ref('Uuid')), toRevisionId=ref('Uuid'), affectedArtifactIds=arr(ref('Uuid'),10000), affectedScopes=arr(enum('identityVisual', 'dialogueAudio', 'subtitleTiming', 'referenceInput', 'requirementCoverage', 'revealTiming', 'timelinePlacement', 'mix', 'export'),9), estimatedExtraMicroCny=nullable(integer()), requiredChecks=arr(string(100),200), expiresAt=string(40))
 S['Issue'] = obj(id=ref('Uuid'), ruleId=string(100), ruleVersion=string(100), artifactId=ref('Uuid'), revisionId=ref('Uuid'), baselineRevisionId=nullable(ref('Uuid')), severity=enum('blocking', 'unknown_required', 'deviation', 'advice'), status=enum('open', 'fixing', 'recheck', 'resolved', 'accepted_deviation'), message=string(), evidence=string(4000, 0), time=nullable(ref('TimeRange')), method=enum('local', 'ai', 'human'), limitations=string(4000, 0))
 S['Capability'] = obj(id=ref('Uuid'), providerId=string(100), modelId=string(200), region=string(100), version=string(100), stage=ref('Stage'), accountState=enum('unknown', 'available', 'unavailable'), interfaceState=enum('unverified', 'verified', 'unavailable'), qualityState=enum('unverified', 'research_only', 'verified'), enabled=BOOL, maxReferences=integer(0, 16), supportedReferenceRoles=arr(string(100), 16), durationOptionsMs=arr(integer(1), 100), supportsQuery=BOOL, supportsCancel=BOOL, priceSource=string(2000), priceDate=string(40), restrictions=arr(string()))
 for key, schema in {'phases': arr(ref('PipelinePhase'),14,1), 'supportsAudioDrive': BOOL, 'supportsLipsync': BOOL, 'voicePresets': arr(string(200),1000), 'maxInputBytes': nullable(integer(1)), 'maxInputCodePoints': nullable(integer(1)), 'resultLifetimeSeconds': nullable(integer(1)), 'supportsAnonymousResultDownload': BOOL}.items():
@@ -76,12 +117,16 @@ for key, schema in {'phases': arr(ref('PipelinePhase'),14,1), 'supportsAudioDriv
     S['Capability']['required'].append(key)
 S['Job']['properties']['kind']['enum'].append('connection_check')
 S['Settings'] = obj(revision=integer(), providers=arr(obj(providerId=string(100), credentialConfigured=BOOL, maskedSuffix=nullable(string(4, 4)), storageConfigured=BOOL)), ffmpegConfigured=BOOL, capabilities=arr(ref('Capability')))
+S['CredentialSummary'] = obj(id=ref('Uuid'), providerId=string(100), kind=enum('api_key', 'oss'), persistence=enum('dpapi', 'session_only'), maskedSuffix=string(4, 4))
+S['StorageProfile'] = obj(id=ref('Uuid'), providerId=string(100), region=string(100), bucket=string(100), credentialRef=ref('Uuid'), retentionHours=integer(1, 168), persistence=enum('dpapi', 'session_only'))
+S['SettingsDetails'] = obj(credentials=arr(ref('CredentialSummary')), storageProfiles=arr(ref('StorageProfile')), toolSummary=nullable(obj(version=string(200), h264=BOOL, aac=BOOL, subtitles=BOOL)))
+S['StageModels'] = arr(obj(phase=ref('PipelinePhase'), capabilityId=ref('Uuid'), capabilityVersion=string(100)), 14)
 S['MutationReceipt'] = obj(operationId=ref('Uuid'), committedRevision=integer(), resourceId=ref('Uuid'), state=string(100))
 S['Operation'] = obj(operationId=ref('Uuid'), state=enum('committed', 'accepted'), receipt=ref('MutationReceipt'))
 S['Session'] = obj(projectId=ref('Uuid'), projectSessionId=ref('Uuid'), mode=enum('read', 'write'), project=ref('Project'))
 S['RightEvidence'] = obj(id=ref('Uuid'), mediaId=ref('Uuid'), source=string(), use=string(), evidenceMediaIds=arr(ref('Uuid')), state=enum('unverified', 'verified', 'recheck'), explanation=string(4000, 0))
 S['ExportRecord'] = obj(id=ref('Uuid'), timelineRevisionId=ref('Uuid'), jobId=ref('Uuid'), state=enum('pending', 'complete', 'failed', 'cancelled'), mediaId=nullable(ref('Uuid')), inputHash=ref('Hash'))
-S['CheckReport'] = obj(id=ref('Uuid'), revisionIds=arr(ref('Uuid'),1000,1), ruleIds=arr(string(100),200,1), outcome=enum('pass','fail','unknown','not_applicable'), issueIds=arr(ref('Uuid')), method=enum('local','ai','human'), observedRanges=arr(ref('TimeRange')), evidenceMediaIds=arr(ref('Uuid')), ruleVersion=string(100), limitations=string(4000,0))
+S['CheckReport'] = obj(id=ref('Uuid'), revisionIds=arr(ref('Uuid'),1000,1), ruleIds=arr(string(100),200,1), outcome=enum('pass','fail','unknown','not_applicable'), issueIds=arr(ref('Uuid'),2000), method=enum('local','ai','human'), observedRanges=arr(ref('TimeRange')), evidenceMediaIds=arr(ref('Uuid')), ruleVersion=string(100), limitations=string(4000,0))
 S['AcceptanceRecord'] = obj(id=ref('Uuid'), sampleId=string(40), reviewerId=string(100), evidenceMediaIds=arr(ref('Uuid')), technical=enum('pass', 'fail', 'unknown'), consistency=enum('pass', 'fail', 'unknown'), artistic=enum('pass', 'fail', 'unknown'), sound=enum('pass', 'fail', 'unknown'), notes=string(10000), provenance=enum('human', 'synthetic'))
 S['AdoptionSnapshot'] = obj(projectRevision=integer(), artifacts=arr(obj(artifactId=ref('Uuid'), adoptedRevisionId=nullable(ref('Uuid')), confirmedRevisionId=nullable(ref('Uuid')), needsUpdate=BOOL)), shotOrder=arr(ref('Uuid')), requirementBindings=arr(obj(requirementId=ref('Uuid'), shotRevisionIds=arr(ref('Uuid')))), activeTimelineRevisionId=nullable(ref('Uuid')))
 S['RenderPlan'] = obj(id=ref('Uuid'), compilerVersion=string(100), timelineRevisionId=ref('Uuid'), timeline=ref('TimelinePayload'), mediaHashes=arr(obj(mediaId=ref('Uuid'), sha256=ref('Hash'))), inputHash=ref('Hash'), videoCodec={'const':'h264'}, audioCodec=nullable({'const':'aac'}), purpose=enum('preview','animatic','export'))
@@ -128,9 +173,9 @@ endpoint('T02', 'post', '/project-sessions', 'openProject', 'OpenProject', 'Sess
 endpoint('T02', 'get', P, 'getProject', response='Project')
 endpoint('T02', 'get', '/operations/{operationId}', 'getGlobalOperation', response='Operation')
 endpoint('T02', 'get', P + '/operations/{operationId}', 'getProjectOperation', response='Operation')
-command('SaveDraft', draftId=ref('Uuid'), artifactId=ref('Uuid'), baseRevisionId=nullable(ref('Uuid')), content=ref('TypedPayload'))
+command('SaveDraft', draftId=ref('Uuid'), artifactId=ref('Uuid'), baseRevisionId=nullable(ref('Uuid')), content=ref('DraftPayload'))
 endpoint('T02', 'put', P + '/drafts/{draftId}', 'saveDraft', 'SaveDraft')
-S['Draft'] = obj(id=ref('Uuid'), artifactId=ref('Uuid'), baseRevisionId=nullable(ref('Uuid')), content=ref('TypedPayload'))
+S['Draft'] = obj(id=ref('Uuid'), artifactId=ref('Uuid'), baseRevisionId=nullable(ref('Uuid')), content=ref('DraftPayload'))
 endpoint('T02', 'get', P + '/drafts/{draftId}', 'getDraft', response='Draft')
 command('ImportMedia', fileGrantId=ref('Uuid'), purpose=enum('reference', 'speech', 'video', 'music', 'sfx', 'evidence'))
 endpoint('T02', 'post', P + '/imports', 'importMedia', 'ImportMedia', status=202)
@@ -150,6 +195,7 @@ stream['responses']['416'] = {'description': 'Range 越界，返回 Content-Rang
 ENDPOINTS[-1]['binary'] = True
 
 endpoint('T03', 'get', '/settings', 'getSettings', response='Settings')
+endpoint('T03', 'get', '/settings/details', 'getSettingsDetails', response='SettingsDetails')
 command('SetCredential', secret=ref('CredentialSecret'), persistence=enum('dpapi', 'session_only'))
 S['SetCredential']['properties']['payload']['properties']['secret']['writeOnly'] = True
 endpoint('T03', 'put', '/credentials/{providerId}', 'setCredential', 'SetCredential')
@@ -160,6 +206,7 @@ endpoint('T03', 'put', '/settings/media-tools', 'configureMediaTools', 'Configur
 command('ConfigureStorage', providerId=string(100), region=string(100), bucket=string(100), credentialRef=ref('Uuid'), retentionHours=integer(1, 168))
 endpoint('T03', 'put', '/settings/storage', 'configureStorage', 'ConfigureStorage')
 command('ConfigureStage', phase=ref('PipelinePhase'), capabilityId=ref('Uuid'))
+endpoint('T03', 'get', P + '/stage-models', 'getStageModels', response='StageModels')
 endpoint('T03', 'put', P + '/stage-models', 'configureStageModel', 'ConfigureStage')
 command('ConnectionCheck', capabilityId=ref('Uuid'))
 endpoint('T03', 'post', '/connection-checks', 'checkConnection', 'ConnectionCheck', status=202)
@@ -170,6 +217,8 @@ endpoint('T04', 'post', P + '/task-plans', 'planTask', 'PlanTask')
 endpoint('T04', 'get', P + '/task-plans/{planId}', 'getTaskPlan', response='TaskPlan')
 command('StartTask', planId=ref('Uuid'), authorizedMaximumMicroCny=integer(), disclosureAccepted=BOOL)
 endpoint('T04', 'post', P + '/tasks', 'startTask', 'StartTask', status=202)
+endpoint('T04', 'get', P + '/tasks', 'listTasks', response=page('TaskPage', 'TaskSummary'))
+endpoint('T04', 'get', '/task-activity', 'getTaskActivity', response='TaskActivity')
 endpoint('T04', 'get', P + '/tasks/{taskId}', 'getTask', response='Task')
 endpoint('T04', 'get', P + '/calls/{callId}', 'getCall', response='Call')
 command('RecoverCall', action=enum('query', 'download', 'stop_waiting', 'cancel_remote'))
@@ -178,6 +227,7 @@ command('ContinueTask', confirmedUnsubmittedOnly=BOOL)
 endpoint('T04', 'post', P + '/tasks/{taskId}/continue', 'continuePreparedTask', 'ContinueTask', status=202)
 command('SetBudget', totalMicroCny=integer(), allocations=arr(obj(stage=ref('Stage'), limitMicroCny=integer()), 8), warningPercent=integer(1, 100))
 endpoint('T04', 'put', P + '/budget', 'setBudget', 'SetBudget')
+endpoint('T04', 'get', P + '/budget', 'getBudget', response='Budget')
 endpoint('T04', 'get', P + '/cost-summary', 'getCostSummary', response='CostSummary')
 endpoint('T04', 'get', P + '/cost-entries', 'listCostEntries', response=page('CostEntryPage', 'CostEntry'))
 command('SettleCall', settledMicroCny=integer(), basis=string(), evidenceMediaIds=arr(ref('Uuid')), reason=string())
@@ -185,14 +235,17 @@ endpoint('T04', 'post', P + '/calls/{callId}/settlements', 'settleCall', 'Settle
 command('ExternalExpense', expenseId=ref('Uuid'), category=enum('storage', 'transfer', 'procurement'), state=enum('estimated', 'pending', 'settled'), amountMicroCny=integer(), basis=string())
 endpoint('T04', 'put', P + '/external-expenses/{expenseId}', 'setExternalExpense', 'ExternalExpense')
 
+S['ArtifactState'] = obj(id=ref('Uuid'), kind=enum('story','asset','shot','speech','subtitle','timeline','observation'), adoptedRevisionId=nullable(ref('Uuid')), confirmedRevisionId=nullable(ref('Uuid')), needsUpdate=BOOL, latestAdoptionId=nullable(ref('Uuid')))
+endpoint('T05', 'get', P + '/artifacts/{artifactId}', 'getArtifact', response='ArtifactState')
 endpoint('T05', 'get', P + '/artifacts/{artifactId}/revisions', 'listRevisions', response=page('RevisionPage', 'Revision'))
+S['RevisionPage']['properties']['nextCursor'] = nullable(ref('Uuid'))
 command('CreateRevision', draftId=ref('Uuid'))
 endpoint('T05', 'post', P + '/artifacts/{artifactId}/revisions', 'createRevision', 'CreateRevision', status=201)
 S['PreviewAdoption'] = obj(toRevisionId=ref('Uuid'), expectedRevision=integer())
 endpoint('T05', 'post', P + '/artifacts/{artifactId}/adoption-preview', 'previewAdoption', 'PreviewAdoption', 'Impact')
 command('AdoptRevision', previewId=ref('Uuid'), toRevisionId=ref('Uuid'), confirm=BOOL)
 endpoint('T05', 'post', P + '/artifacts/{artifactId}/adoptions', 'adoptRevision', 'AdoptRevision')
-command('ConfirmRevision', revisionId=ref('Uuid'), checkIds=arr(ref('Uuid')))
+command('ConfirmRevision', revisionId=ref('Uuid'), checkIds=arr(ref('Uuid'),1000,1))
 endpoint('T05', 'post', P + '/artifacts/{artifactId}/confirmations', 'confirmRevision', 'ConfirmRevision')
 command('UndoAdoption', adoptionId=ref('Uuid'))
 endpoint('T05', 'post', P + '/adoptions/{adoptionId}/undo', 'undoAdoption', 'UndoAdoption')
@@ -217,7 +270,7 @@ S['ReadinessResult'] = obj(ready=BOOL, blockers=arr(string()), warnings=arr(stri
 endpoint('T10', 'post', P + '/video-readiness', 'checkVideoReadiness', 'VideoReadiness', 'ReadinessResult')
 command('SaveRights', evidence=ref('RightEvidence'))
 endpoint('T11', 'put', P + '/rights/{evidenceId}', 'saveRightsEvidence', 'SaveRights')
-command('RunLocalChecks', revisionIds=arr(ref('Uuid')), ruleIds=arr(string(100), 200))
+command('RunLocalChecks', revisionIds=arr(ref('Uuid'), 1000, 1), ruleIds=arr(string(100), 200, 1))
 endpoint('T12', 'post', P + '/local-checks', 'runLocalChecks', 'RunLocalChecks', status=202)
 endpoint('T12', 'get', P + '/check-reports/{checkId}', 'getCheckReport', response='CheckReport')
 endpoint('T12', 'get', P + '/issues', 'listIssues', response=page('IssuePage', 'Issue'))

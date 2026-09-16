@@ -101,7 +101,8 @@
             "targetMs": 1,
             "budgetMicroCny": 0,
             "savedAt": null,
-            "readOnly": false
+            "readOnly": false,
+            "executionMode": null
           }
         }
       }
@@ -133,7 +134,8 @@
           "targetMs": 1,
           "budgetMicroCny": 0,
           "savedAt": null,
-          "readOnly": false
+          "readOnly": false,
+          "executionMode": null
         }
       }
     },
@@ -204,18 +206,7 @@
           "baseRevisionId": null,
           "content": {
             "kind": "story",
-            "content": {
-              "sourceText": "示例",
-              "sourceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              "inputType": "idea",
-              "approvalLevel": "proposal",
-              "brief": "示例",
-              "outline": [],
-              "requirements": [],
-              "scenes": [],
-              "dialogues": [],
-              "adaptationNotes": []
-            }
+            "content": {}
           }
         }
       },
@@ -247,18 +238,7 @@
           "baseRevisionId": null,
           "content": {
             "kind": "story",
-            "content": {
-              "sourceText": "示例",
-              "sourceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              "inputType": "idea",
-              "approvalLevel": "proposal",
-              "brief": "示例",
-              "outline": [],
-              "requirements": [],
-              "scenes": [],
-              "dialogues": [],
-              "adaptationNotes": []
-            }
+            "content": {}
           }
         }
       }
@@ -427,6 +407,25 @@
     },
     {
       "module": "T03",
+      "method": "GET",
+      "path": "/api/v1/settings/details",
+      "operationId": "getSettingsDetails",
+      "request": null,
+      "response": "SettingsDetails",
+      "status": 200,
+      "provenance": "synthetic",
+      "scope": "transport_shape_only; use domain.examples.json for semantic scenarios",
+      "responseBody": {
+        "requestId": "00000064-0000-4000-8000-000000000064",
+        "data": {
+          "credentials": [],
+          "storageProfiles": [],
+          "toolSummary": null
+        }
+      }
+    },
+    {
+      "module": "T03",
       "method": "PUT",
       "path": "/api/v1/credentials/{providerId}",
       "operationId": "setCredential",
@@ -539,6 +538,21 @@
           "resourceId": "00000001-0000-4000-8000-000000000001",
           "state": "示例"
         }
+      }
+    },
+    {
+      "module": "T03",
+      "method": "GET",
+      "path": "/api/v1/projects/{projectId}/stage-models",
+      "operationId": "getStageModels",
+      "request": null,
+      "response": "StageModels",
+      "status": 200,
+      "provenance": "synthetic",
+      "scope": "transport_shape_only; use domain.examples.json for semantic scenarios",
+      "responseBody": {
+        "requestId": "00000064-0000-4000-8000-000000000064",
+        "data": []
       }
     },
     {
@@ -688,7 +702,20 @@
           "templateVersion": "示例",
           "expiresAt": "示例",
           "executionMode": "synthetic",
-          "phase": "story_adaptation"
+          "phase": "story_adaptation",
+          "inputPreview": {
+            "kind": "story",
+            "payload": {}
+          },
+          "models": [
+            {
+              "stepId": "00000001-0000-4000-8000-000000000001",
+              "providerId": "示例",
+              "modelId": "示例",
+              "region": "示例",
+              "capabilityVersion": "示例"
+            }
+          ]
         }
       }
     },
@@ -719,6 +746,39 @@
           "resourceId": "00000001-0000-4000-8000-000000000001",
           "state": "示例"
         }
+      }
+    },
+    {
+      "module": "T04",
+      "method": "GET",
+      "path": "/api/v1/projects/{projectId}/tasks",
+      "operationId": "listTasks",
+      "request": null,
+      "response": "TaskPage",
+      "status": 200,
+      "provenance": "synthetic",
+      "scope": "transport_shape_only; use domain.examples.json for semantic scenarios",
+      "responseBody": {
+        "requestId": "00000064-0000-4000-8000-000000000064",
+        "data": {
+          "items": [],
+          "nextCursor": null
+        }
+      }
+    },
+    {
+      "module": "T04",
+      "method": "GET",
+      "path": "/api/v1/task-activity",
+      "operationId": "getTaskActivity",
+      "request": null,
+      "response": "TaskActivity",
+      "status": 200,
+      "provenance": "synthetic",
+      "scope": "transport_shape_only; use domain.examples.json for semantic scenarios",
+      "responseBody": {
+        "requestId": "00000064-0000-4000-8000-000000000064",
+        "data": []
       }
     },
     {
@@ -767,7 +827,12 @@
           "billingState": "pending",
           "reservedMicroCny": 0,
           "settledMicroCny": null,
-          "expiresAt": null
+          "expiresAt": null,
+          "providerId": "示例",
+          "modelId": "示例",
+          "region": "示例",
+          "requestedAt": "示例",
+          "errorCode": null
         }
       }
     },
@@ -851,6 +916,26 @@
           "committedRevision": 0,
           "resourceId": "00000001-0000-4000-8000-000000000001",
           "state": "示例"
+        }
+      }
+    },
+    {
+      "module": "T04",
+      "method": "GET",
+      "path": "/api/v1/projects/{projectId}/budget",
+      "operationId": "getBudget",
+      "request": null,
+      "response": "Budget",
+      "status": 200,
+      "provenance": "synthetic",
+      "scope": "transport_shape_only; use domain.examples.json for semantic scenarios",
+      "responseBody": {
+        "requestId": "00000064-0000-4000-8000-000000000064",
+        "data": {
+          "totalMicroCny": 0,
+          "allocations": [],
+          "warningPercent": 1,
+          "executionMode": null
         }
       }
     },
@@ -954,6 +1039,28 @@
           "committedRevision": 0,
           "resourceId": "00000001-0000-4000-8000-000000000001",
           "state": "示例"
+        }
+      }
+    },
+    {
+      "module": "T05",
+      "method": "GET",
+      "path": "/api/v1/projects/{projectId}/artifacts/{artifactId}",
+      "operationId": "getArtifact",
+      "request": null,
+      "response": "ArtifactState",
+      "status": 200,
+      "provenance": "synthetic",
+      "scope": "transport_shape_only; use domain.examples.json for semantic scenarios",
+      "responseBody": {
+        "requestId": "00000064-0000-4000-8000-000000000064",
+        "data": {
+          "id": "00000001-0000-4000-8000-000000000001",
+          "kind": "story",
+          "adoptedRevisionId": null,
+          "confirmedRevisionId": null,
+          "needsUpdate": false,
+          "latestAdoptionId": null
         }
       }
     },
@@ -1075,7 +1182,9 @@
         "expectedRevision": 0,
         "payload": {
           "revisionId": "00000001-0000-4000-8000-000000000001",
-          "checkIds": []
+          "checkIds": [
+            "00000001-0000-4000-8000-000000000001"
+          ]
         }
       },
       "responseBody": {
@@ -1365,8 +1474,12 @@
         "clientOperationId": "00000001-0000-4000-8000-000000000001",
         "expectedRevision": 0,
         "payload": {
-          "revisionIds": [],
-          "ruleIds": []
+          "revisionIds": [
+            "00000001-0000-4000-8000-000000000001"
+          ],
+          "ruleIds": [
+            "示例"
+          ]
         }
       },
       "responseBody": {
