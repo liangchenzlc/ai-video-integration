@@ -1,7 +1,4 @@
-import {
-  readEpisodeDraft,
-  readProjectDetails,
-} from "./project-detail-model";
+import { readEpisodeDraft, readProjectDetails } from "./project-detail-model";
 
 export type StageId = "source" | "script" | "assets" | "storyboard" | "video";
 export type Review = "not_started" | "review" | "confirmed" | "stale";
@@ -47,14 +44,23 @@ export type ShotItem = {
 export type GridBatch = {
   id: string;
   sheet: MediaRef;
-  cells: { index: number; shotId: string; ref: MediaRef | null; review: Review }[];
+  cells: {
+    index: number;
+    shotId: string;
+    ref: MediaRef | null;
+    review: Review;
+  }[];
 };
 export type EpisodeWorkflow = {
   version: 2;
   novel: string;
   scriptDraft: string;
   scriptCandidates: Candidate<string>[];
-  approvedScript: { text: string; aspect: "16:9" | "9:16"; style: string } | null;
+  approvedScript: {
+    text: string;
+    aspect: "16:9" | "9:16";
+    style: string;
+  } | null;
   aspect: "16:9" | "9:16";
   style: string;
   models: {
@@ -78,6 +84,184 @@ export type EpisodeWorkflow = {
     videoPrompt: string;
   };
 };
+
+const staleWhenPresent = (review: Review, hasResult: boolean): Review =>
+  hasResult ? "stale" : "not_started";
+
+const hasStoryboardResult = (shot: ShotItem) =>
+  shot.firstFrames.length > 0 || shot.endFrames.length > 0;
+const hasVideoResult = (shot: ShotItem) => shot.videos.length > 0;
+const hasGridResult = (state: EpisodeWorkflow) =>
+  state.gridBatches.some((batch) =>
+    batch.cells.some((cell) => cell.ref !== null),
+  );
+
+export function editScript(
+  state: EpisodeWorkflow,
+  text: string,
+): EpisodeWorkflow {
+  const hasAssets = state.assets.length > 0;
+  const hasStoryboard =
+    state.shots.some(hasStoryboardResult) || hasGridResult(state);
+  const hasVideos = state.shots.some(hasVideoResult);
+  return {
+    ...state,
+    scriptDraft: text,
+    assets: state.assets.map((asset) => ({
+      ...asset,
+      review: staleWhenPresent(asset.review, true),
+    })),
+    shots: state.shots.map((shot) => ({
+      ...shot,
+      review: staleWhenPresent(shot.review, true),
+      frameReview: staleWhenPresent(
+        shot.frameReview,
+        hasStoryboardResult(shot),
+      ),
+      videoReview: staleWhenPresent(shot.videoReview, hasVideoResult(shot)),
+    })),
+    reviews: {
+      ...state.reviews,
+      script: "review",
+      assets: staleWhenPresent(state.reviews.assets, hasAssets),
+      storyboard: staleWhenPresent(state.reviews.storyboard, hasStoryboard),
+      video: staleWhenPresent(state.reviews.video, hasVideos),
+    },
+  };
+}
+
+export function editAsset(
+  state: EpisodeWorkflow,
+  id: string,
+  patch: Partial<Pick<AssetItem, "name" | "description">>,
+): EpisodeWorkflow {
+  const affectedShots = state.shots.filter((shot) =>
+    shot.assetIds.includes(id),
+  );
+  const hasStoryboard =
+    affectedShots.some(hasStoryboardResult) || hasGridResult(state);
+  const hasVideos = affectedShots.some(hasVideoResult);
+  return {
+    ...state,
+    assets: state.assets.map((asset) =>
+      asset.id === id ? { ...asset, ...patch, review: "review" } : asset,
+    ),
+    shots: state.shots.map((shot) =>
+      shot.assetIds.includes(id)
+        ? {
+            ...shot,
+            frameReview: staleWhenPresent(
+              shot.frameReview,
+              hasStoryboardResult(shot),
+            ),
+            videoReview: staleWhenPresent(
+              shot.videoReview,
+              hasVideoResult(shot),
+            ),
+          }
+        : shot,
+    ),
+    reviews: {
+      ...state.reviews,
+      assets: "review",
+      storyboard: staleWhenPresent(state.reviews.storyboard, hasStoryboard),
+      video: staleWhenPresent(state.reviews.video, hasVideos),
+    },
+  };
+}
+
+export function editShot(
+  state: EpisodeWorkflow,
+  id: string,
+  patch: Partial<
+    Pick<
+      ShotItem,
+      "title" | "description" | "action" | "dialogue" | "plannedMs" | "assetIds"
+    >
+  >,
+): EpisodeWorkflow {
+  const target = state.shots.find((shot) => shot.id === id);
+  const hasStoryboard = target !== undefined && hasStoryboardResult(target);
+  const hasVideos = target !== undefined && hasVideoResult(target);
+  return {
+    ...state,
+    shots: state.shots.map((shot) =>
+      shot.id === id
+        ? {
+            ...shot,
+            ...patch,
+            review: "review",
+            frameReview: staleWhenPresent(
+              shot.frameReview,
+              hasStoryboardResult(shot),
+            ),
+            videoReview: staleWhenPresent(
+              shot.videoReview,
+              hasVideoResult(shot),
+            ),
+          }
+        : shot,
+    ),
+    reviews: {
+      ...state.reviews,
+      storyboard: staleWhenPresent(state.reviews.storyboard, hasStoryboard),
+      video: staleWhenPresent(state.reviews.video, hasVideos),
+    },
+  };
+}
+
+export function adoptFrame(
+  state: EpisodeWorkflow,
+  shotId: string,
+  role: "first" | "end",
+  candidateId: string,
+): EpisodeWorkflow {
+  const shot = state.shots.find((item) => item.id === shotId);
+  const candidates = role === "first" ? shot?.firstFrames : shot?.endFrames;
+  if (!shot || !candidates?.some((candidate) => candidate.id === candidateId))
+    return state;
+
+  return {
+    ...state,
+    shots: state.shots.map((item) =>
+      item.id === shotId
+        ? {
+            ...item,
+            ...(role === "first"
+              ? { selectedFirstId: candidateId }
+              : { selectedEndId: candidateId }),
+            frameReview: "confirmed",
+            videoReview: staleWhenPresent(
+              item.videoReview,
+              hasVideoResult(item),
+            ),
+          }
+        : item,
+    ),
+    reviews: {
+      ...state.reviews,
+      video: staleWhenPresent(state.reviews.video, hasVideoResult(shot)),
+    },
+  };
+}
+
+export function stageStatus(state: EpisodeWorkflow, id: StageId): Review {
+  if (id === "assets" && state.assets.some((asset) => asset.review === "stale"))
+    return "stale";
+  if (
+    id === "storyboard" &&
+    state.shots.some(
+      (shot) => shot.review === "stale" || shot.frameReview === "stale",
+    )
+  )
+    return "stale";
+  if (
+    id === "video" &&
+    state.shots.some((shot) => shot.videoReview === "stale")
+  )
+    return "stale";
+  return state.reviews[id];
+}
 
 type ReadStore = Pick<Storage, "getItem">;
 type WriteStore = Pick<Storage, "setItem">;
@@ -190,7 +374,9 @@ function isCandidate(value: unknown, validValue: (value: unknown) => boolean) {
 }
 
 function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 }
 
 function isAsset(value: unknown): value is AssetItem {
@@ -201,10 +387,12 @@ function isAsset(value: unknown): value is AssetItem {
     ["character", "scene", "prop"].includes(asset.kind ?? "") &&
     typeof asset.name === "string" &&
     typeof asset.description === "string" &&
-    (asset.linkedResourceId === null || typeof asset.linkedResourceId === "string") &&
+    (asset.linkedResourceId === null ||
+      typeof asset.linkedResourceId === "string") &&
     Array.isArray(asset.imageCandidates) &&
     asset.imageCandidates.every((item) => isCandidate(item, isMediaRef)) &&
-    (asset.selectedImageId === null || typeof asset.selectedImageId === "string") &&
+    (asset.selectedImageId === null ||
+      typeof asset.selectedImageId === "string") &&
     isReview(asset.review)
   );
 }
@@ -226,11 +414,13 @@ function isShot(value: unknown): value is ShotItem {
     isStringArray(shot.assetIds) &&
     isReview(shot.review) &&
     images(shot.firstFrames) &&
-    (shot.selectedFirstId === null || typeof shot.selectedFirstId === "string") &&
+    (shot.selectedFirstId === null ||
+      typeof shot.selectedFirstId === "string") &&
     images(shot.endFrames) &&
     (shot.selectedEndId === null || typeof shot.selectedEndId === "string") &&
     images(shot.videos) &&
-    (shot.selectedVideoId === null || typeof shot.selectedVideoId === "string") &&
+    (shot.selectedVideoId === null ||
+      typeof shot.selectedVideoId === "string") &&
     isReview(shot.frameReview) &&
     isReview(shot.videoReview)
   );
@@ -290,7 +480,9 @@ function isWorkflow(value: unknown): value is EpisodeWorkflow {
     typeof state.novel === "string" &&
     typeof state.scriptDraft === "string" &&
     Array.isArray(state.scriptCandidates) &&
-    state.scriptCandidates.every((item) => isCandidate(item, (v) => typeof v === "string")) &&
+    state.scriptCandidates.every((item) =>
+      isCandidate(item, (v) => typeof v === "string"),
+    ) &&
     (state.approvedScript === null ||
       (typeof state.approvedScript === "object" &&
         typeof state.approvedScript.text === "string" &&
@@ -307,7 +499,9 @@ function isWorkflow(value: unknown): value is EpisodeWorkflow {
     state.gridBatches.every(isGridBatch) &&
     (state.storyboardMode === "frames" || state.storyboardMode === "grid") &&
     state.reviews !== undefined &&
-    (Object.keys(reviews()) as StageId[]).every((stage) => isReview(state.reviews?.[stage])) &&
+    (Object.keys(reviews()) as StageId[]).every((stage) =>
+      isReview(state.reviews?.[stage]),
+    ) &&
     state.legacyNotes !== undefined &&
     typeof state.legacyNotes.characters === "string" &&
     typeof state.legacyNotes.props === "string" &&
