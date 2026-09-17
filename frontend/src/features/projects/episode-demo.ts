@@ -39,11 +39,12 @@ const stableId = (value: string) => {
 };
 
 export function sampleScript(novel: string): Candidate<string> | null {
-  const excerpt = novel.trim().slice(0, 48);
-  if (!excerpt) return null;
+  const source = novel.trim();
+  if (!source) return null;
+  const excerpt = source.slice(0, 48);
 
   return {
-    id: `demo-script-${stableId(excerpt)}`,
+    id: `demo-script-${stableId(source)}`,
     source: "demo",
     value: `演示剧本草稿（请编辑并确认）\n\n来源片段：「${excerpt}」\n\n场次 1：人物在场景中遇到一个需要自行补全的转折。\n动作：请依据原文补写动作与对白。`,
   };

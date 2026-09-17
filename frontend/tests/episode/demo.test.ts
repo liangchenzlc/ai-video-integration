@@ -19,6 +19,15 @@ describe("episode demo fixtures", () => {
     expect(sampleScript("雨夜有人借灯")?.value).toContain("演示剧本草稿");
   });
 
+  it("keeps candidate identities distinct when sources differ after the display excerpt", () => {
+    const prefix = "雨夜有人借灯".repeat(8);
+    const first = sampleScript(`${prefix}甲`);
+    const second = sampleScript(`${prefix}乙`);
+
+    expect(first?.id).not.toBe(second?.id);
+    expect(sampleScript(`  ${prefix}甲  `)).toEqual(first);
+  });
+
   it("uses generic asset names that require user correction", () => {
     expect(sampleAssets().map((asset) => asset.name)).toEqual([
       "角色 A",
