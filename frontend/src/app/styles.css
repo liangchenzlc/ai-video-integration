@@ -19,7 +19,7 @@ a,
 summary {
   -webkit-tap-highlight-color: transparent;
 }
-button {
+:where(button:not(.ant-btn)) {
   font: inherit;
   color: inherit;
   cursor: pointer;
@@ -29,109 +29,16 @@ button {
   padding: 10px 16px;
   min-height: 42px;
 }
-button:hover:not(:disabled) {
+:where(button:not(.ant-btn)):hover:not(:disabled) {
   background: #385156;
 }
-button:disabled {
+:where(button:not(.ant-btn)):disabled {
   cursor: default;
   opacity: 0.48;
 }
 :focus-visible {
   outline: 3px solid #badfcf;
   outline-offset: 4px;
-}
-.workspace {
-  display: flex;
-  min-height: 100vh;
-}
-.sidebar {
-  width: 226px;
-  flex-shrink: 0;
-  padding: 30px 18px 24px;
-  background: #121d20;
-  border-right: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: 650;
-  font-size: 17px;
-  margin: 4px 8px 38px;
-}
-.brand small {
-  display: block;
-  font-weight: 400;
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 7px;
-}
-.brand-mark {
-  color: var(--accent);
-  font-size: 32px;
-  transform: rotate(-12deg);
-}
-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.nav-label {
-  color: var(--muted);
-  font-size: 12px;
-  margin: 25px 15px 10px;
-}
-.nav-item {
-  text-align: left;
-  background: transparent;
-  border: 1px solid transparent;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  color: #c1cdd0;
-}
-.nav-item.selected {
-  color: #d9f3e7;
-  background: #293f3e;
-  border-color: #435e56;
-}
-.nav-dot {
-  width: 5px;
-  height: 5px;
-  border: 1px solid #8c9d9f;
-  border-radius: 50%;
-}
-.settings {
-  margin-top: 28px;
-}
-.sidebar-foot {
-  margin: auto 12px 0;
-  padding-top: 45px;
-  font-size: 12px;
-  line-height: 1.9;
-  color: #c1cdd0;
-}
-.sidebar-foot span {
-  color: var(--muted);
-}
-.content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 70px;
-  border-bottom: 1px solid var(--line);
-  padding: 18px 36px;
-  color: #c3d0d2;
-  font-size: 14px;
 }
 .connection {
   display: flex;
@@ -185,48 +92,6 @@ p {
 p:last-child {
   margin-bottom: 0;
 }
-.runtime-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 17px 22px;
-  background: #223532;
-  border: 1px solid #436058;
-  border-radius: 8px;
-}
-.runtime-panel h2 {
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-.runtime-panel p {
-  font-size: 12px;
-}
-.runtime-panel button {
-  white-space: nowrap;
-  font-size: 13px;
-  background: #2c4541;
-  border-color: #56796b;
-}
-.runtime-panel.failed,
-.runtime-panel.disconnected,
-.runtime-panel.incompatible {
-  background: #3b3228;
-  border-color: #8b7050;
-}
-.intro {
-  padding: 35px 0 28px;
-  max-width: 760px;
-}
-.edition {
-  display: block;
-  color: var(--accent);
-  font-size: 12px;
-  margin-bottom: 13px;
-}
-.intro p {
-  margin-bottom: 0;
-}
 .section-heading {
   display: flex;
   align-items: center;
@@ -240,59 +105,6 @@ p:last-child {
   color: var(--muted);
   font-size: 12px;
 }
-.workflow ol {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  border-top: 1px solid var(--line);
-}
-.workflow li {
-  display: flex;
-  align-items: center;
-  gap: 23px;
-  padding: 12px 4px;
-  border-bottom: 1px solid var(--line);
-}
-.step-index {
-  font-size: 19px;
-  color: #97b4b3;
-  font-variant-numeric: tabular-nums;
-  min-width: 27px;
-}
-.step-button {
-  background: transparent;
-  border: 0;
-  padding: 4px 0;
-  min-height: 30px;
-  text-align: left;
-  font-size: 14px;
-  border-radius: 2px;
-}
-.step-button:hover:not(:disabled) {
-  background: transparent;
-  color: var(--accent);
-  text-decoration: underline;
-}
-.workflow li p {
-  font-size: 12px;
-  margin: 0;
-}
-.availability {
-  font-size: 12px;
-  color: #b4c2c5;
-  margin-left: auto;
-  white-space: nowrap;
-}
-.project-note {
-  padding-top: 25px;
-}
-.project-note h2 {
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-.project-note p {
-  font-size: 12px;
-}
 .text-button {
   padding: 5px 0;
   background: transparent;
@@ -304,47 +116,6 @@ p:last-child {
 .text-button:hover:not(:disabled) {
   background: transparent;
   text-decoration: underline;
-}
-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  padding: 14px 36px;
-  font-size: 11px;
-}
-.empty-state {
-  text-align: center;
-  padding: 42px 20px 60px;
-  background: var(--surface);
-  border-radius: 10px;
-}
-.empty-state h2 {
-  margin: 25px 0 12px;
-}
-.empty-state p {
-  margin-bottom: 24px;
-}
-.empty-frame {
-  width: 112px;
-  height: 68px;
-  border: 2px solid #60807f;
-  border-radius: 4px;
-  margin: auto;
-  padding: 8px;
-  transform: rotate(-3deg);
-}
-.empty-frame span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 1px solid #48625f;
-  background: linear-gradient(150deg, #304a48 48%, #243935 48%);
-}
-.settings-panel {
-  padding: 22px 0;
-  border-bottom: 1px solid var(--line);
 }
 dl {
   display: grid;
@@ -392,22 +163,10 @@ details p {
   background: #d3e8e1;
   color: #142421;
 }
-.project-summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  padding: 22px 0;
-  border-block: 1px solid #425256;
-}
-.project-summary h3,
 .project-form h3,
 .recent-projects h3 {
   margin: 0 0 14px;
   font-size: 19px;
-}
-.project-summary p {
-  margin: 8px 0;
 }
 .muted {
   color: #acbec1;
@@ -461,28 +220,6 @@ details p {
 .recent-projects {
   margin-top: 30px;
 }
-.recent-projects ul {
-  padding: 0;
-  list-style: none;
-}
-.recent-projects li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 10px 0;
-  border-bottom: 1px solid #34474c;
-}
-.recent-projects li button {
-  background: transparent;
-  border-color: transparent;
-  text-align: left;
-  overflow-wrap: anywhere;
-}
-.recent-projects li span {
-  color: #acbec1;
-  white-space: nowrap;
-}
 .skip-link {
   position: fixed;
   left: 16px;
@@ -496,79 +233,19 @@ details p {
   top: 12px;
 }
 @media (max-width: 1050px) {
-  .sidebar {
-    width: 190px;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .brand {
-    font-size: 14px;
-  }
-  .brand-mark {
-    font-size: 24px;
-  }
   main {
     padding: 24px;
   }
   h1 {
     font-size: 28px;
   }
-  .topbar {
-    padding: 18px 24px;
-  }
-  .workflow li {
-    gap: 16px;
-  }
 }
 @media (max-width: 700px) {
-  .workspace {
-    display: block;
-  }
-  .sidebar {
-    width: 100%;
-    padding: 18px;
-  }
-  .brand {
-    margin: 0 0 18px;
-  }
-  .sidebar nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 3px;
-  }
-  .nav-label,
-  .sidebar-foot {
-    display: none;
-  }
-  .nav-item {
-    font-size: 12px;
-    padding: 8px;
-    min-height: 36px;
-    gap: 8px;
-  }
-  .settings {
-    margin: 0;
-  }
-  .runtime-panel {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .topbar {
-    padding: 14px 18px;
-  }
   main {
     padding: 18px;
   }
-  .availability {
-    display: none;
-  }
   .section-heading > span {
     display: none;
-  }
-  footer {
-    padding: 12px 18px;
-    flex-direction: column;
   }
   h1 {
     font-size: 26px;
@@ -756,38 +433,9 @@ details p {
     width: 100%;
   }
 }
-/* Settings extends the existing dark workbench with grouped, readable forms. */
+/* Task and cost controls retain their own workbench forms. */
 .settings-workspace {
   max-width: 1040px;
-}
-.settings-workspace .intro button {
-  margin-top: 12px;
-}
-.settings-readiness,
-.settings-saved {
-  list-style: none;
-  padding: 0;
-  margin: 20px 0 0;
-}
-.settings-readiness > li {
-  padding: 22px 0;
-  border-top: 1px solid var(--line);
-}
-.settings-readiness h3 {
-  margin: 0 0 10px;
-  font-size: 17px;
-}
-.capability-row {
-  padding-block: 12px;
-}
-.capability-row + .capability-row {
-  border-top: 1px solid var(--line);
-}
-.capability-states {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  font-variant-numeric: tabular-nums;
 }
 .settings-fields {
   display: grid;
@@ -843,30 +491,12 @@ details p {
 .settings-workspace button {
   min-height: 40px;
 }
-.settings-saved li {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--line);
-}
-.settings-saved li > span {
-  flex: 1;
-  min-width: 200px;
-  overflow-wrap: anywhere;
-}
-.settings-confirm,
 .settings-pending {
   padding: 20px;
   margin-block: 20px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
-}
-.settings-confirm button,
-.settings-panel > button {
-  margin-right: 12px;
 }
 .settings-pending code {
   overflow-wrap: anywhere;

@@ -22,6 +22,7 @@ export type AssetItem = {
   imageCandidates: Candidate<MediaRef>[];
   selectedImageId: string | null;
   review: Review;
+  approvedText?: { name: string; description: string };
 };
 export type ShotItem = {
   id: string;
@@ -39,7 +40,18 @@ export type ShotItem = {
   videos: Candidate<MediaRef>[];
   selectedVideoId: string | null;
   frameReview: Review;
+  /** Optional on old V2 drafts; normalize each selected role when reading. */
+  firstFrameReview?: Review;
+  endFrameReview?: Review;
   videoReview: Review;
+  approvedText?: {
+    title: string;
+    description: string;
+    action: string;
+    dialogue: string;
+    plannedMs: number;
+    assetIds: string[];
+  };
 };
 export type GridBatch = {
   id: string;
@@ -93,6 +105,94 @@ const staleStageWhenAffected = (review: Review, hasResult: boolean): Review =>
 const hasStoryboardResult = (shot: ShotItem) =>
   shot.firstFrames.length > 0 || shot.endFrames.length > 0;
 const hasVideoResult = (shot: ShotItem) => shot.videos.length > 0;
+export function frameRoleReview(shot: ShotItem, role: "first" | "end"): Review {
+  return (
+    (role === "first" ? shot.firstFrameReview : shot.endFrameReview) ??
+    ((role === "first" ? shot.selectedFirstId : shot.selectedEndId)
+      ? shot.frameReview
+      : "not_started")
+  );
+}
+export function staleFrameReviews(shot: ShotItem) {
+  return {
+    firstFrameReview: staleWhenPresent(
+      frameRoleReview(shot, "first"),
+      shot.firstFrames.length > 0,
+    ),
+    endFrameReview: staleWhenPresent(
+      frameRoleReview(shot, "end"),
+      shot.endFrames.length > 0,
+    ),
+  };
+}
+export function isScriptCurrent(value: EpisodeWorkflow) {
+  return (
+    value.reviews.script === "confirmed" &&
+    !!value.approvedScript?.text.trim() &&
+    value.approvedScript.text === value.scriptDraft &&
+    value.approvedScript.aspect === value.aspect &&
+    value.approvedScript.style === value.style
+  );
+}
+export const assetText = (asset: AssetItem) => ({
+  name: asset.name,
+  description: asset.description,
+});
+export const shotText = (shot: ShotItem) => ({
+  title: shot.title,
+  description: shot.description,
+  action: shot.action,
+  dialogue: shot.dialogue,
+  plannedMs: shot.plannedMs,
+  assetIds: [...shot.assetIds],
+});
+
+export function addAsset(
+  value: EpisodeWorkflow,
+  kind: AssetItem["kind"],
+): EpisodeWorkflow {
+  const asset: AssetItem = {
+    id: crypto.randomUUID(),
+    kind,
+    name: "",
+    description: "",
+    linkedResourceId: null,
+    imageCandidates: [],
+    selectedImageId: null,
+    review: "review",
+  };
+  return {
+    ...value,
+    assets: [...value.assets, asset],
+    reviews: { ...value.reviews, assets: "review" },
+  };
+}
+export function removeAsset(
+  value: EpisodeWorkflow,
+  id: string,
+): EpisodeWorkflow {
+  if (!value.assets.some((asset) => asset.id === id)) return value;
+  const affected = editAsset(value, id, {});
+  return {
+    ...affected,
+    assets: affected.assets.filter((asset) => asset.id !== id),
+    shots: affected.shots.map((shot) =>
+      shot.assetIds.includes(id)
+        ? {
+            ...shot,
+            assetIds: shot.assetIds.filter((assetId) => assetId !== id),
+            review: "review",
+          }
+        : shot,
+    ),
+    reviews: {
+      ...affected.reviews,
+      storyboard: value.shots.some((shot) => shot.assetIds.includes(id))
+        ? "review"
+        : affected.reviews.storyboard,
+    },
+  };
+}
 const hasGridResult = (state: EpisodeWorkflow, shotIds?: ReadonlySet<string>) =>
   state.gridBatches.some((batch) =>
     batch.cells.some(
@@ -128,10 +228,17 @@ export function editScript(
     scriptDraft: text,
     assets: state.assets.map((asset) => ({
       ...asset,
+      approvedText:
+        asset.approvedText ??
+        (asset.review === "confirmed" ? assetText(asset) : undefined),
       review: staleWhenPresent(asset.review, true),
     })),
     shots: state.shots.map((shot) => ({
       ...shot,
+      approvedText:
+        shot.approvedText ??
+        (shot.review === "confirmed" ? shotText(shot) : undefined),
+      ...staleFrameReviews(shot),
       review: staleWhenPresent(shot.review, true),
       frameReview: staleWhenPresent(
         shot.frameReview,
@@ -169,12 +276,22 @@ export function editAsset(
   return {
     ...state,
     assets: state.assets.map((asset) =>
-      asset.id === id ? { ...asset, ...patch, review: "review" } : asset,
+      asset.id === id
+        ? {
+            ...asset,
+            ...patch,
+            approvedText:
+              asset.approvedText ??
+              (asset.review === "confirmed" ? assetText(asset) : undefined),
+            review: "review",
+          }
+        : asset,
     ),
     shots: state.shots.map((shot) =>
       shot.assetIds.includes(id)
         ? {
             ...shot,
+            ...staleFrameReviews(shot),
             frameReview: staleWhenPresent(
               shot.frameReview,
               hasStoryboardResult(shot),
@@ -218,7 +335,11 @@ export function editShot(
       shot.id === id
         ? {
             ...shot,
+            ...staleFrameReviews(shot),
             ...patch,
+            approvedText:
+              shot.approvedText ??
+              (shot.review === "confirmed" ? shotText(shot) : undefined),
             review: "review",
             frameReview: staleWhenPresent(
               shot.frameReview,
@@ -263,7 +384,15 @@ export function adoptFrame(
             ...(role === "first"
               ? { selectedFirstId: candidateId }
               : { selectedEndId: candidateId }),
-            frameReview: "confirmed",
+            firstFrameReview:
+              role === "first" ? "confirmed" : frameRoleReview(item, "first"),
+            endFrameReview:
+              role === "end" ? "confirmed" : frameRoleReview(item, "end"),
+            frameReview:
+              frameRoleReview(item, role === "first" ? "end" : "first") ===
+              "stale"
+                ? "stale"
+                : "confirmed",
             videoReview: staleWhenPresent(
               item.videoReview,
               hasVideoResult(item),
@@ -276,6 +405,35 @@ export function adoptFrame(
       video: staleStageWhenAffected(state.reviews.video, hasVideoResult(shot)),
     },
   };
+}
+
+export function pendingCount(state: EpisodeWorkflow, id: StageId): number {
+  if (id === "source") return state.scriptDraft.trim() ? 0 : 1;
+  if (id === "script") return isScriptCurrent(state) ? 0 : 1;
+  if (id === "assets")
+    return state.assets.length
+      ? state.assets.filter(
+          (asset) => asset.review !== "confirmed" || !asset.selectedImageId,
+        ).length
+      : 1;
+  if (id === "storyboard")
+    return state.shots.length
+      ? state.shots.filter(
+          (shot) =>
+            shot.review !== "confirmed" ||
+            frameRoleReview(shot, "first") !== "confirmed",
+        ).length + (state.reviews.storyboard === "confirmed" ? 0 : 1)
+      : 1;
+  return state.shots.length
+    ? state.shots.filter((shot) => shot.videoReview !== "confirmed").length
+    : 1;
+}
+export function nearestPendingStage(state: EpisodeWorkflow): StageId {
+  return (
+    (["source", "script", "assets", "storyboard", "video"] as const).find(
+      (id) => pendingCount(state, id) > 0,
+    ) ?? "video"
+  );
 }
 
 export function stageStatus(state: EpisodeWorkflow, id: StageId): Review {
@@ -429,7 +587,10 @@ function isAsset(value: unknown): value is AssetItem {
     asset.imageCandidates.every((item) => isCandidate(item, isMediaRef)) &&
     (asset.selectedImageId === null ||
       typeof asset.selectedImageId === "string") &&
-    isReview(asset.review)
+    isReview(asset.review) &&
+    (asset.approvedText === undefined ||
+      (typeof asset.approvedText?.name === "string" &&
+        typeof asset.approvedText?.description === "string"))
   );
 }
 
@@ -458,7 +619,17 @@ function isShot(value: unknown): value is ShotItem {
     (shot.selectedVideoId === null ||
       typeof shot.selectedVideoId === "string") &&
     isReview(shot.frameReview) &&
-    isReview(shot.videoReview)
+    (shot.firstFrameReview === undefined || isReview(shot.firstFrameReview)) &&
+    (shot.endFrameReview === undefined || isReview(shot.endFrameReview)) &&
+    isReview(shot.videoReview) &&
+    (shot.approvedText === undefined ||
+      (typeof shot.approvedText?.title === "string" &&
+        typeof shot.approvedText?.description === "string" &&
+        typeof shot.approvedText?.action === "string" &&
+        typeof shot.approvedText?.dialogue === "string" &&
+        typeof shot.approvedText?.plannedMs === "number" &&
+        Number.isFinite(shot.approvedText.plannedMs) &&
+        isStringArray(shot.approvedText.assetIds)))
   );
 }
 
@@ -558,7 +729,15 @@ export function readWorkflow(
   storage: ReadStore = localStorage,
 ): EpisodeWorkflow {
   const saved = parseWorkflow(storage, workflowKey(projectId, episodeId));
-  if (isWorkflow(saved)) return freshWorkflow(saved);
+  if (isWorkflow(saved)) {
+    const result = freshWorkflow(saved);
+    result.shots = result.shots.map((shot) => ({
+      ...shot,
+      firstFrameReview: frameRoleReview(shot, "first"),
+      endFrameReview: frameRoleReview(shot, "end"),
+    }));
+    return result;
+  }
 
   const resolved = resolvedDefaults(projectId, defaults, storage);
   const legacy = readEpisodeDraft(projectId, episodeId, storage);

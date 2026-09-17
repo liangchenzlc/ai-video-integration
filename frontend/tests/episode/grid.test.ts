@@ -15,6 +15,17 @@ describe("nine-grid batches", () => {
     ).toEqual([9, 1]);
   });
 
+  it("keeps the tenth shot in its own fixed batch", () => {
+    const sheet = { kind: "demo-image" as const, id: "demo-image-sheet" };
+    const batches = createGridBatches(
+      Array.from({ length: 10 }, (_, index) => `shot-${index + 1}`),
+      () => sheet,
+    );
+
+    expect(batches).toHaveLength(2);
+    expect(batches[1]?.cells.map((cell) => cell.shotId)).toEqual(["shot-10"]);
+  });
+
   it("does not create duplicate cells when input repeats a shot ID", () => {
     expect(groupShotIds(["shot-a", "shot-b", "shot-a"])).toEqual([
       ["shot-a", "shot-b"],
@@ -31,6 +42,21 @@ describe("nine-grid batches", () => {
       ["shot-b", "shot-a"].map(() => batches[0]?.cells[0]?.shotId),
     ).toEqual(["shot-a", "shot-a"]);
     expect(batches[0]?.cells.map((cell) => cell.index)).toEqual([0, 1]);
+  });
+
+  it("retains the original cell label when the shot list is reordered", () => {
+    const batches = createGridBatches(["shot-a", "shot-b", "shot-c"], () => ({
+      kind: "demo-image",
+      id: "demo-image-sheet-1",
+    }));
+    const reorderedShotIds = ["shot-c", "shot-a", "shot-b"];
+
+    expect(reorderedShotIds).toEqual(["shot-c", "shot-a", "shot-b"]);
+    expect(batches[0]?.cells.map((cell) => cell.shotId)).toEqual([
+      "shot-a",
+      "shot-b",
+      "shot-c",
+    ]);
   });
 
   it("does not bind a grid cell to a shot outside its batch", () => {

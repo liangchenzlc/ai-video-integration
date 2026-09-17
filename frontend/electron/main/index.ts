@@ -21,6 +21,7 @@ app.setName("AI Video Integration");
 const development =
   !app.isPackaged &&
   process.env.ELECTRON_RENDERER_URL === "http://127.0.0.1:5173";
+const offscreenForTests = process.env.AVI_E2E_OFFSCREEN_WINDOW === "1";
 const root = resolve(__dirname, "../../..");
 let window: BrowserWindow | undefined;
 let supervisor: RuntimeSupervisor | undefined;
@@ -36,8 +37,10 @@ else {
   app.on("second-instance", () => {
     if (window) {
       if (window.isMinimized()) window.restore();
-      window.show();
-      window.focus();
+      if (!offscreenForTests) {
+        window.show();
+        window.focus();
+      }
     }
   });
   app.on("before-quit", quitGuard.beforeQuit);
@@ -123,12 +126,13 @@ else {
           }),
         );
       window = new BrowserWindow({
+        ...(offscreenForTests ? { x: -32000, y: -32000 } : {}),
         width: 1280,
         height: 800,
         minWidth: 960,
         minHeight: 640,
         show: false,
-        backgroundColor: "#172124",
+        backgroundColor: "#f5f9fe",
         title: "AI 短剧工作台",
         autoHideMenuBar: true,
         webPreferences: {
@@ -165,7 +169,8 @@ else {
       await window.loadURL(
         development ? "http://127.0.0.1:5173/" : "app://ui/",
       );
-      window.show();
+      if (offscreenForTests) window.showInactive();
+      else window.show();
       await supervisor.start();
     })
     .catch(() => {
