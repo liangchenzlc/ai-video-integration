@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "antd";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type {
   AssetKind,
   AssetVisualRef,
   GlobalAsset,
 } from "../../../features/assets/asset-model";
 import {
-  DEMO_MODELS,
+  sampleAssets,
   sampleImage,
 } from "../../../features/projects/episode-demo";
 import { ImagePreview } from "./ImagePreview";
-import { AssetControls } from "./AssetControls";
 import {
+  addAsset,
   editAsset,
   assetText,
   removeAsset,
@@ -39,6 +40,12 @@ const kindLabel: Record<AssetKind, string> = {
   character: "角色",
   scene: "场景",
   prop: "道具",
+};
+const assetKinds = ["character", "prop", "scene"] as const;
+const addLabel: Record<AssetKind, string> = {
+  character: "新增人物",
+  prop: "新增道具",
+  scene: "新增场景",
 };
 
 export function shareAsset(
@@ -197,11 +204,18 @@ export function AssetsStage({
   );
   const [choiceFor, setChoiceFor] = useState<string | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
+  const [activeKind, setActiveKind] = useState<AssetKind>("character");
+  const [editor, setEditor] = useState<{ kind: AssetKind; id?: string } | null>(
+    null,
+  );
+  const [draft, setDraft] = useState({ name: "", description: "" });
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     let active = true;
     setResources(readProjectResources(projectId));
     setChoiceFor(null);
+    setEditor(null);
     if (!ready) return setUsableImages([]);
     void listUsableMedia(projectId, "image/").then((items) => {
       if (active) setUsableImages(items);
@@ -211,14 +225,77 @@ export function AssetsStage({
     };
   }, [projectId, ready]);
 
-  const groups = useMemo(
-    () =>
-      (["character", "scene", "prop"] as const).map(
-        (kind) =>
-          [kind, value.assets.filter((asset) => asset.kind === kind)] as const,
-      ),
-    [value.assets],
+  useEffect(() => {
+    if (!editor) return;
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+    return () => dialog?.close();
+  }, [editor?.id, editor?.kind]);
+
+  const activeAssets = value.assets.filter(
+    (asset) => asset.kind === activeKind,
   );
+  const sample = activeAssets.length
+    ? null
+    : sampleAssets().find((asset) => asset.kind === activeKind);
+  const editingAsset = editor?.id
+    ? value.assets.find((asset) => asset.id === editor.id)
+    : null;
+  const hasUnsavedText =
+    !!editingAsset &&
+    (draft.name !== editingAsset.name ||
+      draft.description !== editingAsset.description);
+  function openEditor(kind: AssetKind, asset?: AssetItem) {
+    if (readOnly) return;
+    setMessage(ready ? "" : "本地媒体服务尚未就绪，无法导入项目图片。");
+    setDraft({
+      name: asset?.name ?? "",
+      description: asset?.description ?? "",
+    });
+    setChoiceFor(null);
+    setEditor({ kind, ...(asset ? { id: asset.id } : {}) });
+  }
+  function closeEditor() {
+    setEditor(null);
+    setChoiceFor(null);
+  }
+  function saveEditor() {
+    if (!editor || readOnly || !draft.name.trim() || !draft.description.trim())
+      return;
+    if (editor.id && !editingAsset) return;
+    const text = {
+      name: draft.name.trim(),
+      description: draft.description.trim(),
+    };
+    if (editingAsset) {
+      if (
+        text.name !== editingAsset.name ||
+        text.description !== editingAsset.description
+      )
+        update(editAsset(value, editingAsset.id, text));
+    } else {
+      const next = addAsset(value, editor.kind);
+      update(editAsset(next, next.assets[next.assets.length - 1].id, text));
+    }
+    closeEditor();
+  }
+  function selectTabByKey(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
+    let nextIndex: number;
+    if (event.key === "ArrowRight") nextIndex = (index + 1) % assetKinds.length;
+    else if (event.key === "ArrowLeft")
+      nextIndex = (index - 1 + assetKinds.length) % assetKinds.length;
+    else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = assetKinds.length - 1;
+    else return;
+    event.preventDefault();
+    setActiveKind(assetKinds[nextIndex]);
+    event.currentTarget.parentElement
+      ?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+      [nextIndex]?.focus();
+  }
   function update(next: EpisodeWorkflow) {
     onChange(next);
   }
@@ -365,262 +442,340 @@ export function AssetsStage({
       <div className="episode-stage-heading">
         <div>
           <h2>素材图片</h2>
-          <p>
-            编辑并审核角色、场景和道具。演示图片不会连接到本地媒体；项目图片仅在可用时可采用。
-          </p>
+          <p>查看角色、道具和场景的提示词与参考图片。</p>
         </div>
-        <label>
-          素材图片演示模型
-          <select
-            value={value.models.assetImage}
-            disabled={readOnly}
-            onChange={(event) =>
-              update({
-                ...value,
-                models: { ...value.models, assetImage: event.target.value },
-              })
-            }
-          >
-            <option value={value.models.assetImage}>
-              {value.models.assetImage}
-            </option>
-            {DEMO_MODELS.assetImage
-              .filter((model) => model.value !== value.models.assetImage)
-              .map((model) => (
-                <option key={model.value} value={model.value}>
-                  {model.label}
-                </option>
-              ))}
-          </select>
-        </label>
       </div>
-      <AssetControls value={value} readOnly={readOnly} onChange={update} />
-      {message && (
+      {message && !editor && (
         <p className="episode-help" role="status">
           {message}
         </p>
       )}
-      {!value.assets.length && (
-        <p className="episode-help">
-          请先在“剧本确认与素材拆解”中演示分析素材，再在此处审核图片。
-        </p>
-      )}
-      {groups.map(([kind, assets]) =>
-        assets.length ? (
-          <section className="episode-assets-group" key={kind}>
-            <h3>{kindLabel[kind]}</h3>
-            <div className="episode-asset-list">
-              {assets.map((asset) => {
-                const adopted = selectedRef(asset);
-                return (
-                  <article
-                    key={asset.id}
-                    className="episode-candidate episode-asset-card"
+      <div className="episode-asset-tabs" role="tablist" aria-label="素材分类">
+        {assetKinds.map((kind, index) => (
+          <button
+            key={kind}
+            id={"episode-assets-tab-" + kind}
+            type="button"
+            role="tab"
+            aria-selected={activeKind === kind}
+            aria-controls="episode-assets-panel"
+            tabIndex={activeKind === kind ? 0 : -1}
+            onClick={() => setActiveKind(kind)}
+            onKeyDown={(event) => selectTabByKey(event, index)}
+          >
+            {kindLabel[kind]}
+          </button>
+        ))}
+      </div>
+      <section
+        id="episode-assets-panel"
+        className="episode-asset-panel"
+        role="tabpanel"
+        aria-labelledby={"episode-assets-tab-" + activeKind}
+        tabIndex={0}
+      >
+        <div className="episode-library-grid">
+          {(sample ? [sample] : activeAssets).map((asset) => {
+            const isSample = !!sample;
+            return (
+              <article key={asset.id} className="episode-library-asset-card">
+                <div className="episode-library-card-copy">
+                  <h3>{asset.name || "未命名" + kindLabel[asset.kind]}</h3>
+                  <p className="episode-library-description">
+                    {asset.description || "暂无提示词描述"}
+                  </p>
+                  {isSample ? (
+                    <span className="episode-library-sample-note">
+                      演示内容，未保存到本集
+                    </span>
+                  ) : (
+                    <Button
+                      type="primary"
+                      disabled={readOnly}
+                      onClick={() => openEditor(asset.kind, asset)}
+                    >
+                      编辑
+                    </Button>
+                  )}
+                </div>
+                <div className="episode-library-cover">
+                  {isSample ? (
+                    <span className="episode-image-empty">暂无图片</span>
+                  ) : (
+                    <ImagePreview
+                      media={selectedRef(asset)}
+                      label={asset.name + "已采用图片"}
+                      projectId={projectId}
+                      mediaItems={usableImages}
+                      kind={asset.kind}
+                    />
+                  )}
+                </div>
+              </article>
+            );
+          })}
+          <div className="episode-library-add-card">
+            <span className="episode-library-add-icon" aria-hidden="true" />
+            <Button
+              type="primary"
+              disabled={readOnly}
+              onClick={() => openEditor(activeKind)}
+            >
+              {addLabel[activeKind]}
+            </Button>
+          </div>
+        </div>
+      </section>
+      {editor && (
+        <dialog
+          ref={dialogRef}
+          className="ui-dialog episode-asset-dialog"
+          aria-labelledby="episode-asset-dialog-title"
+          onClose={(event) => {
+            if (!event.currentTarget.open) closeEditor();
+          }}
+        >
+          <header>
+            <h2 id="episode-asset-dialog-title">
+              {editingAsset
+                ? "编辑" + kindLabel[editor.kind]
+                : addLabel[editor.kind]}
+            </h2>
+            <Button
+              type="primary"
+              className="episode-asset-dialog-close"
+              aria-label="关闭"
+              onClick={() => dialogRef.current?.close()}
+            >
+              关闭
+            </Button>
+          </header>
+          <div className="episode-asset-dialog-body">
+            <form
+              id="episode-asset-edit-form"
+              className="episode-asset-edit-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                saveEditor();
+              }}
+            >
+              <label>
+                名称
+                <input
+                  autoFocus
+                  required
+                  value={draft.name}
+                  onChange={(event) =>
+                    setDraft({ ...draft, name: event.target.value })
+                  }
+                />
+              </label>
+              <label>
+                提示词描述
+                <textarea
+                  required
+                  rows={5}
+                  value={draft.description}
+                  onChange={(event) =>
+                    setDraft({ ...draft, description: event.target.value })
+                  }
+                />
+              </label>
+            </form>
+            {editingAsset && (
+              <section
+                className="episode-asset-image-editor"
+                aria-label="参考图片"
+              >
+                <h3>参考图片</h3>
+                <div className="episode-asset-preview">
+                  <ImagePreview
+                    media={selectedRef(editingAsset)}
+                    label={editingAsset.name + "已采用图片"}
+                    projectId={projectId}
+                    mediaItems={usableImages}
+                    kind={editingAsset.kind}
+                  />
+                </div>
+                <div className="episode-asset-actions">
+                  <Button
+                    type="primary"
+                    disabled={readOnly}
+                    onClick={() => {
+                      const ref = sampleImage(
+                        editingAsset.id +
+                          "-" +
+                          editingAsset.imageCandidates.length,
+                      );
+                      const candidate = {
+                        id: crypto.randomUUID(),
+                        source: "demo" as const,
+                        value: ref,
+                        usableForVideo: true,
+                      };
+                      update(
+                        addAssetImageCandidate(
+                          value,
+                          editingAsset.id,
+                          candidate,
+                        ),
+                      );
+                    }}
                   >
-                    {asset.approvedText && (
-                      <details className="episode-source-compare">
-                        <summary>对照上次确认素材</summary>
-                        <pre>
-                          {asset.approvedText.name}
-                          {"\n"}
-                          {asset.approvedText.description}
-                        </pre>
-                      </details>
-                    )}
-                    <label>
-                      名称
-                      <input
-                        value={asset.name}
-                        readOnly={readOnly}
-                        onChange={(event) =>
-                          update(
-                            editAsset(value, asset.id, {
-                              name: event.target.value,
-                            }),
-                          )
-                        }
-                      />
-                    </label>
-                    <label>
-                      描述
-                      <textarea
-                        rows={3}
-                        value={asset.description}
-                        readOnly={readOnly}
-                        onChange={(event) =>
-                          update(
-                            editAsset(value, asset.id, {
-                              description: event.target.value,
-                            }),
-                          )
-                        }
-                      />
-                    </label>
-                    <div className="episode-asset-preview">
-                      <ImagePreview
-                        media={adopted}
-                        label={`${asset.name}已采用图片`}
-                        projectId={projectId}
-                        mediaItems={usableImages}
-                        kind={asset.kind}
-                      />
-                    </div>
-                    <div className="episode-asset-actions">
+                    生成演示图片
+                  </Button>
+                  <Button
+                    type="primary"
+                    disabled={
+                      readOnly || !ready || importing === editingAsset.id
+                    }
+                    onClick={() => void importImage(editingAsset)}
+                  >
+                    {importing === editingAsset.id
+                      ? "正在导入…"
+                      : "导入项目图片"}
+                  </Button>
+                </div>
+                {ready && (
+                  <label className="episode-asset-media-select">
+                    选择已可用项目图片
+                    <select
+                      value=""
+                      disabled={readOnly}
+                      onChange={(event) => {
+                        if (event.target.value)
+                          addExisting(editingAsset, event.target.value);
+                      }}
+                    >
+                      <option value="">从项目媒体库添加</option>
+                      {usableImages.map((image) => (
+                        <option key={image.id} value={image.id}>
+                          {image.id.slice(0, 8)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+                {editingAsset.imageCandidates.length > 0 && (
+                  <div
+                    className="episode-image-candidates"
+                    aria-label={editingAsset.name + "图片候选"}
+                  >
+                    {editingAsset.imageCandidates.map((candidate) => (
                       <button
                         type="button"
+                        key={candidate.id}
+                        className={
+                          candidate.id === editingAsset.selectedImageId
+                            ? "selected"
+                            : ""
+                        }
                         disabled={readOnly}
-                        onClick={() => {
-                          const ref = sampleImage(
-                            `${asset.id}-${asset.imageCandidates.length}`,
-                          );
-                          const candidate = {
-                            id: crypto.randomUUID(),
-                            source: "demo" as const,
-                            value: ref,
-                            usableForVideo: true,
-                          };
-                          update(
-                            addAssetImageCandidate(value, asset.id, candidate),
-                          );
-                        }}
+                        onClick={() => select(editingAsset, candidate.id)}
                       >
-                        生成演示图片
+                        <ImagePreview
+                          media={candidate.value}
+                          label={editingAsset.name + "候选"}
+                          projectId={projectId}
+                          mediaItems={usableImages}
+                          kind={editingAsset.kind}
+                        />
+                        {candidate.value.kind === "demo-image"
+                          ? "演示图片"
+                          : candidate.value.kind === "project-image"
+                            ? "项目图片"
+                            : "不可用于素材图片"}
                       </button>
-                      <button
-                        type="button"
-                        disabled={readOnly || !ready || importing === asset.id}
-                        onClick={() => void importImage(asset)}
-                      >
-                        {importing === asset.id ? "正在导入…" : "导入项目图片"}
-                      </button>
-                    </div>
-                    {ready && (
-                      <label>
-                        选择已可用项目图片
-                        <select
-                          value=""
-                          disabled={readOnly}
-                          onChange={(event) => {
-                            if (event.target.value)
-                              addExisting(asset, event.target.value);
-                          }}
-                        >
-                          <option value="">从项目媒体库添加</option>
-                          {usableImages.map((image) => (
-                            <option key={image.id} value={image.id}>
-                              {image.id.slice(0, 8)}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    )}
-                    {asset.imageCandidates.length > 0 && (
-                      <div
-                        className="episode-image-candidates"
-                        role="list"
-                        aria-label={`${asset.name}图片候选`}
-                      >
-                        {asset.imageCandidates.map((candidate) => (
-                          <button
-                            type="button"
-                            role="listitem"
-                            key={candidate.id}
-                            className={
-                              candidate.id === asset.selectedImageId
-                                ? "selected"
-                                : ""
-                            }
-                            disabled={readOnly}
-                            onClick={() => select(asset, candidate.id)}
-                          >
-                            <ImagePreview
-                              media={candidate.value}
-                              label={`${asset.name}候选`}
-                              projectId={projectId}
-                              mediaItems={usableImages}
-                              kind={asset.kind}
-                            />
-                            {candidate.value.kind === "demo-image"
-                              ? "演示图片"
-                              : candidate.value.kind === "project-image"
-                                ? "项目图片"
-                                : "不可用于素材图片"}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    <div className="episode-asset-actions">
-                      <button
-                        className="episode-primary-action"
-                        type="button"
-                        disabled={
-                          readOnly ||
-                          !canConfirm(asset) ||
-                          (adopted?.kind === "project-image" &&
-                            !usableImages.some(
-                              (item) => item.id === adopted.id,
-                            ))
-                        }
-                        onClick={() => confirm(asset)}
-                      >
-                        确认采用
-                      </button>
-                      <button
-                        type="button"
-                        disabled={
-                          readOnly ||
-                          asset.review !== "confirmed" ||
-                          !canConfirm(asset)
-                        }
-                        onClick={() => share(asset)}
-                      >
-                        共享到项目资源库
-                      </button>
-                      <button
-                        type="button"
-                        disabled={readOnly}
-                        onClick={() => update(removeAsset(value, asset.id))}
-                      >
-                        删除素材
-                      </button>
-                    </div>
-                    {!canConfirm(asset) && (
-                      <p className="episode-help">
-                        请补全名称和描述，并选择可用素材图片后确认。
-                      </p>
-                    )}
-                    {choiceFor === asset.id && (
-                      <div
-                        className="episode-share-choice"
-                        role="group"
-                        aria-label="重复素材处理"
-                      >
-                        <p>
-                          项目资源库中已有同名{kindLabel[asset.kind]}
-                          。请选择链接已有资源或另建资源。
-                        </p>
-                        <button
-                          type="button"
-                          disabled={readOnly}
-                          onClick={() => share(asset, "link")}
-                        >
-                          链接已有资源
-                        </button>
-                        <button
-                          type="button"
-                          disabled={readOnly}
-                          onClick={() => share(asset, "create")}
-                        >
-                          另建资源
-                        </button>
-                      </div>
-                    )}
-                  </article>
-                );
-              })}
-            </div>
-          </section>
-        ) : null,
+                    ))}
+                  </div>
+                )}
+                <div className="episode-asset-actions">
+                  <Button
+                    type="primary"
+                    disabled={
+                      readOnly || hasUnsavedText || !canConfirm(editingAsset)
+                    }
+                    onClick={() => confirm(editingAsset)}
+                  >
+                    确认采用
+                  </Button>
+                  <Button
+                    type="primary"
+                    disabled={
+                      readOnly ||
+                      hasUnsavedText ||
+                      editingAsset.review !== "confirmed" ||
+                      !canConfirm(editingAsset)
+                    }
+                    onClick={() => share(editingAsset)}
+                  >
+                    共享到项目资源库
+                  </Button>
+                </div>
+                {choiceFor === editingAsset.id && (
+                  <div
+                    className="episode-share-choice"
+                    role="group"
+                    aria-label="重复素材处理"
+                  >
+                    <p>
+                      项目资源库中已有同名{kindLabel[editingAsset.kind]}
+                      。请选择链接已有资源或另建资源。
+                    </p>
+                    <Button
+                      type="primary"
+                      onClick={() => share(editingAsset, "link")}
+                    >
+                      链接已有资源
+                    </Button>
+                    <Button
+                      type="primary"
+                      onClick={() => share(editingAsset, "create")}
+                    >
+                      另建资源
+                    </Button>
+                  </div>
+                )}
+                {message && (
+                  <p className="episode-help" role="status">
+                    {message}
+                  </p>
+                )}
+                <p className="episode-asset-save-note">
+                  图片操作会立即保存；名称与提示词请点击“保存”。
+                </p>
+              </section>
+            )}
+          </div>
+          <footer className="episode-asset-dialog-actions">
+            {editingAsset && (
+              <Button
+                type="primary"
+                className="episode-asset-delete"
+                danger
+                disabled={readOnly}
+                onClick={() => {
+                  if (!window.confirm("确定删除这项素材吗？")) return;
+                  update(removeAsset(value, editingAsset.id));
+                  closeEditor();
+                }}
+              >
+                删除素材
+              </Button>
+            )}
+            <Button type="primary" onClick={() => dialogRef.current?.close()}>
+              取消
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              form="episode-asset-edit-form"
+              disabled={!draft.name.trim() || !draft.description.trim()}
+            >
+              保存
+            </Button>
+          </footer>
+        </dialog>
       )}
     </>
   );

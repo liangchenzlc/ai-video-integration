@@ -10,12 +10,15 @@ import {
   type StageId,
 } from "../../features/projects/episode-workflow";
 import { activeStepIndex } from "./episode-scroll";
-import { episodeStages, StageNav } from "./episode/StageNav";
+import {
+  episodeStages,
+  StageNav,
+  visibleEpisodeStage,
+} from "./episode/StageNav";
 import { SourceStage } from "./episode/SourceStage";
 import { ScriptStage } from "./episode/ScriptStage";
 import { AssetsStage } from "./episode/AssetsStage";
 import { StoryboardStage } from "./episode/StoryboardStage";
-import { VideoStage } from "./episode/VideoStage";
 import {
   listUsableMedia,
   type ListedMedia,
@@ -47,8 +50,11 @@ function EpisodeWorkspace({
   const [value, setValue] = useState(() =>
     readWorkflow(session.projectId, episode.id, defaults),
   );
-  const [step, setStep] = useState<StageId>(() => nearestPendingStage(value));
+  const [step, setStep] = useState<StageId>(() =>
+    visibleEpisodeStage(nearestPendingStage(value)),
+  );
   const latest = useRef(value);
+  const navigationTarget = useRef<StageId | null>(null);
   latest.current = value;
   const [images, setImages] = useState<readonly ListedMedia[]>([]);
   const [saveMessage, setSaveMessage] = useState("尚未修改");
@@ -59,10 +65,11 @@ function EpisodeWorkspace({
     const restored = readWorkflow(session.projectId, episode.id, defaults);
     latest.current = restored;
     setValue(restored);
-    setStep(nearestPendingStage(restored));
+    const restoredStep = visibleEpisodeStage(nearestPendingStage(restored));
+    setStep(restoredStep);
     const frame = requestAnimationFrame(() =>
       document
-        .getElementById(`episode-stage-${nearestPendingStage(restored)}`)
+        .getElementById(`episode-stage-${restoredStep}`)
         ?.scrollIntoView({ behavior: "auto", block: "start" }),
     );
     setSaveMessage("尚未修改");
@@ -76,8 +83,11 @@ function EpisodeWorkspace({
       setImages([]);
       return;
     }
-    void listUsableMedia(session.projectId, "image/").then((items) => {
-      if (active) setImages(items);
+    void Promise.all([
+      listUsableMedia(session.projectId, "image/"),
+      listUsableMedia(session.projectId, "video/"),
+    ]).then(([imageItems, videoItems]) => {
+      if (active) setImages([...imageItems, ...videoItems]);
     });
     return () => {
       active = false;
@@ -107,19 +117,55 @@ function EpisodeWorkspace({
             .bottom ?? headerBottom)
         : headerBottom;
       setStep(
-        episodeStages[
-          activeStepIndex(
-            tops,
-            Math.max(headerBottom, navBottom) + 24,
-            atBottom,
-          )
-        ].id,
+        // Near the bottom, a short section cannot align to the header.
+        // Keep the explicitly selected section until the user scrolls again.
+        atBottom && navigationTarget.current
+          ? navigationTarget.current
+          : episodeStages[
+              activeStepIndex(
+                tops,
+                Math.max(headerBottom, navBottom) + 24,
+                atBottom,
+              )
+            ].id,
       );
     };
     const schedule = () => {
       if (!frame) frame = window.requestAnimationFrame(updateStep);
     };
+    const clearNavigationTarget = () => {
+      navigationTarget.current = null;
+      schedule();
+    };
+    const onScrollKey = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable || target.closest("input, textarea, select"))
+      )
+        return;
+      if (
+        [
+          "ArrowDown",
+          "ArrowUp",
+          "PageDown",
+          "PageUp",
+          "Home",
+          "End",
+          " ",
+        ].includes(event.key)
+      )
+        clearNavigationTarget();
+    };
     window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("wheel", clearNavigationTarget, { passive: true });
+    window.addEventListener("pointerdown", clearNavigationTarget, {
+      passive: true,
+    });
+    window.addEventListener("touchmove", clearNavigationTarget, {
+      passive: true,
+    });
+    window.addEventListener("keydown", onScrollKey);
     window.addEventListener("resize", schedule);
     const content = document.querySelector(".episode-content");
     const observer = new ResizeObserver(schedule);
@@ -127,6 +173,10 @@ function EpisodeWorkspace({
     schedule();
     return () => {
       window.removeEventListener("scroll", schedule);
+      window.removeEventListener("wheel", clearNavigationTarget);
+      window.removeEventListener("pointerdown", clearNavigationTarget);
+      window.removeEventListener("touchmove", clearNavigationTarget);
+      window.removeEventListener("keydown", onScrollKey);
       window.removeEventListener("resize", schedule);
       observer.disconnect();
       if (frame) window.cancelAnimationFrame(frame);
@@ -134,6 +184,8 @@ function EpisodeWorkspace({
   }, [session.projectId, episode.id]);
 
   function goToStep(next: StageId) {
+    navigationTarget.current = next;
+    setStep(next);
     document.getElementById(`episode-stage-${next}`)?.scrollIntoView({
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"
@@ -194,13 +246,10 @@ function EpisodeWorkspace({
       )}
       <div className="episode-layout">
         <aside className="episode-sidebar">
-          <p>制作流程</p>
-          <StageNav
-            active={step}
-            reviews={value.reviews}
-            value={value}
-            onSelect={goToStep}
-          />
+          <div className="episode-sidebar-inner">
+            <p>制作流程</p>
+            <StageNav active={step} onSelect={goToStep} />
+          </div>
         </aside>
         <div className="episode-content">
           <section
@@ -243,7 +292,7 @@ function EpisodeWorkspace({
             id="episode-stage-storyboard"
             data-testid="episode-stage-storyboard"
             className="episode-stage"
-            aria-label="分镜脚本与分镜图"
+            aria-label="分镜制作"
           >
             <StoryboardStage
               value={value}
@@ -251,21 +300,6 @@ function EpisodeWorkspace({
               onChange={update}
               projectId={session.projectId}
               mediaItems={images}
-            />
-          </section>
-          <section
-            id="episode-stage-video"
-            data-testid="episode-stage-video"
-            className="episode-stage"
-            aria-label="分镜视频"
-          >
-            <VideoStage
-              value={value}
-              readOnly={readOnly}
-              ready={ready}
-              projectId={session.projectId}
-              onChange={update}
-              onApply={update}
             />
           </section>
         </div>

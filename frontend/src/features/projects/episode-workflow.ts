@@ -28,6 +28,9 @@ export type ShotItem = {
   id: string;
   title: string;
   description: string;
+  /** Optional for compatibility with previously saved V2 shots. */
+  imagePrompt?: string;
+  videoPrompt?: string;
   action: string;
   dialogue: string;
   plannedMs: number;
@@ -322,7 +325,13 @@ export function editShot(
   patch: Partial<
     Pick<
       ShotItem,
-      "title" | "description" | "action" | "dialogue" | "plannedMs" | "assetIds"
+      | "title"
+      | "description"
+      | "imagePrompt"
+      | "action"
+      | "dialogue"
+      | "plannedMs"
+      | "assetIds"
     >
   >,
 ): EpisodeWorkflow {
@@ -360,6 +369,35 @@ export function editShot(
         hasStoryboard || hasGridResult(state, new Set([id])),
       ),
       video: staleStageWhenAffected(state.reviews.video, hasVideos),
+    },
+  };
+}
+
+/** Motion instructions only invalidate the video, never its source image. */
+export function editShotVideoPrompt(
+  state: EpisodeWorkflow,
+  id: string,
+  videoPrompt: string,
+): EpisodeWorkflow {
+  const shot = state.shots.find((item) => item.id === id);
+  if (!shot || shot.videoPrompt === videoPrompt) return state;
+  return {
+    ...state,
+    shots: state.shots.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            videoPrompt,
+            videoReview: staleWhenPresent(
+              item.videoReview,
+              hasVideoResult(item),
+            ),
+          }
+        : item,
+    ),
+    reviews: {
+      ...state.reviews,
+      video: staleStageWhenAffected(state.reviews.video, hasVideoResult(shot)),
     },
   };
 }
@@ -604,6 +642,8 @@ function isShot(value: unknown): value is ShotItem {
     typeof shot.id === "string" &&
     typeof shot.title === "string" &&
     typeof shot.description === "string" &&
+    (shot.imagePrompt === undefined || typeof shot.imagePrompt === "string") &&
+    (shot.videoPrompt === undefined || typeof shot.videoPrompt === "string") &&
     typeof shot.action === "string" &&
     typeof shot.dialogue === "string" &&
     typeof shot.plannedMs === "number" &&

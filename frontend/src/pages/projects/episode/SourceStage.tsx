@@ -1,3 +1,4 @@
+import { Button } from "antd";
 import React from "react";
 import {
   DEMO_MODELS,
@@ -54,6 +55,7 @@ export function SourceStage({
       <label className="episode-editor-label">
         本集小说
         <textarea
+          className="episode-novel-text"
           rows={12}
           value={value.novel}
           readOnly={readOnly}
@@ -77,7 +79,7 @@ export function SourceStage({
           }}
         />
       </label>
-      <div className="episode-stage-controls">
+      <div className="episode-stage-controls episode-source-controls">
         <label>
           剧本生成模型
           <select
@@ -109,14 +111,13 @@ export function SourceStage({
               ))}
           </select>
         </label>
-        <button
-          className="episode-primary-action"
-          type="button"
+        <Button
+          type="primary"
           disabled={readOnly || !value.novel.trim()}
           onClick={generate}
         >
           演示生成剧本
-        </button>
+        </Button>
       </div>
       {!value.novel.trim() && (
         <p className="episode-help">
@@ -129,13 +130,13 @@ export function SourceStage({
           {value.scriptCandidates.map((candidate) => (
             <article key={candidate.id} className="episode-candidate">
               <pre>{candidate.value}</pre>
-              <button
-                type="button"
+              <Button
+                type="primary"
                 disabled={readOnly}
                 onClick={() => select(candidate.id)}
               >
                 选用此候选
-              </button>
+              </Button>
             </article>
           ))}
         </div>

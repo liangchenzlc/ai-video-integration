@@ -28,11 +28,11 @@ describe("episode demo fixtures", () => {
     expect(sampleScript(`  ${prefix}甲  `)).toEqual(first);
   });
 
-  it("uses generic asset names that require user correction", () => {
+  it("provides specific fictional asset examples for each kind", () => {
     expect(sampleAssets().map((asset) => asset.name)).toEqual([
-      "角色 A",
-      "场景 A",
-      "道具 A",
+      "林小雨",
+      "旧城雨巷",
+      "旧铜手提灯",
     ]);
   });
 

@@ -1,13 +1,11 @@
+import { Button } from "antd";
 import React from "react";
-import { AssetControls } from "./AssetControls";
 import {
   DEMO_MODELS,
   sampleAssets,
 } from "../../../features/projects/episode-demo";
 import {
-  editAsset,
   editScript,
-  removeAsset,
   staleFrameReviews,
   type EpisodeWorkflow,
 } from "../../../features/projects/episode-workflow";
@@ -70,8 +68,12 @@ export function ScriptStage({
       },
     });
   }
-  function confirmScript() {
+  function generateFramework() {
     if (!value.scriptDraft.trim()) return;
+    const existingKinds = new Set(value.assets.map((asset) => asset.kind));
+    const additions = sampleAssets().filter(
+      (asset) => !existingKinds.has(asset.kind),
+    );
     onChange({
       ...value,
       approvedScript: {
@@ -79,24 +81,15 @@ export function ScriptStage({
         aspect: value.aspect,
         style: value.style,
       },
-      reviews: { ...value.reviews, script: "confirmed" },
-    });
-  }
-  function analyze() {
-    if (!currentSnapshot) return;
-    const existing = new Set(
-      value.assets.map((asset) => `${asset.kind}:${asset.name}`),
-    );
-    const additions = sampleAssets().filter(
-      (asset) => !existing.has(`${asset.kind}:${asset.name}`),
-    );
-    onChange({
-      ...value,
       assets: [
         ...value.assets,
         ...additions.map((asset) => ({ ...asset, id: crypto.randomUUID() })),
       ],
-      reviews: { ...value.reviews, assets: "review" },
+      reviews: {
+        ...value.reviews,
+        script: "confirmed",
+        assets: additions.length ? "review" : value.reviews.assets,
+      },
     });
   }
   return (
@@ -104,34 +97,23 @@ export function ScriptStage({
       <div className="episode-stage-heading">
         <div>
           <h2>剧本确认与素材拆解</h2>
-          <p>
-            校对剧本与原文，再确认当前文字、画幅和风格；素材仅生成演示占位候选。
-          </p>
+          <p>编辑剧本并设置画幅与风格，再生成可逐项修改的素材文本框架。</p>
         </div>
         <span>
           {currentSnapshot
-            ? "当前版本已确认"
+            ? "当前剧本版本已保存"
             : value.reviews.script === "stale"
-              ? "需复核原文变更"
+              ? "剧本变更待更新"
               : value.approvedScript
-                ? "有待确认修改"
-                : "待确认"}
+                ? "有待保存的修改"
+                : "待生成文本框架"}
         </span>
       </div>
-      <details className="episode-source-compare">
-        <summary>对照小说原文</summary>
-        <pre>{value.novel || "尚未填写本集小说。"}</pre>
-      </details>
-      {value.approvedScript && (
-        <details className="episode-source-compare">
-          <summary>查看已确认剧本快照</summary>
-          <pre>{value.approvedScript.text}</pre>
-        </details>
-      )}
       <label className="episode-editor-label">
         本集剧本
         <textarea
-          rows={14}
+          className="episode-script-textarea"
+          rows={18}
           value={value.scriptDraft}
           readOnly={readOnly}
           placeholder="直接粘贴已有剧本，或选用上一阶段的演示候选"
@@ -198,97 +180,20 @@ export function ScriptStage({
           本集画幅与项目设置不同；后续画面需保持本集画幅一致。
         </p>
       )}
-      <div className="episode-stage-controls">
-        {!currentSnapshot ? (
-          <button
-            className="episode-primary-action"
-            type="button"
-            disabled={readOnly || !value.scriptDraft.trim()}
-            onClick={confirmScript}
-          >
-            确认剧本
-          </button>
-        ) : (
-          <button
-            className="episode-primary-action"
-            type="button"
-            disabled={readOnly}
-            onClick={analyze}
-          >
-            演示分析素材
-          </button>
-        )}
+      <div className="episode-script-action-row">
+        <Button
+          type="primary"
+          disabled={readOnly || !value.scriptDraft.trim()}
+          onClick={generateFramework}
+        >
+          一键生成文本框架
+        </Button>
+        <p>
+          {value.scriptDraft.trim()
+            ? "同时保存当前剧本版本；演示模式仅补齐缺少的角色、场景和道具占位文本，不覆盖已有内容。"
+            : "先输入或选用本集剧本，再生成角色、场景和道具的文本框架。"}
+        </p>
       </div>
-      <AssetControls value={value} readOnly={readOnly} onChange={onChange} />
-      {value.assets.length > 0 && (
-        <div className="episode-candidates">
-          <h3>素材候选 · 请人工核对</h3>
-          <div className="episode-asset-list">
-            {value.assets.map((asset) => (
-              <article key={asset.id} className="episode-candidate">
-                {asset.approvedText && (
-                  <details className="episode-source-compare">
-                    <summary>对照上次确认素材</summary>
-                    <pre>
-                      {asset.approvedText.name}
-                      {"\n"}
-                      {asset.approvedText.description}
-                    </pre>
-                  </details>
-                )}
-                <button
-                  type="button"
-                  disabled={readOnly}
-                  onClick={() => onChange(removeAsset(value, asset.id))}
-                >
-                  删除素材
-                </button>
-                <span>
-                  {
-                    (
-                      {
-                        character: "角色",
-                        scene: "场景",
-                        prop: "道具",
-                      } as const
-                    )[asset.kind]
-                  }{" "}
-                  · {asset.review === "stale" ? "需复核" : "演示候选"}
-                </span>
-                <label>
-                  名称
-                  <input
-                    value={asset.name}
-                    readOnly={readOnly}
-                    onChange={(event) =>
-                      onChange(
-                        editAsset(value, asset.id, {
-                          name: event.target.value,
-                        }),
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  描述
-                  <textarea
-                    rows={3}
-                    value={asset.description}
-                    readOnly={readOnly}
-                    onChange={(event) =>
-                      onChange(
-                        editAsset(value, asset.id, {
-                          description: event.target.value,
-                        }),
-                      )
-                    }
-                  />
-                </label>
-              </article>
-            ))}
-          </div>
-        </div>
-      )}
     </>
   );
 }

@@ -40,7 +40,7 @@ export function shotInputIssue(
   media: readonly ListedMedia[] = [],
 ): string | null {
   if (!isScriptCurrent(value))
-    return "请先返回第二阶段确认当前剧本、画幅和风格";
+    return "请先返回第二阶段，基于当前剧本、画幅和风格生成文本框架";
   if (!shotTextReady(value, shot))
     return "请先返回分镜阶段确认本镜文字、动作和时长";
   if (

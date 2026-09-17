@@ -1,12 +1,19 @@
 import React, { type ReactNode } from "react";
+import { Button } from "antd";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import {
   adoptFrame,
+  editShot,
+  editShotVideoPrompt,
   emptyWorkflow,
   readWorkflow,
   saveWorkflow,
 } from "../../src/features/projects/episode-workflow";
+import {
+  sampleAssets,
+  sampleShots,
+} from "../../src/features/projects/episode-demo";
 import {
   StoryboardStage,
   adoptGridCellAsFirstFrame,
@@ -68,7 +75,10 @@ function button(
     }
   } else if (React.isValidElement(node)) {
     const props = node.props as { children?: ReactNode };
-    if (node.type === "button" && props.children === label)
+    if (
+      (node.type === "button" || node.type === Button) &&
+      props.children === label
+    )
       return node as ReturnType<typeof button>;
     if (props.children !== undefined) return button(props.children, label);
   }
@@ -106,11 +116,6 @@ describe("storyboard stage", () => {
     }));
     value.shots.push(...appendedShots);
     value.storyboardMode = "grid";
-    expect(
-      renderToStaticMarkup(
-        <StoryboardStage value={value} readOnly={false} onChange={() => {}} />,
-      ),
-    ).toContain("为新增镜头生成九宫格");
     const next = createStoryboardGrids(value);
     expect(next.gridBatches[0]).toBe(existing);
     expect(next.gridBatches).toHaveLength(3);
@@ -130,16 +135,18 @@ describe("storyboard stage", () => {
       ),
     ).not.toContain("为新增镜头生成九宫格");
   });
-  it("renders both frame modes and all nine fixed grid cells", () => {
+  it("keeps all saved shots collapsed and replaces old frame/grid controls", () => {
     const value = workflowWithShots();
     value.storyboardMode = "grid";
     const markup = renderToStaticMarkup(
       <StoryboardStage value={value} readOnly={false} onChange={() => {}} />,
     );
 
-    expect(markup).toContain("首尾帧");
-    expect(markup).toContain("九宫格分镜");
-    expect(markup.match(/episode-grid-cell/g)).toHaveLength(9);
+    expect(markup.match(/<details class="storyboard-item"/g)).toHaveLength(9);
+    expect(markup).not.toMatch(/<details[^>]*open/);
+    expect(markup).not.toContain("首尾帧");
+    expect(markup).not.toContain("九宫格分镜");
+    expect(markup).toContain("生成分镜脚本");
   });
 
   it("does not adopt a whole grid sheet as a shot first frame", () => {
@@ -226,18 +233,22 @@ describe("storyboard stage", () => {
     expect(next.shots[0]?.firstFrames).toEqual([]);
   });
 
-  it("does not emit a state change from read-only mode switches", () => {
+  it("blocks generation and prompt editing in read-only mode", () => {
     const onChange = vi.fn();
     const rendered = StoryboardStage({
       value: workflowWithShots(),
       readOnly: true,
       onChange,
     });
-    const gridMode = button(rendered, "九宫格分镜");
+    const generate = button(rendered, "生成分镜脚本");
 
-    expect(gridMode.props.disabled).toBe(true);
-    gridMode.props.onClick();
+    expect(generate.props.disabled).toBe(true);
+    generate.props.onClick();
     expect(onChange).not.toHaveBeenCalled();
+    const markup = renderToStaticMarkup(rendered);
+    expect(markup).toContain('readOnly=""');
+    expect(markup).not.toContain("添加关联角色");
+    expect(markup).not.toContain("取消关联");
   });
 
   it("keeps first- and end-frame adoption independent", () => {
@@ -308,26 +319,138 @@ describe("storyboard stage", () => {
     ]);
   });
 
-  it("labels the preview as static and calls unsupported tail frames review-only", () => {
-    const frameMarkup = renderToStaticMarkup(
-      <StoryboardStage
-        value={workflowWithShots()}
-        readOnly={false}
-        onChange={() => {}}
-      />,
+  it("shows shared materials followed by a two-row image/video production table", () => {
+    const value = workflowWithShots();
+    value.shots = sampleShots("雨夜");
+    const markup = renderToStaticMarkup(
+      <StoryboardStage value={value} readOnly={false} onChange={() => {}} />,
     );
-    const gridValue = workflowWithShots();
-    gridValue.storyboardMode = "grid";
-    const gridMarkup = renderToStaticMarkup(
-      <StoryboardStage
-        value={gridValue}
-        readOnly={false}
-        onChange={() => {}}
-      />,
+    expect(markup.indexOf('class="storyboard-materials"')).toBeLessThan(
+      markup.indexOf('class="storyboard-prompt"'),
     );
+    expect(markup.indexOf('class="storyboard-prompt"')).toBeLessThan(
+      markup.indexOf('class="storyboard-output"'),
+    );
+    expect(markup.match(/aria-label="分镜图空白展示区"/g)).toHaveLength(2);
+    expect(markup.match(/aria-label="分镜视频空白展示区"/g)).toHaveLength(2);
+    expect(markup.match(/class="storyboard-materials-table"/g)).toHaveLength(2);
+    expect(markup.match(/class="storyboard-production-table"/g)).toHaveLength(
+      2,
+    );
+    expect(markup.match(/<tr>/g)).toHaveLength(6);
+    expect(markup.indexOf("<h4>角色</h4>")).toBeLessThan(
+      markup.indexOf("<h4>场景</h4>"),
+    );
+    expect(markup.indexOf("<h4>场景</h4>")).toBeLessThan(
+      markup.indexOf("<h4>道具</h4>"),
+    );
+    expect(markup).toContain("ant-btn-primary");
+    expect(markup).not.toContain("<h3>关联素材</h3>");
+    expect(markup).toContain("生成分镜图");
+    expect(markup).toContain("生成视频");
+    expect(markup).toContain("视频提示词");
+    expect(markup).toContain("雨巷来客");
+    expect(markup).toContain("门前迟疑");
+  });
 
-    expect(frameMarkup).toContain("静态预览");
-    expect(gridMarkup).toContain("仅供分镜参考");
-    expect(frameMarkup).toContain("不支持尾帧的视频模型会将其视为仅供审核参考");
+  it("generates exactly two collapsed examples linked only to existing assets", () => {
+    const value = emptyWorkflow({});
+    value.scriptDraft = "雨夜";
+    value.assets = sampleAssets();
+    const onChange = vi.fn();
+    const generate = button(
+      StoryboardStage({ value, readOnly: false, onChange }),
+      "生成分镜脚本",
+    );
+    generate.props.onClick();
+    const next = onChange.mock.calls[0]![0];
+    expect(next.shots).toHaveLength(2);
+    expect(next.shots[0].assetIds).toEqual([
+      "demo-asset-2",
+      "demo-asset-1",
+      "demo-asset-3",
+    ]);
+    expect(next.shots[0].imagePrompt).toContain("林小雨");
+    expect(next.assets).toEqual(value.assets);
+    expect(
+      next.shots.every(
+        (shot: { firstFrames: unknown[] }) => shot.firstFrames.length === 0,
+      ),
+    ).toBe(true);
+  });
+
+  it("persists prompt edits and associations without changing other shots", () => {
+    const value = workflowWithShots();
+    const next = editShot(value, "shot-1", {
+      imagePrompt: "更新的图片提示词",
+      assetIds: ["asset-1"],
+    });
+    const withVideoPrompt = editShotVideoPrompt(
+      next,
+      "shot-1",
+      "镜头缓慢向前推进",
+    );
+    expect(next.shots[1]).toBe(value.shots[1]);
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, text: string) => {
+        values.set(key, text);
+      },
+    };
+    expect(saveWorkflow("p", "e", withVideoPrompt, storage)).toEqual({
+      ok: true,
+    });
+    expect(readWorkflow("p", "e", {}, storage).shots[0]).toMatchObject({
+      imagePrompt: "更新的图片提示词",
+      videoPrompt: "镜头缓慢向前推进",
+      assetIds: ["asset-1"],
+    });
+    expect(
+      readWorkflow("p", "e", {}, storage).shots[1]?.imagePrompt,
+    ).toBeUndefined();
+  });
+
+  it("video prompt edits invalidate only the matching video and preserve source images", () => {
+    const value = workflowWithShots();
+    const shot = value.shots[0]!;
+    shot.review = "confirmed";
+    shot.frameReview = "confirmed";
+    shot.firstFrameReview = "confirmed";
+    shot.firstFrames = [
+      {
+        id: "frame",
+        source: "demo",
+        value: { kind: "demo-image", id: "frame" },
+      },
+    ];
+    shot.selectedFirstId = "frame";
+    shot.videos = [
+      {
+        id: "video",
+        source: "demo",
+        value: { kind: "demo-motion", id: "video" },
+      },
+    ];
+    shot.selectedVideoId = "video";
+    shot.videoReview = "confirmed";
+    value.reviews.storyboard = "confirmed";
+    value.reviews.video = "confirmed";
+    const next = editShotVideoPrompt(value, shot.id, "缓慢推近");
+    expect(next.shots[0]).toMatchObject({
+      videoPrompt: "缓慢推近",
+      review: "confirmed",
+      frameReview: "confirmed",
+      firstFrameReview: "confirmed",
+      selectedFirstId: "frame",
+      selectedVideoId: "video",
+      videoReview: "stale",
+    });
+    expect(next.shots[0]!.firstFrames).toBe(shot.firstFrames);
+    expect(next.shots[0]!.videos).toBe(shot.videos);
+    expect(next.shots[1]).toBe(value.shots[1]);
+    expect(next.gridBatches).toBe(value.gridBatches);
+    expect(next.reviews.storyboard).toBe("confirmed");
+    expect(next.reviews.video).toBe("stale");
   });
 });

@@ -2,7 +2,10 @@ import React, { type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { emptyWorkflow } from "../../src/features/projects/episode-workflow";
-import { StageNav } from "../../src/pages/projects/episode/StageNav";
+import {
+  StageNav,
+  visibleEpisodeStage,
+} from "../../src/pages/projects/episode/StageNav";
 import { SourceStage } from "../../src/pages/projects/episode/SourceStage";
 import { ScriptStage } from "../../src/pages/projects/episode/ScriptStage";
 
@@ -161,13 +164,28 @@ function reviewedState() {
 }
 
 describe("episode stages", () => {
-  it("offers exactly five reviewable stages", () => {
+  it("omits the saved-script viewer without changing the saved snapshot", () => {
+    const value = reviewedState();
+    const snapshot = value.approvedScript;
     const markup = renderToStaticMarkup(
-      <StageNav active="source" reviews={state.reviews} onSelect={() => {}} />,
+      <ScriptStage value={value} readOnly={false} onChange={() => {}} />,
     );
-    expect(markup.match(/episode-stage-link/g)).toHaveLength(5);
+    expect(markup).not.toContain("查看上次保存的剧本版本");
+    expect(markup).not.toContain("episode-script-snapshot");
+    expect(markup).toContain("本集剧本");
+    expect(value.approvedScript).toBe(snapshot);
+  });
+  it("offers four stages with image and video production combined", () => {
+    const markup = renderToStaticMarkup(
+      <StageNav active="source" onSelect={() => {}} />,
+    );
+    expect(markup.match(/episode-stage-link/g)).toHaveLength(4);
     expect(markup).toContain("小说与剧本生成");
-    expect(markup).toContain("分镜视频");
+    expect(markup).toContain("分镜制作");
+    expect(markup).not.toContain("分镜视频");
+    expect(visibleEpisodeStage("video")).toBe("storyboard");
+    expect(markup).not.toContain("未开始");
+    expect(markup).not.toContain("<small>");
   });
 
   it("keeps source text and demo model choice visible", () => {
@@ -196,8 +214,12 @@ describe("episode stages", () => {
     const script = renderToStaticMarkup(
       <ScriptStage value={state} readOnly onChange={() => {}} />,
     );
-    expect(source).toMatch(/disabled=""[^>]*>演示生成剧本/);
-    expect(script).toMatch(/disabled=""[^>]*>确认剧本/);
+    expect(source).toMatch(/<button[^>]*disabled=""[^>]*><span>演示生成剧本/);
+    expect(script).toMatch(
+      /<button[^>]*disabled=""[^>]*><span>一键生成文本框架/,
+    );
+    expect(source).toContain("ant-btn-primary");
+    expect(script).toContain("ant-btn-primary");
   });
 
   it("selects a candidate only on an explicit choice and keeps its history", () => {
@@ -280,10 +302,10 @@ describe("episode stages", () => {
     const markup = renderToStaticMarkup(
       <ScriptStage value={next} readOnly={false} onChange={() => {}} />,
     );
-    expect(markup).toContain("需复核");
-    expect(markup).not.toContain("当前版本已确认");
-    expect(markup).toContain("确认剧本");
-    expect(markup).not.toContain("演示分析素材");
+    expect(markup).toContain("剧本变更待更新");
+    expect(markup).not.toContain("当前剧本版本已保存");
+    expect(markup).toContain("一键生成文本框架");
+    expect(markup).not.toContain("确认剧本</button>");
   });
 
   it.each(["aspect", "style"] as const)(

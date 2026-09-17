@@ -6,16 +6,12 @@ import {
   sampleShots,
   sampleAssets,
 } from "../../src/features/projects/episode-demo";
-import {
-  AssetsStage,
-  shareAsset,
-} from "../../src/pages/projects/episode/AssetsStage";
+import { shareAsset } from "../../src/pages/projects/episode/AssetsStage";
 import * as storyboard from "../../src/pages/projects/episode/StoryboardStage";
 import {
   VideoStage,
   canGenerateVideo,
 } from "../../src/pages/projects/episode/VideoStage";
-import { StageNav } from "../../src/pages/projects/episode/StageNav";
 import { ImagePreview } from "../../src/pages/projects/episode/ImagePreview";
 import { hasAvailableMedia } from "../../src/features/projects/episode-media";
 import type { ListedMedia } from "../../src/features/projects/episode-media";
@@ -238,7 +234,7 @@ describe("final review boundaries", () => {
     },
   );
 
-  it("provides visible distinct illustrations for frame, sheet, cell, and static previews", () => {
+  it("keeps existing asset and frame previews in the combined production table", () => {
     const value = approvedState();
     const frames = renderToStaticMarkup(
       <storyboard.StoryboardStage
@@ -247,7 +243,9 @@ describe("final review boundaries", () => {
         onChange={() => {}}
       />,
     );
-    expect((frames.match(/<svg/g) ?? []).length).toBeGreaterThanOrEqual(6);
+    expect(frames).toContain("林小雨 · 演示参考");
+    expect(frames).toContain("雨巷来客分镜图");
+    expect(frames).toContain("门前迟疑分镜图");
     const grid = storyboard.createStoryboardGrids(value);
     grid.storyboardMode = "grid";
     const markup = renderToStaticMarkup(
@@ -257,11 +255,11 @@ describe("final review boundaries", () => {
         onChange={() => {}}
       />,
     );
-    expect(markup).toContain("整张九宫格演示参考");
-    expect((markup.match(/<svg/g) ?? []).length).toBeGreaterThanOrEqual(9);
+    expect(markup).not.toContain("整张九宫格演示参考");
+    expect(markup).toContain("storyboard-production-table");
   });
 
-  it("offers explicit shot and stage text confirmation", () => {
+  it("replaces shot and stage confirmation with prompt editing", () => {
     const value = approvedState();
     value.shots[0]!.review = "stale";
     const markup = renderToStaticMarkup(
@@ -271,23 +269,10 @@ describe("final review boundaries", () => {
         onChange={() => {}}
       />,
     );
-    expect(markup).toContain("确认本镜文字");
-    expect(markup).toContain("确认分镜阶段");
-  });
-
-  it("shows actionable counts for pending review", () => {
-    const value = approvedState();
-    value.assets[0]!.review = "stale";
-    expect(
-      renderToStaticMarkup(
-        <StageNav
-          active="assets"
-          value={value}
-          reviews={value.reviews}
-          onSelect={() => {}}
-        />,
-      ),
-    ).toContain("1 项待处理");
+    expect(markup).not.toContain("确认本镜文字");
+    expect(markup).not.toContain("确认分镜阶段");
+    expect(markup).toContain("图片提示词");
+    expect(markup).not.toMatch(/<details[^>]*open/);
   });
 
   it("adds typed stable assets and removes only their own dependencies", () => {

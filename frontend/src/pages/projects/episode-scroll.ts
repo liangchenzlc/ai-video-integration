@@ -7,7 +7,8 @@ export function activeStepIndex(
   if (atBottom) return tops.length - 1;
   let index = 0;
   tops.forEach((top, candidate) => {
-    if (top <= probeY) index = candidate;
+    // scrollIntoView rounds scroll positions, while section bounds can be fractional.
+    if (top <= probeY + 1) index = candidate;
   });
   return index;
 }
