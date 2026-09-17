@@ -1,0 +1,19 @@
+extends: ./electron-builder.yml
+directories:
+  output: ../release/installer
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  signAndEditExecutable: false
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  artifactName: AI-Video-Integration-${version}-${arch}-setup.${ext}

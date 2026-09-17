@@ -8,6 +8,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
+    { name = "jsonschema" },
     { name = "pydantic" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "uvicorn" },
@@ -16,7 +17,6 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "httpx" },
-    { name = "jsonschema" },
     { name = "mypy" },
     { name = "pyinstaller" },
     { name = "pytest" },
@@ -26,6 +26,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = "==0.141.1" },
+    { name = "jsonschema", specifier = "==4.26.0" },
     { name = "pydantic", specifier = "==2.13.5" },
     { name = "pywin32", marker = "sys_platform == 'win32'", specifier = "==312" },
     { name = "uvicorn", specifier = "==0.53.0" },
@@ -34,7 +35,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "httpx", specifier = "==0.28.1" },
-    { name = "jsonschema", specifier = "==4.26.0" },
     { name = "mypy", specifier = "==2.3.1" },
     { name = "pyinstaller", specifier = "==6.22.3" },
     { name = "pytest", specifier = "==9.1.1" },

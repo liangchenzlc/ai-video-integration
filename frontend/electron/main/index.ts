@@ -5,39 +5,45 @@ import { RuntimeSupervisor } from "./runtime/supervisor";
 import { launchBackend } from "./runtime/launch";
 import { installIpc } from "./ipc";
 import { allowedPage, productionCsp, developmentCsp } from "./security";
+import { confirmRendererLeave, createQuitGuard } from "./draft-flush";
 
 protocol.registerSchemesAsPrivileged([
   {
     scheme: "app",
     privileges: { standard: true, secure: true, supportFetchAPI: true },
   },
+  {
+    scheme: "avi-media",
+    privileges: { standard: true, secure: true, stream: true },
+  },
 ]);
 app.setName("AI Video Integration");
 const development =
   !app.isPackaged &&
   process.env.ELECTRON_RENDERER_URL === "http://127.0.0.1:5173";
+const offscreenForTests = process.env.AVI_E2E_OFFSCREEN_WINDOW === "1";
 const root = resolve(__dirname, "../../..");
 let window: BrowserWindow | undefined;
-let quitting = false;
 let supervisor: RuntimeSupervisor | undefined;
+const quitGuard = createQuitGuard({
+  confirm: () =>
+    window ? confirmRendererLeave(window, development) : Promise.resolve(true),
+  stop: () => supervisor?.stop("app_exit") ?? Promise.resolve(),
+  quit: () => app.quit(),
+});
 
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
   app.on("second-instance", () => {
     if (window) {
       if (window.isMinimized()) window.restore();
-      window.show();
-      window.focus();
+      if (!offscreenForTests) {
+        window.show();
+        window.focus();
+      }
     }
   });
-  app.on("before-quit", (event) => {
-    if (quitting) return;
-    event.preventDefault();
-    quitting = true;
-    void (supervisor?.stop("app_exit") ?? Promise.resolve())
-      .catch(() => {})
-      .finally(() => app.quit());
-  });
+  app.on("before-quit", quitGuard.beforeQuit);
   app.on("window-all-closed", () => app.quit());
   void app
     .whenReady()
@@ -102,6 +108,7 @@ else {
         callback({
           cancel:
             !(url.protocol === "app:" && url.host === "ui") &&
+            !(url.protocol === "avi-media:" && url.host === "local") &&
             !(
               development &&
               ["http:", "ws:"].includes(url.protocol) &&
@@ -119,12 +126,13 @@ else {
           }),
         );
       window = new BrowserWindow({
+        ...(offscreenForTests ? { x: -32000, y: -32000 } : {}),
         width: 1280,
         height: 800,
         minWidth: 960,
         minHeight: 640,
         show: false,
-        backgroundColor: "#172124",
+        backgroundColor: "#f5f9fe",
         title: "AI 短剧工作台",
         autoHideMenuBar: true,
         webPreferences: {
@@ -145,12 +153,7 @@ else {
       window.webContents.on("will-attach-webview", (event) =>
         event.preventDefault(),
       );
-      window.on("close", (event) => {
-        if (!quitting) {
-          event.preventDefault();
-          app.quit();
-        }
-      });
+      window.on("close", quitGuard.beforeClose);
       supervisor = new RuntimeSupervisor({
         launch: () =>
           launchBackend(root, process.resourcesPath, app.isPackaged),
@@ -166,7 +169,8 @@ else {
       await window.loadURL(
         development ? "http://127.0.0.1:5173/" : "app://ui/",
       );
-      window.show();
+      if (offscreenForTests) window.showInactive();
+      else window.show();
       await supervisor.start();
     })
     .catch(() => {

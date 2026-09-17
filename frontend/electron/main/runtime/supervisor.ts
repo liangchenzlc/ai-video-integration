@@ -72,6 +72,22 @@ export class RuntimeSupervisor {
   snapshot(): RuntimeSnapshot {
     return { ...this.#state };
   }
+  async withConnection<T>(
+    work: (endpoint: Endpoint, signal: AbortSignal) => Promise<T>,
+  ): Promise<T> {
+    const c = this.#context;
+    if (
+      !c?.endpoint ||
+      !c.verified ||
+      this.#state.state !== "ready" ||
+      this.#closing
+    )
+      throw new RuntimeError("BACKEND_UNAVAILABLE");
+    const result = await work(c.endpoint, c.abort.signal);
+    if (!this.#current(c) || c.stopping || this.#state.state !== "ready")
+      throw new RuntimeError("STALE_RUNTIME");
+    return result;
+  }
   subscribe(listener: (value: RuntimeSnapshot) => void): () => void {
     this.#listeners.add(listener);
     return () => {

@@ -2,7 +2,7 @@
 
 面向中文新手的 Windows 本地 AI 漫剧制作工具：自有 API Key，从故事、资产与分镜到声音、视频、剪辑和 MP4，质量优先，费用可追溯，局部修改和任务恢复可控。
 
-T01 桌面底座已完成：真实后端连接、状态与重启、六组中文导航和 Windows 目录包均已验证。T02–T14 业务功能仍待实现。前端 Electron + React + TypeScript，后端本机 FastAPI + Python，SQLite 与 FFmpeg 管理本地项目和媒体。
+T01–T07 已接入本地项目、媒体、配置、任务费用恢复、候选版本及故事资产分镜。T08–T13 已实现配音字幕、时间线预演、视频准入、混音、检查导出和安装诊断工程，逐模块验证记录见下文；T14 与真实模型、生产效果验收仍待完成。前端 Electron + React + TypeScript，后端本机 FastAPI + Python，SQLite 与 FFmpeg 管理本地项目和媒体。
 
 - [开发准入与资料清单](./docs/开发准备/README.md)
 - [资料验证结果](./docs/开发准备/资料验证结果.md)
@@ -12,7 +12,11 @@ T01 桌面底座已完成：真实后端连接、状态与重启、六组中文�
 - [设计契约与示例验证](./docs/技术方案/验证/README.md)
 - [T01 最终验证与代码 Review](./docs/开发记录/T01-最终验证与Review.md)
 - [详细开发交接：代码入口、T02 实施批次和剩余模块](./docs/开发记录/T01完成后的开发交接.md)
+- [当前开发进度与接续边界](./docs/开发记录/2026-09-16-继续开发核对.md)
+- [T08–T13 实现与逐模块验证](./docs/开发记录/2026-09-16-T08-T13实现与验证.md)
+- [T06 接续实现、测试与 Review](./docs/开发记录/2026-09-16-T06实现与验证.md)
+- [T07 离线内容工作区与基础验证](./docs/开发记录/2026-09-16-T07实现与验证.md)
 
-原型和验证脚本不调用真实模型；研究素材与模拟账目不代表正式效果或价格。当前产品仅开放本地服务连接；项目保存、模型生成、剪辑和导出尚未实现。
+当前源码支持本地项目保存、故事与资产分镜编辑、媒体导入、配音字幕、时间线剪辑、FFmpeg 预演及满足检查条件的 MP4 导出。synthetic 练习不调用真实模型，固定文字/图像与模拟账目不代表正式效果或实际费用。真实模型和云传输保持未授权；安装配置不代表干净系统和签名验收通过。
 
-运行目录包：`release/t01/win-unpacked/AI Video Integration.exe`，保留整个目录。开发运行 `powershell.exe -NoProfile -File scripts/dev.ps1`；检查、打包及目录包验证分别使用 `scripts/check.ps1`、`scripts/pack-win.ps1`、`scripts/test-packaged.ps1`。
+运行目录包：`release/t01/win-unpacked/AI Video Integration.exe`，保留整个目录。现有目录包仍为 T06，本轮未重新打包；体验 T07–T13 请开发运行 `powershell.exe -NoProfile -File scripts/dev.ps1`。检查、打包及目录包验证分别使用 `scripts/check.ps1`、`scripts/pack-win.ps1`、`scripts/test-packaged.ps1`。本轮已完成逐模块基础验证及定向集合检查，结果见 T08–T13 验证记录；未运行历史全套。

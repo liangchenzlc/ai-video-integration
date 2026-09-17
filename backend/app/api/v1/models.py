@@ -111,9 +111,10 @@ class Capability(StrictModel):
 
     @model_validator(mode="after")
     def match_implementation(self) -> Capability:
-        available = self.id == "runtime"
-        if self.enabled != available or self.reason_code != (
-            "AVAILABLE" if available else "NOT_IMPLEMENTED"
+        if (
+            (self.id == "runtime" and not self.enabled)
+            or (self.enabled and self.id not in {"runtime", "projects"})
+            or self.reason_code != ("AVAILABLE" if self.enabled else "NOT_IMPLEMENTED")
         ):
             raise ValueError("Capability does not match implemented runtime")
         return self

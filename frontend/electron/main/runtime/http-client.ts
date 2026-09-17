@@ -213,8 +213,9 @@ async function get(
       parsed.data.capabilities.some(
         (c, i) =>
           c.id !== capabilityIds[i] ||
-          c.enabled !== (i === 0) ||
-          c.reasonCode !== (i === 0 ? "AVAILABLE" : "NOT_IMPLEMENTED"),
+          (i === 0 && !c.enabled) ||
+          (c.enabled && !["runtime", "projects"].includes(c.id)) ||
+          c.reasonCode !== (c.enabled ? "AVAILABLE" : "NOT_IMPLEMENTED"),
       )
     )
       throw new RuntimeError("PROTOCOL_INVALID");

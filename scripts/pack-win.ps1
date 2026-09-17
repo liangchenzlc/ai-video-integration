@@ -18,5 +18,6 @@ try {
         Invoke-Checked $projectNode @('node_modules/electron-vite/bin/electron-vite.js', 'build')
         Invoke-Checked $projectNode @('node_modules/electron-builder/cli.js', '--dir', '--win', '--x64', '--config', 'electron-builder.yml')
     } finally { Pop-Location }
+    Invoke-Checked $projectPython @('scripts/release_manifest.py', '--directory', 'release/t01/win-unpacked')
     Write-Output 'Directory package: release/t01/win-unpacked/AI Video Integration.exe'
 } finally { $env:PATH = $previousPath; Pop-Location }

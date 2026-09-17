@@ -3,7 +3,7 @@ from pathlib import Path
 root = Path(SPECPATH)
 analysis = Analysis(
     [str(root / "app" / "entrypoint.py")], pathex=[str(root)],
-    binaries=[], datas=[], hiddenimports=["uvicorn.logging", "uvicorn.loops.asyncio", "uvicorn.protocols.http.h11_impl", "uvicorn.lifespan.on"],
+    binaries=[], datas=[(str(root / "app/storage/migration_002.sql"), "app/storage"), (str(root / "app/storage/migration_003.sql"), "app/storage"), (str(root / "app/storage/migration_004.sql"), "app/storage"), (str(root / "app/storage/migration_005.sql"), "app/storage"), (str(root / "app/storage/migration_006.sql"), "app/storage"), (str(root / "app/storage/migration_007.sql"), "app/storage"), (str(root / "app/storage/migration_008.sql"), "app/storage"), (str(root / "app/storage/capability.schema.json"), "app/storage"), (str(root / "app/schemas/production-errors.json"), "app/schemas"), (str(root / "app/schemas/draft.schema.json"), "app/schemas"), (str(root / "app/schemas/revision.schema.json"), "app/schemas")], hiddenimports=["uvicorn.logging", "uvicorn.loops.asyncio", "uvicorn.protocols.http.h11_impl", "uvicorn.lifespan.on"],
     hookspath=[], hooksconfig={}, runtime_hooks=[], excludes=[], noarchive=False,
 )
 pyz = PYZ(analysis.pure)

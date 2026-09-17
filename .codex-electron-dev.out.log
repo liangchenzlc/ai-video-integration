@@ -1,0 +1,116 @@
+vite v7.3.6 building ssr environment for development...
+transforming...
+✓ 30 modules transformed.
+rendering chunks...
+out/main/index.js  157.68 kB
+✓ built in 265ms
+
+electron main process built successfully
+
+-----
+
+vite v7.3.6 building ssr environment for development...
+transforming...
+✓ 115 modules transformed.
+rendering chunks...
+out/preload/index.js  357.85 kB
+✓ built in 483ms
+
+electron preload scripts built successfully
+
+-----
+
+11:24:31 [vite] (client) Re-optimizing dependencies because vite config has changed
+dev server running for the electron renderer process at:
+
+  ➜  Local:   http://127.0.0.1:5173/
+
+starting electron app...
+
+
+11:42:27 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx
+11:43:22 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx
+11:43:23 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+11:43:23 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:43:23 [vite] (client) hmr update /src/app/App.tsx
+11:46:49 [vite] (client) hmr update /src/app/App.tsx
+11:47:16 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+11:47:16 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:47:16 [vite] (client) hmr update /src/app/App.tsx
+11:47:29 [vite] (client) hmr update /src/features/projects/ProjectDetailHeader.tsx
+11:47:30 [vite] (client) hmr update /src/pages/projects/EpisodePage.tsx
+11:48:15 [vite] (client) hmr update /src/app/studio.css
+11:49:02 [vite] (client) hmr update /src/app/studio.css
+11:49:13 [vite] (client) hmr update /src/app/studio.css
+11:49:35 [vite] (client) hmr update /src/app/App.tsx
+11:49:35 [vite] (client) hmr update /src/app/studio.css
+11:49:35 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+11:49:35 [vite] (client) hmr update /src/pages/projects/EpisodePage.tsx
+11:49:35 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:49:35 [vite] (client) hmr update /src/app/App.tsx
+11:49:35 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx
+11:49:35 [vite] (client) hmr update /src/features/projects/ProjectResourceLibrary.tsx
+11:49:35 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx, /src/features/projects/ProjectResourceLibrary.tsx, /src/pages/projects/ProjectsPage.tsx, /src/pages/projects/EpisodePage.tsx
+11:49:35 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:49:35 [vite] (client) hmr update /src/app/App.tsx
+11:50:57 [vite] (client) hmr update /src/app/styles.css
+11:53:06 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx, /src/features/projects/ProjectResourceLibrary.tsx, /src/pages/projects/ProjectsPage.tsx, /src/pages/projects/EpisodePage.tsx
+11:53:06 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:53:06 [vite] (client) hmr update /src/app/App.tsx
+11:53:07 [vite] (client) hmr update /src/features/projects/ProjectResourceLibrary.tsx
+11:55:37 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+11:55:37 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:55:37 [vite] (client) hmr update /src/app/App.tsx
+11:55:43 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+11:55:44 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:55:44 [vite] (client) hmr update /src/app/App.tsx
+12:03:14 [vite] (client) hmr update /src/components/ui/Dialog.tsx
+12:03:15 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx, /src/features/projects/ProjectResourceLibrary.tsx, /src/pages/projects/ProjectsPage.tsx, /src/pages/projects/EpisodePage.tsx
+12:03:15 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+12:03:15 [vite] (client) hmr update /src/app/App.tsx
+12:03:16 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx
+12:04:28 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx, /src/features/projects/ProjectResourceLibrary.tsx, /src/pages/projects/ProjectsPage.tsx, /src/pages/projects/EpisodePage.tsx
+12:04:28 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh ("prepareDraftMutation" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+12:04:28 [vite] (client) hmr update /src/app/App.tsx
+12:09:18 [vite] (client) hmr update /src/pages/projects/EpisodePage.tsx
+12:10:06 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+12:10:06 [vite] (client) hmr invalidate /src/pages/projects/ProjectsPage.tsx Could not Fast Refresh (export removed)
+12:10:06 [vite] (client) hmr update /src/app/App.tsx
+12:10:23 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+12:10:42 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+12:10:54 [vite] (client) hmr update /src/app/App.tsx
+12:10:55 [vite] (client) hmr update /src/app/studio.css
+12:11:59 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+12:11:59 [vite] (client) hmr update /src/pages/projects/EpisodePage.tsx
+12:50:16 [vite] (client) page reload src/main.tsx
+12:50:16 [vite] (client) hmr update /src/components/layout/Sidebar.tsx
+12:50:16 [vite] (client) hmr update /src/app/styles.css
+12:50:16 [vite] (client) hmr update /src/app/studio.css
+12:50:19 [vite] (client) ✨ new dependencies optimized: antd, antd/locale/zh_CN
+12:50:19 [vite] (client) ✨ optimized dependencies changed. reloading
+12:53:49 [vite] (client) hmr update /src/features/projects/ProjectDetailHeader.tsx
+12:53:49 [vite] (client) hmr update /src/pages/projects/ProjectsPage.tsx
+12:53:49 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx
+12:54:06 [vite] (client) hmr update /src/app/studio.css
+12:54:22 [vite] (client) hmr update /src/app/studio.css
+12:55:31 [vite] (client) hmr update /src/features/projects/ProjectCard.tsx
+12:55:31 [vite] (client) hmr update /src/features/assets/AssetCard.tsx
+12:55:31 [vite] (client) hmr update /src/app/studio.css
+12:56:54 [vite] (client) hmr update /src/features/projects/ProjectCreateForm.tsx
+12:56:54 [vite] (client) hmr update /src/features/assets/AssetForm.tsx
+12:56:54 [vite] (client) hmr update /src/pages/assets/AssetsPage.tsx
+12:56:54 [vite] (client) hmr update /src/features/projects/ProjectResourceLibrary.tsx
+12:58:34 [vite] (client) hmr update /src/pages/projects/EpisodePage.tsx
+12:58:51 [vite] (client) hmr update /src/app/studio.css
+13:02:45 [vite] (client) page reload src/main.tsx
+13:04:09 [vite] (client) hmr update /src/app/styles.css
+13:04:09 [vite] (client) hmr update /src/app/studio.css
+13:05:38 [vite] (client) page reload src/main.tsx
+13:05:38 [vite] (client) hmr update /src/app/studio.css
+13:06:38 [vite] (client) hmr update /src/app/studio.css
+13:06:38 [vite] (client) hmr update /src/components/layout/Sidebar.tsx
+13:06:38 [vite] (client) hmr update /src/features/assets/AssetForm.tsx
+13:06:38 [vite] (client) hmr update /src/features/projects/ProjectCreateForm.tsx
+13:06:38 [vite] (client) hmr update /src/features/projects/ProjectOverview.tsx
+13:06:38 [vite] (client) hmr update /src/features/projects/ProjectResourceLibrary.tsx
+13:06:38 [vite] (client) hmr update /src/pages/projects/EpisodePage.tsx

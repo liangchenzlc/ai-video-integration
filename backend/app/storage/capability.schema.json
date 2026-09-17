@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/Capability",
+  "$defs": {
+    "Uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Stage": {
+      "type": "string",
+      "enum": [
+        "story",
+        "image",
+        "video",
+        "speech",
+        "lipsync",
+        "music",
+        "sfx",
+        "check"
+      ]
+    },
+    "PipelinePhase": {
+      "type": "string",
+      "enum": [
+        "story_adaptation",
+        "story_outline",
+        "story_scene",
+        "story_dialogue",
+        "image_character",
+        "image_location",
+        "image_prop",
+        "image_keyframe",
+        "video",
+        "speech",
+        "lipsync",
+        "music",
+        "sfx",
+        "check"
+      ]
+    },
+    "Capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "providerId",
+        "modelId",
+        "region",
+        "version",
+        "stage",
+        "accountState",
+        "interfaceState",
+        "qualityState",
+        "enabled",
+        "maxReferences",
+        "supportedReferenceRoles",
+        "durationOptionsMs",
+        "supportsQuery",
+        "supportsCancel",
+        "priceSource",
+        "priceDate",
+        "restrictions",
+        "phases",
+        "supportsAudioDrive",
+        "supportsLipsync",
+        "voicePresets",
+        "maxInputBytes",
+        "maxInputCodePoints",
+        "resultLifetimeSeconds",
+        "supportsAnonymousResultDownload"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "providerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "modelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "stage": {
+          "$ref": "#/$defs/Stage"
+        },
+        "accountState": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "available",
+            "unavailable"
+          ]
+        },
+        "interfaceState": {
+          "type": "string",
+          "enum": [
+            "unverified",
+            "verified",
+            "unavailable"
+          ]
+        },
+        "qualityState": {
+          "type": "string",
+          "enum": [
+            "unverified",
+            "research_only",
+            "verified"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "maxReferences": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "supportedReferenceRoles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "minItems": 0,
+          "maxItems": 16
+        },
+        "durationOptionsMs": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "supportsQuery": {
+          "type": "boolean"
+        },
+        "supportsCancel": {
+          "type": "boolean"
+        },
+        "priceSource": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "priceDate": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PipelinePhase"
+          },
+          "minItems": 1,
+          "maxItems": 14
+        },
+        "supportsAudioDrive": {
+          "type": "boolean"
+        },
+        "supportsLipsync": {
+          "type": "boolean"
+        },
+        "voicePresets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "maxInputBytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxInputCodePoints": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resultLifetimeSeconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "supportsAnonymousResultDownload": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

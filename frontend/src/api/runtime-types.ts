@@ -38,35 +38,2250 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/file-grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Register Grant */
+        post: operations["registerFileGrant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create */
+        post: operations["createProject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/project-sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Open Project */
+        post: operations["openProject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{projectId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Project */
+        get: operations["getProject"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{projectId}/drafts/{draftId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Draft */
+        get: operations["getDraft"];
+        /** Save Draft */
+        put: operations["saveDraft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{projectId}/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Drafts */
+        get: operations["listDrafts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{projectId}/operations/{operationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Project Operation */
+        get: operations["getProjectOperation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/{operationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Operation */
+        get: operations["getGlobalOperation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recent-projects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recent */
+        get: operations["listRecentProjects"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/private/recent-projects/{project_id}/directory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Directory */
+        get: operations["getRecentProjectDirectory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/project-sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Close */
+        delete: operations["closeProjectSession"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Settings */
+        get: operations["getSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/settings/media-tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Configure */
+        put: operations["configureMediaTools"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import Media */
+        post: operations["importMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Media */
+        get: operations["listMedia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/media/{media_id}/metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Metadata */
+        get: operations["getMediaMetadata"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/media/{media_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Binary */
+        get: operations["getMediaBytes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        /** Binary */
+        head: operations["headMediaBytes"];
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/media/{media_id}/relocate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Relocate */
+        post: operations["relocateMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Jobs */
+        get: operations["listLocalJobs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Job */
+        get: operations["getLocalJob"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/jobs/{job_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel */
+        post: operations["cancelLocalJob"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/settings/details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Details */
+        get: operations["getSettingsDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credentials/{provider_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Credential */
+        put: operations["setCredential"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credentials/{provider_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete Credential */
+        post: operations["deleteCredential"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/settings/storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Storage */
+        put: operations["configureStorage"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/stage-models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stages */
+        get: operations["getStageModels"];
+        /** Stage */
+        put: operations["configureStageModel"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/connection-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check */
+        post: operations["checkConnection"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Job */
+        get: operations["getGlobalJob"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/budget": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Budget */
+        get: operations["getBudget"];
+        /** Set Budget */
+        put: operations["setBudget"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/task-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Plan Task */
+        post: operations["planTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/task-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Task Plan */
+        get: operations["getTaskPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/tasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tasks */
+        get: operations["listTasks"];
+        put?: never;
+        /** Start Task */
+        post: operations["startTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/tasks/{task_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Task */
+        get: operations["getTask"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/tasks/{task_id}/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Task Candidates */
+        get: operations["listTaskCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/calls/{call_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Call */
+        get: operations["getCall"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/calls/{call_id}/recovery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Recover Call */
+        post: operations["recoverCall"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/tasks/{task_id}/continue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Continue Task */
+        post: operations["continuePreparedTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/cost-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Cost Summary */
+        get: operations["getCostSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/cost-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Cost Entries */
+        get: operations["listCostEntries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/calls/{call_id}/settlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Settle Call */
+        post: operations["settleCall"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/external-expenses/{expense_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set External Expense */
+        put: operations["setExternalExpense"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/task-activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity */
+        get: operations["getTaskActivity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/artifacts/{artifact_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Artifact */
+        get: operations["getArtifact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/artifacts/{artifact_id}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Revisions */
+        get: operations["listRevisions"];
+        put?: never;
+        /** Create Revision */
+        post: operations["createRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/artifacts/{artifact_id}/adoption-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview Adoption */
+        post: operations["previewAdoption"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/artifacts/{artifact_id}/adoptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Adopt Revision */
+        post: operations["adoptRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/artifacts/{artifact_id}/confirmations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Revision */
+        post: operations["confirmRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/adoptions/{adoption_id}/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Undo Adoption */
+        post: operations["undoAdoption"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/local-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run Local Checks */
+        post: operations["runLocalChecks"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/check-reports/{check_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Check Report */
+        get: operations["getCheckReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/storyboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Storyboard */
+        get: operations["getStoryboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/coverage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Coverage */
+        get: operations["getRequirementCoverage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/shot-order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Reorder */
+        put: operations["reorderShots"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/references/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify */
+        post: operations["verifyReference"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/storyboard/shots/{shot_id}/prompt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Prompt */
+        get: operations["previewShotPrompt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/issues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Issues */
+        get: operations["list_issues_api_v1_projects__project_id__issues_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/issues/{issue_id}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decision */
+        post: operations["decision_api_v1_projects__project_id__issues__issue_id__decisions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/production": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Index */
+        get: operations["index_api_v1_projects__project_id__production_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/diagnostics/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview */
+        post: operations["preview_api_v1_diagnostics_preview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/diagnostics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Diagnostic */
+        post: operations["diagnostic_api_v1_diagnostics_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/timing-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Timing */
+        post: operations["checkTiming"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/video-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Video Readiness */
+        post: operations["checkVideoReadiness"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Rights */
+        get: operations["listRightsEvidence"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rights/{evidence_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Rights */
+        put: operations["saveRightsEvidence"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/mix/ducking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ducking */
+        post: operations["previewMusicDucking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/animatics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Animatic */
+        post: operations["renderAnimatic"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Export */
+        post: operations["exportFilm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/exports/{export_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Export */
+        get: operations["getExport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/render-plan-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview */
+        post: operations["previewRenderPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/render-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Plan */
+        get: operations["getRenderPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/timeline/replacement-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replacement */
+        post: operations["previewTimelineReplacement"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/timeline/edit-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Edit */
+        post: operations["previewTimelineEdit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AdoptRevision */
+        AdoptRevision: {
+            previewId: components["schemas"]["Uuid"];
+            toRevisionId: components["schemas"]["Uuid"];
+            /** Confirm */
+            confirm: boolean;
+        };
+        /** AdoptedSummary */
+        AdoptedSummary: {
+            artifactId: components["schemas"]["Uuid"];
+            revisionId: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "story" | "asset" | "shot" | "speech" | "subtitle" | "timeline" | "observation";
+            /** Confirmed */
+            confirmed: boolean;
+            /** Needsupdate */
+            needsUpdate: boolean;
+            /** Content */
+            content: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+        };
+        /** Allocation */
+        Allocation: {
+            stage: components["schemas"]["Stage"];
+            limitMicroCny: components["schemas"]["SafeInteger"];
+        };
+        /** ApiKeySecret */
+        ApiKeySecret: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "api_key";
+            /** Apikey */
+            apiKey: string;
+        };
+        /** @enum {string} */
+        ArtifactKind: "story" | "asset" | "shot" | "speech" | "subtitle" | "timeline" | "observation";
+        /** ArtifactState */
+        ArtifactState: {
+            id: components["schemas"]["Uuid"];
+            kind: components["schemas"]["ArtifactKind"];
+            adoptedRevisionId: components["schemas"]["Uuid"] | null;
+            confirmedRevisionId: components["schemas"]["Uuid"] | null;
+            /** Needsupdate */
+            needsUpdate: boolean;
+            latestAdoptionId: components["schemas"]["Uuid"] | null;
+        };
+        /** Budget */
+        Budget: {
+            totalMicroCny: components["schemas"]["SafeInteger"];
+            /** Allocations */
+            allocations: components["schemas"]["Allocation"][];
+            warningPercent: components["schemas"]["SafeInteger"];
+            executionMode: components["schemas"]["ExecutionMode"] | null;
+        };
+        /** Call */
+        Call: {
+            id: components["schemas"]["Uuid"];
+            taskId: components["schemas"]["Uuid"];
+            stepId: components["schemas"]["Uuid"];
+            submissionToken: components["schemas"]["Uuid"];
+            /** Remotetaskid */
+            remoteTaskId: string | null;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "prepared" | "submitting" | "running" | "result_unknown" | "pending_download" | "succeeded" | "failed" | "cancelled";
+            /** Resultmediaids */
+            resultMediaIds: components["schemas"]["Uuid"][];
+            /**
+             * Billingstate
+             * @enum {string}
+             */
+            billingState: "pending" | "settled";
+            reservedMicroCny: components["schemas"]["SafeInteger"];
+            settledMicroCny: components["schemas"]["SafeInteger"] | null;
+            /** Expiresat */
+            expiresAt: string | null;
+            providerId: components["schemas"]["ProviderId"];
+            /** Modelid */
+            modelId: string;
+            /** Region */
+            region: string;
+            /** Requestedat */
+            requestedAt: string;
+            /** Errorcode */
+            errorCode: string | null;
+        };
+        /** CancelJob */
+        CancelJob: {
+            /** Reason */
+            reason: string;
+        };
         /** CapabilitiesData */
         CapabilitiesData: {
             runtimeId: components["schemas"]["Uuid"];
             generation: components["schemas"]["Generation"];
             /** Capabilities */
-            capabilities: components["schemas"]["Capability"][];
+            capabilities: components["schemas"]["app__api__v1__models__Capability"][];
         };
         /** CapabilitiesResponse */
         CapabilitiesResponse: {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["CapabilitiesData"];
         };
-        /** Capability */
-        Capability: {
-            id: components["schemas"]["CapabilityId"];
-            /** Enabled */
-            enabled: boolean;
-            /**
-             * Reasoncode
-             * @enum {string}
-             */
-            reasonCode: "AVAILABLE" | "NOT_IMPLEMENTED";
-        };
         /** @enum {string} */
         CapabilityId: "runtime" | "projects" | "credentials" | "story" | "visualAssets" | "storyboard" | "video" | "audio" | "timeline" | "checks" | "exports" | "costs";
+        /** CheckReport */
+        CheckReport: {
+            id: components["schemas"]["Uuid"];
+            /** Revisionids */
+            revisionIds: components["schemas"]["Uuid"][];
+            /** Ruleids */
+            ruleIds: components["schemas"]["RuleId"][];
+            /**
+             * Outcome
+             * @enum {string}
+             */
+            outcome: "pass" | "fail" | "unknown" | "not_applicable";
+            /** Issueids */
+            issueIds: components["schemas"]["Uuid"][];
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "local" | "ai" | "human";
+            /** Observedranges */
+            observedRanges: components["schemas"]["ObservedRange"][];
+            /** Evidencemediaids */
+            evidenceMediaIds: components["schemas"]["Uuid"][];
+            /** Ruleversion */
+            ruleVersion: string;
+            /** Limitations */
+            limitations: string;
+        };
+        /** Clip */
+        Clip: {
+            id: components["schemas"]["Uuid"];
+            trackId: components["schemas"]["Uuid"];
+            shotId: components["schemas"]["Uuid"] | null;
+            mediaId: components["schemas"]["Uuid"] | null;
+            contentRevisionId: components["schemas"]["Uuid"] | null;
+            startMs: components["schemas"]["SafeInteger"];
+            inMs: components["schemas"]["SafeInteger"];
+            outMs: components["schemas"]["PositiveInteger"];
+            durationMs: components["schemas"]["PositiveInteger"];
+            /** Gaindb */
+            gainDb: number;
+            /** Linkedclipids */
+            linkedClipIds: components["schemas"]["Uuid"][];
+            /** Keyframes */
+            keyframes: components["schemas"]["Keyframe"][];
+        };
+        /** ClosedSession */
+        ClosedSession: {
+            /**
+             * Closed
+             * @constant
+             */
+            closed: true;
+        };
+        /** Command[AdoptRevision] */
+        Command_AdoptRevision_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["AdoptRevision"];
+        };
+        /** Command[CancelJob] */
+        Command_CancelJob_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["CancelJob"];
+        };
+        /** Command[ConfigureStage] */
+        Command_ConfigureStage_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ConfigureStage"];
+        };
+        /** Command[ConfigureStorage] */
+        Command_ConfigureStorage_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ConfigureStorage"];
+        };
+        /** Command[ConfigureTools] */
+        Command_ConfigureTools_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ConfigureTools"];
+        };
+        /** Command[ConfirmRevision] */
+        Command_ConfirmRevision_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ConfirmRevision"];
+        };
+        /** Command[ConnectionCheck] */
+        Command_ConnectionCheck_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ConnectionCheck"];
+        };
+        /** Command[ContinueTask] */
+        Command_ContinueTask_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ContinueTask"];
+        };
+        /** Command[CreatePayload] */
+        Command_CreatePayload_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["CreatePayload"];
+        };
+        /** Command[CreateRevision] */
+        Command_CreateRevision_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["CreateRevision"];
+        };
+        /** Command[DeleteCredential] */
+        Command_DeleteCredential_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["DeleteCredential"];
+        };
+        /** Command[DiagnosticPayload] */
+        Command_DiagnosticPayload_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["DiagnosticPayload"];
+        };
+        /** Command[ExportFilm] */
+        Command_ExportFilm_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ExportFilm"];
+        };
+        /** Command[ExternalExpense] */
+        Command_ExternalExpense_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ExternalExpense"];
+        };
+        /** Command[GrantPayload] */
+        Command_GrantPayload_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["GrantPayload"];
+        };
+        /** Command[ImportMedia] */
+        Command_ImportMedia_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ImportMedia"];
+        };
+        /** Command[IssueDecision] */
+        Command_IssueDecision_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["IssueDecision"];
+        };
+        /** Command[PlanTask] */
+        Command_PlanTask_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["PlanTask"];
+        };
+        /** Command[RecoverCall] */
+        Command_RecoverCall_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["RecoverCall"];
+        };
+        /** Command[RelocateMedia] */
+        Command_RelocateMedia_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["RelocateMedia"];
+        };
+        /** Command[RenderAnimatic] */
+        Command_RenderAnimatic_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["RenderAnimatic"];
+        };
+        /** Command[ReorderShots] */
+        Command_ReorderShots_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["ReorderShots"];
+        };
+        /** Command[RunLocalChecks] */
+        Command_RunLocalChecks_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["RunLocalChecks"];
+        };
+        /** Command[SaveDraftPayload] */
+        Command_SaveDraftPayload_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["SaveDraftPayload"];
+        };
+        /** Command[SaveRights] */
+        Command_SaveRights_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["SaveRights"];
+        };
+        /** Command[SetBudget] */
+        Command_SetBudget_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["SetBudget"];
+        };
+        /** Command[SetCredential] */
+        Command_SetCredential_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["SetCredential"];
+        };
+        /** Command[SettleCall] */
+        Command_SettleCall_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["SettleCall"];
+        };
+        /** Command[StartTask] */
+        Command_StartTask_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["StartTask"];
+        };
+        /** Command[UndoAdoption] */
+        Command_UndoAdoption_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["UndoAdoption"];
+        };
+        /** Command[VerifyReference] */
+        Command_VerifyReference_: {
+            clientOperationId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+            payload: components["schemas"]["VerifyReference"];
+        };
+        CompletePayload: {
+            /** @constant */
+            kind: "story";
+            content: {
+                sourceText: string;
+                sourceHash: string;
+                /** @enum {string} */
+                inputType: "idea" | "excerpt" | "script";
+                /** @enum {string} */
+                approvalLevel: "proposal" | "outline" | "scenes" | "dialogue";
+                brief: string;
+                outline: string[];
+                requirements: {
+                    id: string;
+                    text: string;
+                    /** @enum {string} */
+                    category: "fact" | "action" | "dialogue" | "sound" | "screenText" | "reveal";
+                    source: {
+                        sourceHash: string;
+                        startCodePoint: number;
+                        endCodePoint: number;
+                    } | null;
+                    required: boolean;
+                    /** @enum {string} */
+                    decision: "keep" | "omit" | "replace" | "unresolved";
+                    decisionReason: string;
+                }[];
+                scenes: {
+                    id: string;
+                    title: string;
+                    action: string;
+                    plannedMs: number;
+                    locationAssetId: string | null;
+                }[];
+                dialogues: {
+                    id: string;
+                    speakerAssetId: string;
+                    text: string;
+                    /** @enum {string} */
+                    delivery: "visible" | "VO" | "OS";
+                    requirementIds: string[];
+                    sceneId: string;
+                }[];
+                adaptationNotes: string[];
+            };
+        } | {
+            /** @constant */
+            kind: "asset";
+            content: {
+                /** @enum {string} */
+                assetType: "character" | "location" | "prop" | "style";
+                name: string;
+                identityAnchors: string[];
+                allowedChanges: string[];
+                states: {
+                    id: string;
+                    description: string;
+                    reason: string;
+                    fromShotId: string;
+                    throughShotId: string;
+                }[];
+                references: {
+                    mediaId: string;
+                    mediaHash: string;
+                    /** @enum {string} */
+                    role: "identity" | "style" | "location" | "prop" | "composition" | "firstFrame" | "keyMoment" | "endFrame" | "voiceDrive" | "voiceReference";
+                    order: number;
+                    /** @enum {string} */
+                    state: "pending" | "imported" | "verified" | "missing" | "incompatible";
+                    keep: string[];
+                    ignore: string[];
+                    crop: {
+                        x: number;
+                        y: number;
+                        width: number;
+                        height: number;
+                    } | null;
+                }[];
+            };
+        } | {
+            /** @constant */
+            kind: "shot";
+            content: {
+                shotId: string;
+                purpose: string;
+                sceneId: string;
+                assetRevisionIds: string[];
+                requirementIds: string[];
+                startState: string;
+                events: {
+                    id: string;
+                    text: string;
+                    time: {
+                        startMs: number;
+                        endMs: number;
+                    };
+                    requirementIds: string[];
+                    /** @enum {string} */
+                    carrier: "visual" | "audio" | "subtitle" | "screenText";
+                    /** @enum {string} */
+                    observer: "physical" | "character" | "audience";
+                }[];
+                endState: string;
+                camera: string;
+                /** @enum {string} */
+                subjectHand: "left" | "right" | "both" | "none";
+                plannedMs: number;
+                dialogueIds: string[];
+                references: {
+                    mediaId: string;
+                    mediaHash: string;
+                    /** @enum {string} */
+                    role: "identity" | "style" | "location" | "prop" | "composition" | "firstFrame" | "keyMoment" | "endFrame" | "voiceDrive" | "voiceReference";
+                    order: number;
+                    /** @enum {string} */
+                    state: "pending" | "imported" | "verified" | "missing" | "incompatible";
+                    keep: string[];
+                    ignore: string[];
+                    crop: {
+                        x: number;
+                        y: number;
+                        width: number;
+                        height: number;
+                    } | null;
+                }[];
+                videoMediaId: string | null;
+                pickupOfShotId: string | null;
+                /** @enum {string} */
+                use: "original" | "supplement" | "alternate";
+            };
+        } | {
+            /** @constant */
+            kind: "speech";
+            content: {
+                dialogueId: string;
+                text: string;
+                speakerAssetId: string;
+                mediaId: string;
+                measuredMs: number;
+                voicedRanges: {
+                    startMs: number;
+                    endMs: number;
+                }[];
+                /** @enum {string} */
+                timingMethod: "manual" | "provider_sentence" | "provider_word" | "estimated";
+                voicePreset: string;
+                pronunciationNotes: string;
+            };
+        } | {
+            /** @constant */
+            kind: "subtitle";
+            content: {
+                audioRevisionId: string | null;
+                /** @enum {string} */
+                timingMethod: "manual" | "provider_sentence" | "provider_word" | "estimated";
+                cues: {
+                    id: string;
+                    dialogueId: string | null;
+                    text: string;
+                    time: {
+                        startMs: number;
+                        endMs: number;
+                    };
+                    differsFromDialogue: boolean;
+                }[];
+            };
+        } | {
+            /** @constant */
+            kind: "timeline";
+            content: {
+                /** @enum {unknown} */
+                width: 720 | 1080 | 1280 | 1920;
+                /** @enum {unknown} */
+                height: 720 | 1080 | 1280 | 1920;
+                fps: {
+                    /** @enum {unknown} */
+                    numerator: 24 | 25 | 30;
+                    /** @constant */
+                    denominator: 1;
+                };
+                durationMs: number;
+                tracks: {
+                    id: string;
+                    /** @enum {string} */
+                    kind: "image" | "video" | "voice" | "music" | "sfx" | "subtitle";
+                    order: number;
+                    muted: boolean;
+                }[];
+                clips: {
+                    id: string;
+                    trackId: string;
+                    shotId: string | null;
+                    mediaId: string | null;
+                    contentRevisionId: string | null;
+                    startMs: number;
+                    inMs: number;
+                    outMs: number;
+                    durationMs: number;
+                    gainDb: number;
+                    linkedClipIds: string[];
+                    keyframes: {
+                        timeMs: number;
+                        /** @enum {string} */
+                        property: "x" | "y" | "scale" | "opacity" | "volume";
+                        value: number;
+                        /** @enum {string} */
+                        interpolation: "linear" | "hold";
+                    }[];
+                }[];
+                transitions: {
+                    id: string;
+                    fromClipId: string;
+                    toClipId: string;
+                    /** @enum {string} */
+                    type: "cut" | "dissolve" | "fade";
+                    durationMs: number;
+                }[];
+                burnSubtitles: boolean;
+            };
+        } | {
+            /** @constant */
+            kind: "observation";
+            content: {
+                mediaId: string;
+                mediaHash: string;
+                /** @enum {string} */
+                method: "human" | "ai" | "technical";
+                observed: {
+                    startMs: number;
+                    endMs: number;
+                }[];
+                usable: {
+                    startMs: number;
+                    endMs: number;
+                }[];
+                problems: {
+                    time: {
+                        startMs: number;
+                        endMs: number;
+                    };
+                    text: string;
+                }[];
+                limitations: string;
+            };
+        };
+        /** ConfigureStage */
+        ConfigureStage: {
+            phase: components["schemas"]["PipelinePhase"];
+            capabilityId: components["schemas"]["Uuid"];
+        };
+        /** ConfigureStorage */
+        ConfigureStorage: {
+            providerId: components["schemas"]["ProviderId"];
+            /** Region */
+            region: string;
+            /** Bucket */
+            bucket: string;
+            credentialRef: components["schemas"]["Uuid"];
+            retentionHours: components["schemas"]["SafeInteger"];
+        };
+        /** ConfigureTools */
+        ConfigureTools: {
+            ffmpegGrantId: components["schemas"]["Uuid"];
+        };
+        /** ConfirmRevision */
+        ConfirmRevision: {
+            revisionId: components["schemas"]["Uuid"];
+            /** Checkids */
+            checkIds: components["schemas"]["Uuid"][];
+        };
+        /** ConnectionCheck */
+        ConnectionCheck: {
+            capabilityId: components["schemas"]["Uuid"];
+        };
+        /** ContentDraftSummary */
+        ContentDraftSummary: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "story" | "asset" | "shot";
+            /** Savedat */
+            savedAt: string;
+        };
+        /** ContinueTask */
+        ContinueTask: {
+            /** Confirmedunsubmittedonly */
+            confirmedUnsubmittedOnly: boolean;
+        };
+        /** CostEntry */
+        CostEntry: {
+            callId: components["schemas"]["Uuid"];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "pending" | "settled";
+            reservedMicroCny: components["schemas"]["SafeInteger"];
+            settledMicroCny: components["schemas"]["SafeInteger"] | null;
+            /** Basis */
+            basis: string;
+        };
+        /** CostEntryPage */
+        CostEntryPage: {
+            /** Items */
+            items: components["schemas"]["CostEntry"][];
+            nextCursor: components["schemas"]["Uuid"] | null;
+        };
+        /** CostSummary */
+        CostSummary: {
+            settledMicroCny: components["schemas"]["SafeInteger"];
+            reservedMicroCny: components["schemas"]["SafeInteger"];
+            remainingWorkMicroCny: components["schemas"]["SafeInteger"];
+            reworkScenarioMicroCny: components["schemas"]["SafeInteger"];
+            forecastMicroCny: components["schemas"]["SafeInteger"];
+            budgetMicroCny: components["schemas"]["SafeInteger"];
+            /** Containsunknown */
+            containsUnknown: boolean;
+            /** Estimateversion */
+            estimateVersion: string;
+        };
+        /** Coverage */
+        Coverage: {
+            /** Unassignedrequirementids */
+            unassignedRequirementIds: components["schemas"]["Uuid"][];
+            /** Unresolvedrequirementids */
+            unresolvedRequirementIds: components["schemas"]["Uuid"][];
+            /** Invalidreferenceids */
+            invalidReferenceIds: components["schemas"]["Uuid"][];
+        };
+        /** CreatePayload */
+        CreatePayload: {
+            directoryGrantId: components["schemas"]["Uuid"];
+            /** Name */
+            name: string;
+            /**
+             * Aspect
+             * @enum {string}
+             */
+            aspect: "16:9" | "9:16";
+            /**
+             * Resolution
+             * @enum {string}
+             */
+            resolution: "720p" | "1080p";
+            fps: components["schemas"]["Fps"];
+            targetMs: components["schemas"]["PositiveInteger"];
+        };
+        /** CreateRevision */
+        CreateRevision: {
+            draftId: components["schemas"]["Uuid"];
+        };
+        /** CredentialSummary */
+        CredentialSummary: {
+            id: components["schemas"]["Uuid"];
+            providerId: components["schemas"]["ProviderId"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "api_key" | "oss";
+            persistence: components["schemas"]["Persistence"];
+            /** Maskedsuffix */
+            maskedSuffix: string;
+        };
+        /** DeleteCredential */
+        DeleteCredential: {
+            /** Confirmed */
+            confirmed: boolean;
+        };
+        /** DiagnosticFile */
+        DiagnosticFile: {
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+        };
+        /** DiagnosticOptions */
+        DiagnosticOptions: {
+            projectId: components["schemas"]["Uuid"] | null;
+            /** Includeproject */
+            includeProject: boolean;
+            /** Includecontent */
+            includeContent: boolean;
+        };
+        /** DiagnosticPayload */
+        DiagnosticPayload: {
+            projectId: components["schemas"]["Uuid"] | null;
+            /** Includeproject */
+            includeProject: boolean;
+            /** Includecontent */
+            includeContent: boolean;
+            targetGrantId: components["schemas"]["Uuid"];
+        };
+        /** DiagnosticPreview */
+        DiagnosticPreview: {
+            projectId: components["schemas"]["Uuid"] | null;
+            /** Includeproject */
+            includeProject: boolean;
+            /** Includecontent */
+            includeContent: boolean;
+            /** Files */
+            files: components["schemas"]["DiagnosticFile"][];
+        };
+        /** Draft */
+        Draft: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            baseRevisionId: components["schemas"]["Uuid"] | null;
+            content: components["schemas"]["DraftContent"];
+        };
+        /** DraftContent */
+        DraftContent: {
+            kind: components["schemas"]["DraftKind"];
+            /** Content */
+            content: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+        };
+        /** @enum {string} */
+        DraftKind: "story" | "asset" | "shot" | "speech" | "subtitle" | "timeline" | "observation";
+        /** DuckingRequest */
+        DuckingRequest: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            /** Musicclipids */
+            musicClipIds: components["schemas"]["Uuid"][];
+            /** Reductiondb */
+            reductionDb: number;
+            attackMs: components["schemas"]["SafeInteger"];
+            releaseMs: components["schemas"]["SafeInteger"];
+        };
+        /** DuckingResult */
+        DuckingResult: {
+            /** Timeline */
+            timeline: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+            /** Warnings */
+            warnings: string[];
+        };
+        /** Envelope[ArtifactState] */
+        Envelope_ArtifactState_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ArtifactState"];
+        };
+        /** Envelope[Budget] */
+        Envelope_Budget_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Budget"];
+        };
+        /** Envelope[Call] */
+        Envelope_Call_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Call"];
+        };
+        /** Envelope[CheckReport] */
+        Envelope_CheckReport_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["CheckReport"];
+        };
+        /** Envelope[ClosedSession] */
+        Envelope_ClosedSession_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ClosedSession"];
+        };
+        /** Envelope[CostEntryPage] */
+        Envelope_CostEntryPage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["CostEntryPage"];
+        };
+        /** Envelope[CostSummary] */
+        Envelope_CostSummary_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["CostSummary"];
+        };
+        /** Envelope[Coverage] */
+        Envelope_Coverage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Coverage"];
+        };
+        /** Envelope[DiagnosticPreview] */
+        Envelope_DiagnosticPreview_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["DiagnosticPreview"];
+        };
+        /** Envelope[Draft] */
+        Envelope_Draft_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Draft"];
+        };
+        /** Envelope[DuckingResult] */
+        Envelope_DuckingResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["DuckingResult"];
+        };
+        /** Envelope[ExportRecord] */
+        Envelope_ExportRecord_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ExportRecord"];
+        };
+        /** Envelope[Impact] */
+        Envelope_Impact_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Impact"];
+        };
+        /** Envelope[IssuePage] */
+        Envelope_IssuePage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["IssuePage"];
+        };
+        /** Envelope[Job] */
+        Envelope_Job_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Job"];
+        };
+        /** Envelope[MediaPage] */
+        Envelope_MediaPage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["MediaPage"];
+        };
+        /** Envelope[Media] */
+        Envelope_Media_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Media"];
+        };
+        /** Envelope[MutationReceipt] */
+        Envelope_MutationReceipt_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["MutationReceipt"];
+        };
+        /** Envelope[Operation] */
+        Envelope_Operation_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Operation"];
+        };
+        /** Envelope[PrivateDirectory] */
+        Envelope_PrivateDirectory_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["PrivateDirectory"];
+        };
+        /** Envelope[ProductionIndex] */
+        Envelope_ProductionIndex_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ProductionIndex"];
+        };
+        /** Envelope[Project] */
+        Envelope_Project_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Project"];
+        };
+        /** Envelope[PromptPreview] */
+        Envelope_PromptPreview_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["PromptPreview"];
+        };
+        /** Envelope[ReadinessResult] */
+        Envelope_ReadinessResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ReadinessResult"];
+        };
+        /** Envelope[RenderPlan] */
+        Envelope_RenderPlan_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["RenderPlan"];
+        };
+        /** Envelope[ReplacementImpact] */
+        Envelope_ReplacementImpact_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["ReplacementImpact"];
+        };
+        /** Envelope[RevisionPage] */
+        Envelope_RevisionPage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["RevisionPage"];
+        };
+        /** Envelope[RightsList] */
+        Envelope_RightsList_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["RightsList"];
+        };
+        /** Envelope[Session] */
+        Envelope_Session_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Session"];
+        };
+        /** Envelope[SettingsDetails] */
+        Envelope_SettingsDetails_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["SettingsDetails"];
+        };
+        /** Envelope[Settings] */
+        Envelope_Settings_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Settings"];
+        };
+        /** Envelope[Storyboard] */
+        Envelope_Storyboard_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Storyboard"];
+        };
+        /** Envelope[TaskPage] */
+        Envelope_TaskPage_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["TaskPage"];
+        };
+        /** Envelope[TaskPlan] */
+        Envelope_TaskPlan_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["TaskPlan"];
+        };
+        /** Envelope[Task] */
+        Envelope_Task_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["Task"];
+        };
+        /** Envelope[TimelineEditResult] */
+        Envelope_TimelineEditResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["TimelineEditResult"];
+        };
+        /** Envelope[TimingResult] */
+        Envelope_TimingResult_: {
+            requestId: components["schemas"]["Uuid"];
+            data: components["schemas"]["TimingResult"];
+        };
+        /** Envelope[list[DraftSummary]] */
+        Envelope_list_DraftSummary__: {
+            requestId: components["schemas"]["Uuid"];
+            /** Data */
+            data: components["schemas"]["app__api__v1__projects_models__DraftSummary"][];
+        };
+        /** Envelope[list[Job]] */
+        Envelope_list_Job__: {
+            requestId: components["schemas"]["Uuid"];
+            /** Data */
+            data: components["schemas"]["Job"][];
+        };
+        /** Envelope[list[RecentProject]] */
+        Envelope_list_RecentProject__: {
+            requestId: components["schemas"]["Uuid"];
+            /** Data */
+            data: components["schemas"]["RecentProject"][];
+        };
+        /** Envelope[list[StageModel]] */
+        Envelope_list_StageModel__: {
+            requestId: components["schemas"]["Uuid"];
+            /** Data */
+            data: components["schemas"]["StageModel"][];
+        };
+        /** Envelope[list[TaskActivity]] */
+        Envelope_list_TaskActivity__: {
+            requestId: components["schemas"]["Uuid"];
+            /** Data */
+            data: components["schemas"]["TaskActivity"][];
+        };
         /** @enum {string} */
         ErrorCode: "AUTH_REQUIRED" | "AUTH_INVALID" | "HOST_REJECTED" | "ORIGIN_REJECTED" | "REQUEST_INVALID" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "BACKEND_NOT_READY" | "INTERNAL_ERROR";
         /** ErrorDetail */
@@ -83,7 +2298,80 @@ export interface components {
             requestId: components["schemas"]["Uuid"];
             error: components["schemas"]["ErrorDetail"];
         };
+        /** @enum {string} */
+        ExecutionMode: "synthetic" | "real";
+        /** ExportFilm */
+        ExportFilm: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            targetGrantId: components["schemas"]["Uuid"];
+            /** Burnsubtitles */
+            burnSubtitles: boolean;
+            /** Overwriteconfirmed */
+            overwriteConfirmed: boolean;
+        };
+        /** ExportRecord */
+        ExportRecord: {
+            id: components["schemas"]["Uuid"];
+            timelineRevisionId: components["schemas"]["Uuid"];
+            jobId: components["schemas"]["Uuid"];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "pending" | "complete" | "failed" | "cancelled";
+            mediaId: components["schemas"]["Uuid"] | null;
+            /** Inputhash */
+            inputHash: string;
+        };
+        /** ExternalExpense */
+        ExternalExpense: {
+            expenseId: components["schemas"]["Uuid"];
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "storage" | "transfer" | "procurement";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "estimated" | "pending" | "settled";
+            amountMicroCny: components["schemas"]["SafeInteger"];
+            /** Basis */
+            basis: string;
+        };
+        /** Fps */
+        Fps: {
+            /**
+             * Numerator
+             * @enum {integer}
+             */
+            numerator: 24 | 25 | 30;
+            /**
+             * Denominator
+             * @constant
+             */
+            denominator: 1;
+        };
         Generation: number;
+        /** GrantPayload */
+        GrantPayload: {
+            grantId: components["schemas"]["Uuid"];
+            /** Path */
+            path: string;
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "createProject" | "openProject" | "importMedia" | "ffmpeg" | "exportFilm" | "diagnostic";
+            windowId: components["schemas"]["PositiveInteger"];
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        Hash: string;
         /** HealthData */
         HealthData: {
             /**
@@ -103,14 +2391,881 @@ export interface components {
             requestId: components["schemas"]["Uuid"];
             data: components["schemas"]["HealthData"];
         };
+        /** Impact */
+        Impact: {
+            previewId: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            fromRevisionId: components["schemas"]["Uuid"] | null;
+            toRevisionId: components["schemas"]["Uuid"];
+            /** Affectedartifactids */
+            affectedArtifactIds: components["schemas"]["Uuid"][];
+            /** Affectedscopes */
+            affectedScopes: components["schemas"]["SemanticScope"][];
+            estimatedExtraMicroCny: components["schemas"]["SafeInteger"] | null;
+            /** Requiredchecks */
+            requiredChecks: components["schemas"]["RuleId"][];
+            /** Expiresat */
+            expiresAt: string;
+        };
+        /** ImportMedia */
+        ImportMedia: {
+            fileGrantId: components["schemas"]["Uuid"];
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "reference" | "speech" | "video" | "music" | "sfx" | "evidence";
+        };
+        /** InputPreview */
+        InputPreview: {
+            kind: components["schemas"]["ArtifactKind"];
+            /** Payload */
+            payload: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+        };
+        /** Issue */
+        Issue: {
+            id: components["schemas"]["Uuid"];
+            /** Ruleid */
+            ruleId: string;
+            /** Ruleversion */
+            ruleVersion: string;
+            artifactId: components["schemas"]["Uuid"];
+            revisionId: components["schemas"]["Uuid"];
+            baselineRevisionId: components["schemas"]["Uuid"] | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "blocking" | "unknown_required" | "deviation" | "advice";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "fixing" | "recheck" | "resolved" | "accepted_deviation";
+            /** Message */
+            message: string;
+            /** Evidence */
+            evidence: string;
+            /** Time */
+            time: {
+                [key: string]: number;
+            } | null;
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "local" | "ai" | "human";
+            /** Limitations */
+            limitations: string;
+        };
+        /** IssueDecision */
+        IssueDecision: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "accept_deviation" | "request_recheck" | "attach_evidence";
+            /** Reason */
+            reason: string;
+            /** Evidencemediaids */
+            evidenceMediaIds: components["schemas"]["Uuid"][];
+        };
+        /** IssuePage */
+        IssuePage: {
+            /** Items */
+            items: components["schemas"]["Issue"][];
+            nextCursor: components["schemas"]["Uuid"] | null;
+        };
+        /** Job */
+        Job: {
+            id: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "import" | "probe" | "animatic" | "export" | "diagnostic" | "local_check" | "connection_check";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "queued" | "running" | "succeeded" | "failed" | "cancelled";
+            /** Progress */
+            progress: number;
+            resultId: components["schemas"]["Uuid"] | null;
+            /** Errorcode */
+            errorCode: string | null;
+        };
+        JsonValue: unknown;
+        /** Keyframe */
+        Keyframe: {
+            timeMs: components["schemas"]["SafeInteger"];
+            /**
+             * Property
+             * @enum {string}
+             */
+            property: "x" | "y" | "scale" | "opacity" | "volume";
+            /** Value */
+            value: number;
+            /**
+             * Interpolation
+             * @enum {string}
+             */
+            interpolation: "linear" | "hold";
+        };
+        /** Media */
+        Media: {
+            id: components["schemas"]["Uuid"];
+            /** Sha256 */
+            sha256: string;
+            byteLength: components["schemas"]["PositiveInteger"];
+            /**
+             * Mime
+             * @enum {string}
+             */
+            mime: "image/png" | "image/jpeg" | "video/mp4" | "audio/wav" | "audio/mpeg" | "audio/mp4";
+            durationMs: components["schemas"]["PositiveInteger"] | null;
+            width: components["schemas"]["PositiveInteger"] | null;
+            height: components["schemas"]["PositiveInteger"] | null;
+            /**
+             * Availability
+             * @enum {string}
+             */
+            availability: "staging" | "available" | "missing" | "quarantined";
+            /**
+             * Provenance
+             * @enum {string}
+             */
+            provenance: "imported" | "generated" | "derived" | "synthetic";
+        };
+        /** MediaHash */
+        MediaHash: {
+            mediaId: components["schemas"]["Uuid"];
+            /** Sha256 */
+            sha256: string;
+        };
+        /** MediaPage */
+        MediaPage: {
+            /** Items */
+            items: components["schemas"]["Media"][];
+            nextCursor: components["schemas"]["Uuid"] | null;
+        };
+        /** MutationReceipt */
+        MutationReceipt: {
+            operationId: components["schemas"]["Uuid"];
+            committedRevision: components["schemas"]["SafeInteger"];
+            resourceId: components["schemas"]["Uuid"];
+            /** State */
+            state: string;
+        };
+        /** ObservedRange */
+        ObservedRange: {
+            startMs: components["schemas"]["SafeInteger"];
+            endMs: components["schemas"]["SafeInteger"];
+        };
+        /** OpenProject */
+        OpenProject: {
+            directoryGrantId: components["schemas"]["Uuid"];
+            /**
+             * Requestedmode
+             * @enum {string}
+             */
+            requestedMode: "read" | "write";
+        };
+        /** Operation */
+        Operation: {
+            operationId: components["schemas"]["Uuid"];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "committed" | "accepted";
+            receipt: components["schemas"]["MutationReceipt"];
+        };
+        /** OssSecret */
+        OssSecret: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "oss";
+            /** Accesskeyid */
+            accessKeyId: string;
+            /** Accesskeysecret */
+            accessKeySecret: string;
+            /** Securitytoken */
+            securityToken: string | null;
+        };
+        /** @enum {string} */
+        Persistence: "dpapi" | "session_only";
+        /** @enum {string} */
+        PipelinePhase: "story_adaptation" | "story_outline" | "story_scene" | "story_dialogue" | "image_character" | "image_location" | "image_prop" | "image_keyframe" | "video" | "speech" | "lipsync" | "music" | "sfx" | "check";
+        /** PlanTask */
+        PlanTask: {
+            objectId: components["schemas"]["Uuid"];
+            stage: components["schemas"]["Stage"];
+            phase: components["schemas"]["PipelinePhase"];
+            /** Goal */
+            goal: string;
+            /** Inputrevisionids */
+            inputRevisionIds: components["schemas"]["Uuid"][];
+            candidates: components["schemas"]["SafeInteger"];
+            /** Includeprecheck */
+            includePrecheck: boolean;
+            executionMode: components["schemas"]["ExecutionMode"];
+        };
+        /** PlannedModel */
+        PlannedModel: {
+            stepId: components["schemas"]["Uuid"];
+            providerId: components["schemas"]["ProviderId"];
+            /** Modelid */
+            modelId: string;
+            /** Region */
+            region: string;
+            /** Capabilityversion */
+            capabilityVersion: string;
+        };
+        PositiveInteger: number;
+        /** PreviewAdoption */
+        PreviewAdoption: {
+            toRevisionId: components["schemas"]["Uuid"];
+            expectedRevision: components["schemas"]["SafeInteger"];
+        };
+        /** PrivateDirectory */
+        PrivateDirectory: {
+            /** Path */
+            path: string;
+        };
+        /** ProductionIndex */
+        ProductionIndex: {
+            /** Drafts */
+            drafts: components["schemas"]["app__api__v1__production__DraftSummary"][];
+            /** Adopted */
+            adopted: components["schemas"]["AdoptedSummary"][];
+            /** Nextoffset */
+            nextOffset: number | null;
+        };
+        /** Project */
+        Project: {
+            id: components["schemas"]["Uuid"];
+            /** Name */
+            name: string;
+            revision: components["schemas"]["SafeInteger"];
+            eventSequence: components["schemas"]["SafeInteger"];
+            formatVersion: components["schemas"]["PositiveInteger"];
+            /**
+             * Aspect
+             * @enum {string}
+             */
+            aspect: "16:9" | "9:16";
+            /**
+             * Resolution
+             * @enum {string}
+             */
+            resolution: "720p" | "1080p";
+            fps: components["schemas"]["Fps"];
+            targetMs: components["schemas"]["PositiveInteger"];
+            budgetMicroCny: components["schemas"]["SafeInteger"];
+            /** Savedat */
+            savedAt: string | null;
+            /** Readonly */
+            readOnly: boolean;
+            /** Executionmode */
+            executionMode?: ("synthetic" | "real") | null;
+        };
+        /** PromptPreview */
+        PromptPreview: {
+            /** Templateid */
+            templateId: string;
+            /** Templateversion */
+            templateVersion: string;
+            /** Prompt */
+            prompt: string;
+            /** Sourcerevisionids */
+            sourceRevisionIds: components["schemas"]["Uuid"][];
+            /** Blockers */
+            blockers: string[];
+            reusableVideoMediaId: components["schemas"]["Uuid"] | null;
+        };
         /** @constant */
         ProtocolVersion: 1;
+        ProviderId: string;
+        /** ProviderSummary */
+        ProviderSummary: {
+            providerId: components["schemas"]["ProviderId"];
+            /** Credentialconfigured */
+            credentialConfigured: boolean;
+            /** Maskedsuffix */
+            maskedSuffix: string | null;
+            /** Storageconfigured */
+            storageConfigured: boolean;
+        };
+        /** ReadinessResult */
+        ReadinessResult: {
+            /** Ready */
+            ready: boolean;
+            /** Blockers */
+            blockers: string[];
+            /** Warnings */
+            warnings: string[];
+        };
+        /** RecentProject */
+        RecentProject: {
+            projectId: components["schemas"]["Uuid"];
+            /** Name */
+            name: string;
+            /** Lastopenedat */
+            lastOpenedAt: string;
+        };
+        /** RecoverCall */
+        RecoverCall: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "query" | "download" | "stop_waiting" | "cancel_remote";
+        };
         /** @enum {string} */
         RecoveryAction: "none" | "retry_connection" | "restart_backend" | "repair_installation";
+        /** @enum {string} */
+        ReferenceRole: "identity" | "style" | "location" | "prop" | "composition" | "firstFrame" | "keyMoment" | "endFrame" | "voiceDrive" | "voiceReference";
+        /** RelocateMedia */
+        RelocateMedia: {
+            fileGrantId: components["schemas"]["Uuid"];
+            /** Expectedhash */
+            expectedHash: string;
+        };
+        /** RenderAnimatic */
+        RenderAnimatic: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+        };
+        /** RenderPlan */
+        RenderPlan: {
+            id: components["schemas"]["Uuid"];
+            /** Compilerversion */
+            compilerVersion: string;
+            timelineRevisionId: components["schemas"]["Uuid"];
+            timeline: components["schemas"]["TimelinePayload"];
+            /** Mediahashes */
+            mediaHashes: components["schemas"]["MediaHash"][];
+            /** Inputhash */
+            inputHash: string;
+            /**
+             * Videocodec
+             * @constant
+             */
+            videoCodec: "h264";
+            /** Audiocodec */
+            audioCodec: "aac" | null;
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "preview" | "animatic" | "export";
+        };
+        /** RenderPlanPreview */
+        RenderPlanPreview: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            /** Burnsubtitles */
+            burnSubtitles?: boolean | null;
+        };
+        /** ReorderShots */
+        ReorderShots: {
+            /** Shotids */
+            shotIds: components["schemas"]["Uuid"][];
+        };
+        /** ReplacementImpact */
+        ReplacementImpact: {
+            shortageMs: components["schemas"]["SafeInteger"];
+            /** Affectedclipids */
+            affectedClipIds: components["schemas"]["Uuid"][];
+            /** Requiredchecks */
+            requiredChecks: string[];
+            /** Canpreserveedit */
+            canPreserveEdit: boolean;
+        };
+        /** ReplacementPreview */
+        ReplacementPreview: {
+            timelineRevisionId: components["schemas"]["Uuid"];
+            clipId: components["schemas"]["Uuid"];
+            newMediaId: components["schemas"]["Uuid"];
+        };
+        /** Revision */
+        Revision: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            parentId: components["schemas"]["Uuid"] | null;
+            payload: components["schemas"]["CompletePayload"];
+            contentHash: components["schemas"]["Hash"];
+            /** Createdat */
+            createdAt: string;
+        };
+        /** RevisionPage */
+        RevisionPage: {
+            /** Items */
+            items: components["schemas"]["Revision"][];
+            nextCursor: components["schemas"]["Uuid"] | null;
+        };
+        /** RightEvidence */
+        RightEvidence: {
+            id: components["schemas"]["Uuid"];
+            mediaId: components["schemas"]["Uuid"];
+            /** Source */
+            source: string;
+            /** Use */
+            use: string;
+            /** Evidencemediaids */
+            evidenceMediaIds: components["schemas"]["Uuid"][];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "unverified" | "verified" | "recheck";
+            /** Explanation */
+            explanation: string;
+        };
+        /** RightsList */
+        RightsList: {
+            /** Items */
+            items: components["schemas"]["RightEvidence"][];
+        };
+        RuleId: string;
+        /** RunLocalChecks */
+        RunLocalChecks: {
+            /** Revisionids */
+            revisionIds: components["schemas"]["Uuid"][];
+            /** Ruleids */
+            ruleIds: components["schemas"]["RuleId"][];
+        };
+        SafeInteger: number;
         SafeMilliseconds: number;
+        /** SaveDraftPayload */
+        SaveDraftPayload: {
+            draftId: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            baseRevisionId: components["schemas"]["Uuid"] | null;
+            content: components["schemas"]["DraftContent"];
+        };
+        /** SaveRights */
+        SaveRights: {
+            evidence: components["schemas"]["RightEvidence"];
+        };
+        /** @enum {string} */
+        SemanticScope: "identityVisual" | "dialogueAudio" | "subtitleTiming" | "referenceInput" | "requirementCoverage" | "revealTiming" | "timelinePlacement" | "mix" | "export";
+        /** Session */
+        Session: {
+            projectId: components["schemas"]["Uuid"];
+            projectSessionId: components["schemas"]["Uuid"];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "read" | "write";
+            project: components["schemas"]["Project"];
+        };
+        /** SetBudget */
+        SetBudget: {
+            totalMicroCny: components["schemas"]["SafeInteger"];
+            /** Allocations */
+            allocations: components["schemas"]["Allocation"][];
+            warningPercent: components["schemas"]["SafeInteger"];
+        };
+        /** SetCredential */
+        SetCredential: {
+            /** Secret */
+            secret: components["schemas"]["ApiKeySecret"] | components["schemas"]["OssSecret"];
+            persistence: components["schemas"]["Persistence"];
+        };
+        /** Settings */
+        Settings: {
+            revision: components["schemas"]["SafeInteger"];
+            /** Providers */
+            providers: components["schemas"]["ProviderSummary"][];
+            /** Ffmpegconfigured */
+            ffmpegConfigured: boolean;
+            /** Capabilities */
+            capabilities: components["schemas"]["app__api__v1__settings_models__Capability"][];
+        };
+        /** SettingsDetails */
+        SettingsDetails: {
+            /** Credentials */
+            credentials: components["schemas"]["CredentialSummary"][];
+            /** Storageprofiles */
+            storageProfiles: components["schemas"]["StorageProfile"][];
+            toolSummary: components["schemas"]["ToolSummary"] | null;
+        };
+        /** SettleCall */
+        SettleCall: {
+            settledMicroCny: components["schemas"]["SafeInteger"];
+            /** Basis */
+            basis: string;
+            /** Evidencemediaids */
+            evidenceMediaIds: components["schemas"]["Uuid"][];
+            /** Reason */
+            reason: string;
+        };
+        /** @enum {string} */
+        Stage: "story" | "image" | "video" | "speech" | "lipsync" | "music" | "sfx" | "check";
+        /** StageModel */
+        StageModel: {
+            phase: components["schemas"]["PipelinePhase"];
+            capabilityId: components["schemas"]["Uuid"];
+            /** Capabilityversion */
+            capabilityVersion: string;
+        };
+        /** StartTask */
+        StartTask: {
+            planId: components["schemas"]["Uuid"];
+            authorizedMaximumMicroCny: components["schemas"]["SafeInteger"];
+            /** Disclosureaccepted */
+            disclosureAccepted: boolean;
+        };
+        /** StorageProfile */
+        StorageProfile: {
+            providerId: components["schemas"]["ProviderId"];
+            /** Region */
+            region: string;
+            /** Bucket */
+            bucket: string;
+            credentialRef: components["schemas"]["Uuid"];
+            retentionHours: components["schemas"]["SafeInteger"];
+            id: components["schemas"]["Uuid"];
+            persistence: components["schemas"]["Persistence"];
+        };
+        /** Storyboard */
+        Storyboard: {
+            /** Drafts */
+            drafts: components["schemas"]["ContentDraftSummary"][];
+            /** Shotids */
+            shotIds: components["schemas"]["Uuid"][];
+        };
+        /** SubtitleSplit */
+        SubtitleSplit: {
+            clipId: components["schemas"]["Uuid"];
+            splitMs: components["schemas"]["SafeInteger"];
+        };
+        /** Task */
+        Task: {
+            id: components["schemas"]["Uuid"];
+            planId: components["schemas"]["Uuid"];
+            state: components["schemas"]["TaskState"];
+            eventSequence: components["schemas"]["SafeInteger"];
+            /** Callids */
+            callIds: components["schemas"]["Uuid"][];
+            /** Candidaterevisionids */
+            candidateRevisionIds: components["schemas"]["Uuid"][];
+            /** Observationstopped */
+            observationStopped: boolean;
+        };
+        /** TaskActivity */
+        TaskActivity: {
+            projectId: components["schemas"]["Uuid"];
+            /** Projectname */
+            projectName: string;
+            taskId: components["schemas"]["Uuid"];
+            state: components["schemas"]["TaskState"];
+        };
+        /** TaskPage */
+        TaskPage: {
+            /** Items */
+            items: components["schemas"]["TaskSummary"][];
+            nextCursor: components["schemas"]["Uuid"] | null;
+        };
+        /** TaskPlan */
+        TaskPlan: {
+            id: components["schemas"]["Uuid"];
+            objectId: components["schemas"]["Uuid"];
+            stage: components["schemas"]["Stage"];
+            phase: components["schemas"]["PipelinePhase"];
+            /** Goal */
+            goal: string;
+            /** Inputrevisionids */
+            inputRevisionIds: components["schemas"]["Uuid"][];
+            /** Inputmediahashes */
+            inputMediaHashes: components["schemas"]["Hash"][];
+            /** Steps */
+            steps: components["schemas"]["TaskStep"][];
+            candidates: components["schemas"]["SafeInteger"];
+            maximumMicroCny: components["schemas"]["SafeInteger"];
+            /** Priceversion */
+            priceVersion: string;
+            /** Templateversion */
+            templateVersion: string;
+            /** Expiresat */
+            expiresAt: string;
+            executionMode: components["schemas"]["ExecutionMode"];
+            inputPreview: components["schemas"]["InputPreview"];
+            /** Models */
+            models: components["schemas"]["PlannedModel"][];
+        };
+        /** @enum {string} */
+        TaskState: "pending" | "running" | "complete" | "partial" | "result_unknown" | "pending_download" | "failed";
+        /** TaskStep */
+        TaskStep: {
+            id: components["schemas"]["Uuid"];
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "create" | "revise" | "precheck";
+            capabilityId: components["schemas"]["Uuid"];
+            maxCalls: components["schemas"]["SafeInteger"];
+            requestedMs: components["schemas"]["PositiveInteger"] | null;
+            maxMicroCny: components["schemas"]["SafeInteger"];
+            /** Disclosure */
+            disclosure: ("text" | "image" | "audio" | "video" | "upload")[];
+        };
+        /** TaskSummary */
+        TaskSummary: {
+            id: components["schemas"]["Uuid"];
+            planId: components["schemas"]["Uuid"];
+            objectId: components["schemas"]["Uuid"];
+            stage: components["schemas"]["Stage"];
+            phase: components["schemas"]["PipelinePhase"];
+            state: components["schemas"]["TaskState"];
+            eventSequence: components["schemas"]["SafeInteger"];
+            /** Observationstopped */
+            observationStopped: boolean;
+            /** Active */
+            active: boolean;
+        };
+        /** TimelineEdit */
+        TimelineEdit: {
+            timeline: components["schemas"]["TimelinePayload"];
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "move" | "split" | "trim";
+            clipId: components["schemas"]["Uuid"];
+            startMs?: components["schemas"]["SafeInteger"] | null;
+            splitMs?: components["schemas"]["SafeInteger"] | null;
+            inMs?: components["schemas"]["SafeInteger"] | null;
+            outMs?: components["schemas"]["PositiveInteger"] | null;
+            durationMs?: components["schemas"]["PositiveInteger"] | null;
+        };
+        /** TimelineEditResult */
+        TimelineEditResult: {
+            timeline: components["schemas"]["TimelinePayload"];
+            /** Affectedclipids */
+            affectedClipIds: components["schemas"]["Uuid"][];
+            /** Subtitlesplitpreview */
+            subtitleSplitPreview: components["schemas"]["SubtitleSplit"][];
+        };
+        /** TimelinePayload */
+        TimelinePayload: {
+            /**
+             * Width
+             * @enum {integer}
+             */
+            width: 720 | 1080 | 1280 | 1920;
+            /**
+             * Height
+             * @enum {integer}
+             */
+            height: 720 | 1080 | 1280 | 1920;
+            fps: components["schemas"]["Fps"];
+            durationMs: components["schemas"]["PositiveInteger"];
+            /** Tracks */
+            tracks: components["schemas"]["Track"][];
+            /** Clips */
+            clips: components["schemas"]["Clip"][];
+            /** Transitions */
+            transitions: components["schemas"]["Transition"][];
+            /** Burnsubtitles */
+            burnSubtitles: boolean;
+        };
+        /** TimingRequest */
+        TimingRequest: {
+            shotRevisionId: components["schemas"]["Uuid"];
+            /** Speechrevisionids */
+            speechRevisionIds: components["schemas"]["Uuid"][];
+            beforeMs: components["schemas"]["SafeInteger"];
+            afterMs: components["schemas"]["SafeInteger"];
+        };
+        /** TimingResult */
+        TimingResult: {
+            requiredMs: components["schemas"]["SafeInteger"];
+            plannedMs: components["schemas"]["SafeInteger"];
+            shortageMs: components["schemas"]["SafeInteger"];
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "measured" | "estimated";
+            /** Suitable */
+            suitable: boolean;
+        };
+        /** ToolSummary */
+        ToolSummary: {
+            /** Version */
+            version: string;
+            /** H264 */
+            h264: boolean;
+            /** Aac */
+            aac: boolean;
+            /** Subtitles */
+            subtitles: boolean;
+        };
+        /** Track */
+        Track: {
+            id: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "image" | "video" | "voice" | "music" | "sfx" | "subtitle";
+            order: components["schemas"]["SafeInteger"];
+            /** Muted */
+            muted: boolean;
+        };
+        /** Transition */
+        Transition: {
+            id: components["schemas"]["Uuid"];
+            fromClipId: components["schemas"]["Uuid"];
+            toClipId: components["schemas"]["Uuid"];
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "cut" | "dissolve" | "fade";
+            durationMs: components["schemas"]["SafeInteger"];
+        };
+        /** UndoAdoption */
+        UndoAdoption: {
+            adoptionId: components["schemas"]["Uuid"];
+        };
         /** Format: uuid */
         Uuid: string;
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
+        };
+        /** VerifyReference */
+        VerifyReference: {
+            draftId: components["schemas"]["Uuid"];
+            mediaId: components["schemas"]["Uuid"];
+            role: components["schemas"]["ReferenceRole"];
+            /** Matchespurpose */
+            matchesPurpose: boolean;
+            /** Note */
+            note: string;
+        };
         Version: string;
+        /** VideoReadiness */
+        VideoReadiness: {
+            shotRevisionId: components["schemas"]["Uuid"];
+            /** Speechrevisionids */
+            speechRevisionIds: components["schemas"]["Uuid"][];
+            capabilityId: components["schemas"]["Uuid"];
+            /**
+             * Path
+             * @enum {string}
+             */
+            path: "research" | "production";
+        };
+        /** Capability */
+        app__api__v1__models__Capability: {
+            id: components["schemas"]["CapabilityId"];
+            /** Enabled */
+            enabled: boolean;
+            /**
+             * Reasoncode
+             * @enum {string}
+             */
+            reasonCode: "AVAILABLE" | "NOT_IMPLEMENTED";
+        };
+        /** DraftSummary */
+        app__api__v1__production__DraftSummary: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "story" | "asset" | "shot" | "speech" | "subtitle" | "timeline" | "observation";
+            /** Savedat */
+            savedAt: string;
+        };
+        /** DraftSummary */
+        app__api__v1__projects_models__DraftSummary: {
+            id: components["schemas"]["Uuid"];
+            artifactId: components["schemas"]["Uuid"];
+            kind: components["schemas"]["DraftKind"];
+            /** Savedat */
+            savedAt: string;
+        };
+        /** Capability */
+        app__api__v1__settings_models__Capability: {
+            id: components["schemas"]["Uuid"];
+            providerId: components["schemas"]["ProviderId"];
+            /** Modelid */
+            modelId: string;
+            /** Region */
+            region: string;
+            /** Version */
+            version: string;
+            /**
+             * Stage
+             * @enum {string}
+             */
+            stage: "story" | "image" | "video" | "speech" | "lipsync" | "music" | "sfx" | "check";
+            /** Phases */
+            phases: components["schemas"]["PipelinePhase"][];
+            /**
+             * Accountstate
+             * @enum {string}
+             */
+            accountState: "unknown" | "available" | "unavailable";
+            /**
+             * Interfacestate
+             * @enum {string}
+             */
+            interfaceState: "unverified" | "verified" | "unavailable";
+            /**
+             * Qualitystate
+             * @enum {string}
+             */
+            qualityState: "unverified" | "research_only" | "verified";
+            /** Enabled */
+            enabled: boolean;
+            maxReferences: components["schemas"]["SafeInteger"];
+            /** Supportedreferenceroles */
+            supportedReferenceRoles: string[];
+            /** Durationoptionsms */
+            durationOptionsMs: components["schemas"]["PositiveInteger"][];
+            /** Supportsquery */
+            supportsQuery: boolean;
+            /** Supportscancel */
+            supportsCancel: boolean;
+            /** Supportsaudiodrive */
+            supportsAudioDrive: boolean;
+            /** Supportslipsync */
+            supportsLipsync: boolean;
+            /** Voicepresets */
+            voicePresets: string[];
+            maxInputBytes: components["schemas"]["PositiveInteger"] | null;
+            maxInputCodePoints: components["schemas"]["PositiveInteger"] | null;
+            resultLifetimeSeconds: components["schemas"]["PositiveInteger"] | null;
+            /** Supportsanonymousresultdownload */
+            supportsAnonymousResultDownload: boolean;
+            /** Pricesource */
+            priceSource: string;
+            /** Pricedate */
+            priceDate: string;
+            /** Restrictions */
+            restrictions: string[];
+        };
     };
     responses: never;
     parameters: never;
@@ -322,6 +3477,2572 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    registerFileGrant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_GrantPayload_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    createProject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_CreatePayload_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    openProject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpenProject"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Session_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getProject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: components["schemas"]["Uuid"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Project_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: components["schemas"]["Uuid"];
+                draftId: components["schemas"]["Uuid"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Draft_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    saveDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: components["schemas"]["Uuid"];
+                draftId: components["schemas"]["Uuid"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_SaveDraftPayload_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listDrafts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: components["schemas"]["Uuid"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_list_DraftSummary__"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getProjectOperation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: components["schemas"]["Uuid"];
+                operationId: components["schemas"]["Uuid"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Operation_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getGlobalOperation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operationId: components["schemas"]["Uuid"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Operation_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listRecentProjects: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_list_RecentProject__"];
+                };
+            };
+        };
+    };
+    getRecentProjectDirectory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_PrivateDirectory_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    closeProjectSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ClosedSession_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Settings_"];
+                };
+            };
+        };
+    };
+    configureMediaTools: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ConfigureTools_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    importMedia: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ImportMedia_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listMedia: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MediaPage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getMediaMetadata: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Media_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getMediaBytes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    headMediaBytes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    relocateMedia: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_RelocateMedia_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listLocalJobs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_list_Job__"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getLocalJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Job_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancelLocalJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_CancelJob_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getSettingsDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_SettingsDetails_"];
+                };
+            };
+        };
+    };
+    setCredential: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_SetCredential_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deleteCredential: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_DeleteCredential_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    configureStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ConfigureStorage_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getStageModels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_list_StageModel__"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    configureStageModel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ConfigureStage_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checkConnection: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ConnectionCheck_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getGlobalJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Job_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getBudget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Budget_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    setBudget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_SetBudget_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    planTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_PlanTask_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getTaskPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_TaskPlan_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listTasks: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_TaskPage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    startTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_StartTask_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Task_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listTaskCandidates: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RevisionPage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getCall: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                call_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Call_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recoverCall: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                call_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_RecoverCall_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    continuePreparedTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ContinueTask_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getCostSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_CostSummary_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listCostEntries: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_CostEntryPage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    settleCall: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                call_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_SettleCall_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    setExternalExpense: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                expense_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ExternalExpense_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getTaskActivity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_list_TaskActivity__"];
+                };
+            };
+        };
+    };
+    getArtifact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ArtifactState_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listRevisions: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RevisionPage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    createRevision: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_CreateRevision_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewAdoption: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreviewAdoption"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Impact_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    adoptRevision: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_AdoptRevision_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirmRevision: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ConfirmRevision_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    undoAdoption: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                adoption_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_UndoAdoption_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    runLocalChecks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_RunLocalChecks_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getCheckReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                check_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_CheckReport_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getStoryboard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Storyboard_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRequirementCoverage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_Coverage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reorderShots: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ReorderShots_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verifyReference: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_VerifyReference_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewShotPrompt: {
+        parameters: {
+            query?: {
+                phase?: "image" | "video";
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                shot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_PromptPreview_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_issues_api_v1_projects__project_id__issues_get: {
+        parameters: {
+            query?: {
+                cursor?: components["schemas"]["Uuid"] | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_IssuePage_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decision_api_v1_projects__project_id__issues__issue_id__decisions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                issue_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_IssueDecision_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    index_api_v1_projects__project_id__production_get: {
+        parameters: {
+            query?: {
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ProductionIndex_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_api_v1_diagnostics_preview_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiagnosticOptions"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_DiagnosticPreview_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    diagnostic_api_v1_diagnostics_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_DiagnosticPayload_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checkTiming: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimingRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_TimingResult_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checkVideoReadiness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VideoReadiness"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ReadinessResult_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listRightsEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RightsList_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    saveRightsEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                evidence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_SaveRights_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewMusicDucking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DuckingRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_DuckingResult_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    renderAnimatic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_RenderAnimatic_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    exportFilm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Command_ExportFilm_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_MutationReceipt_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getExport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                export_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ExportRecord_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewRenderPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RenderPlanPreview"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RenderPlan_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRenderPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_RenderPlan_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewTimelineReplacement: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplacementPreview"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_ReplacementImpact_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewTimelineEdit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimelineEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Envelope_TimelineEditResult_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

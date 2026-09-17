@@ -1,5 +1,12 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { z } from "zod";
+import { settingsBridge } from "./settings";
+import { tasksBridge } from "./tasks";
+import { projectsBridge } from "./projects";
+import { versionsBridge } from "./versions";
+import { storyboardBridge } from "./storyboard";
+import { productionBridge } from "./production";
+import { createBeforeLeaveBridge } from "./draft-flush";
 import {
   snapshotSchema,
   capabilitySchema,
@@ -32,7 +39,16 @@ async function invoke<T>(
   }
   return { ok: false, error: safeError("BACKEND_UNAVAILABLE") };
 }
+const beforeLeave = createBeforeLeaveBridge();
+window.addEventListener("unload", () => beforeLeave.dispose());
 const bridge: DesktopBridge = {
+  onBeforeLeave: beforeLeave.onBeforeLeave,
+  projects: projectsBridge,
+  settings: settingsBridge,
+  tasks: tasksBridge,
+  versions: versionsBridge,
+  storyboard: storyboardBridge,
+  production: productionBridge,
   getRuntimeState: () => invoke("runtime:state", snapshotSchema),
   getCapabilities: () => invoke("runtime:capabilities", capabilitySchema),
   restartBackend: (input) => {

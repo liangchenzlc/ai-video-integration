@@ -1,14 +1,68 @@
-import { ipcMain, shell, type BrowserWindow } from "electron";
+import { ipcMain, shell, protocol, type BrowserWindow } from "electron";
 import type { RuntimeSupervisor } from "./runtime/supervisor";
 import { RuntimeError, safeError } from "../shared/runtime";
 import { restartSchema, helpSchema } from "../shared/bridge-schema";
 import { isTrustedSender } from "./security";
+import { installProjectIpc } from "./projects/ipc";
+import { requestRendererFlush, resumeRendererEditing } from "./draft-flush";
+import { installSettingsIpc } from "./projects/settings-ipc";
+import { installTasksIpc } from "./projects/tasks-ipc";
+import { installMediaIpc } from "./projects/media-ipc";
+import { installVersionsIpc } from "./projects/versions-ipc";
+import { installStoryboardIpc } from "./projects/storyboard-ipc";
+import { installProductionIpc } from "./projects/production-ipc";
+import { serveMedia } from "./projects/media-stream";
 
 export function installIpc(
   window: BrowserWindow,
   supervisor: RuntimeSupervisor,
   development: boolean,
 ): () => void {
+  const disposeProjects = installProjectIpc(window, supervisor, development);
+  const disposeProduction = installProductionIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
+  const disposeStoryboard = installStoryboardIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
+  const disposeTasks = installTasksIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
+  const disposeMedia = installMediaIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
+  const disposeSettings = installSettingsIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
+  const disposeVersions = installVersionsIpc(
+    window,
+    supervisor,
+    development,
+    disposeProjects.current,
+  );
+  protocol.handle("avi-media", (request) =>
+    serveMedia(
+      request,
+      supervisor,
+      disposeProjects.current,
+      window.webContents.id,
+    ),
+  );
   const commands = [
     "runtime:state",
     "runtime:capabilities",
@@ -42,7 +96,17 @@ export function installIpc(
           const parsed = restartSchema.safeParse(args[0]);
           if (args.length !== 1 || !parsed.success)
             throw new RuntimeError("REQUEST_INVALID");
-          data = await supervisor.restart(parsed.data.expectedGeneration);
+          const needsFlush = supervisor.snapshot().state === "ready";
+          try {
+            if (
+              needsFlush &&
+              !(await requestRendererFlush(window, development))
+            )
+              throw new RuntimeError("DRAFT_FLUSH_FAILED");
+            data = await supervisor.restart(parsed.data.expectedGeneration);
+          } finally {
+            if (needsFlush) resumeRendererEditing(window);
+          }
         } else {
           if (args.length !== 1 || !helpSchema.safeParse(args[0]).success)
             throw new RuntimeError("REQUEST_INVALID");
@@ -73,6 +137,14 @@ export function installIpc(
       window.webContents.send("runtime:changed", snapshot);
   });
   return () => {
+    disposeProjects.dispose();
+    disposeMedia();
+    disposeSettings();
+    disposeTasks();
+    disposeVersions();
+    disposeStoryboard();
+    disposeProduction();
+    protocol.unhandle("avi-media");
     unsubscribe();
     for (const command of commands) ipcMain.removeHandler(command);
   };
