@@ -1,8 +1,8 @@
 import type { GridBatch, MediaRef, Review } from "./episode-workflow";
 
 export const groupShotIds = (ids: readonly string[]) =>
-  Array.from({ length: Math.ceil(ids.length / 9) }, (_, index) =>
-    ids.slice(index * 9, index * 9 + 9),
+  Array.from({ length: Math.ceil(new Set(ids).size / 9) }, (_, index) =>
+    Array.from(new Set(ids)).slice(index * 9, index * 9 + 9),
   );
 
 export function createGridBatches(

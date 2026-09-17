@@ -104,6 +104,10 @@ function workflow(): EpisodeWorkflow {
 describe("episode dependency invalidation", () => {
   it("preserves script candidates while a script edit makes existing downstream work stale", () => {
     const original = workflow();
+    original.gridBatches[0]!.cells[0]!.ref = {
+      kind: "demo-image",
+      id: "demo-image-cell-script",
+    };
     const edited = editScript(original, "改后的剧本");
 
     expect(edited.scriptDraft).toBe("改后的剧本");
@@ -113,7 +117,11 @@ describe("episode dependency invalidation", () => {
     expect(edited.assets[0]?.review).toBe("stale");
     expect(edited.shots[0]?.frameReview).toBe("stale");
     expect(edited.shots[0]?.videoReview).toBe("stale");
-    expect(edited.gridBatches).toEqual(original.gridBatches);
+    expect(edited.gridBatches[0]?.cells[0]).toMatchObject({
+      shotId: "shot-a",
+      ref: { kind: "demo-image", id: "demo-image-cell-script" },
+      review: "stale",
+    });
     expect(stageStatus(edited, "assets")).toBe("stale");
     expect(stageStatus(edited, "storyboard")).toBe("stale");
     expect(stageStatus(edited, "video")).toBe("stale");
@@ -173,5 +181,105 @@ describe("episode dependency invalidation", () => {
     state.reviews.assets = "not_started";
 
     expect(stageStatus(state, "assets")).toBe("not_started");
+  });
+
+  it("preserves confirmed stage badges when an edited shot has no downstream result", () => {
+    const state = workflow();
+    const target = state.shots.find((shot) => shot.id === "shot-a")!;
+    target.firstFrames = [];
+    target.selectedFirstId = null;
+    target.videos = [];
+    target.selectedVideoId = null;
+    const unrelated = state.shots.find((shot) => shot.id === "shot-b")!;
+    unrelated.firstFrames = [
+      {
+        id: "first-b",
+        value: { kind: "demo-image", id: "demo-image-first-b" },
+        source: "demo",
+      },
+    ];
+
+    const edited = editShot(state, "shot-a", { action: "回头" });
+
+    expect(edited.reviews.storyboard).toBe("confirmed");
+    expect(edited.reviews.video).toBe("confirmed");
+    expect(edited.shots.find((shot) => shot.id === "shot-b")).toMatchObject({
+      frameReview: "confirmed",
+      videoReview: "confirmed",
+    });
+  });
+
+  it("stales only grid cells bound to shots affected by an asset edit", () => {
+    const state = workflow();
+    state.gridBatches = [
+      {
+        id: "grid-a",
+        sheet: { kind: "demo-image", id: "demo-image-sheet-a" },
+        cells: [
+          {
+            index: 0,
+            shotId: "shot-a",
+            ref: { kind: "demo-image", id: "demo-image-cell-a" },
+            review: "confirmed",
+          },
+          {
+            index: 1,
+            shotId: "shot-b",
+            ref: { kind: "demo-image", id: "demo-image-cell-b" },
+            review: "confirmed",
+          },
+        ],
+      },
+    ];
+
+    const edited = editAsset(state, "asset-a", { description: "蓝外套" });
+
+    expect(edited.gridBatches[0]?.cells.map((cell) => cell.review)).toEqual([
+      "stale",
+      "confirmed",
+    ]);
+    expect(edited.gridBatches[0]?.cells.map((cell) => cell.ref?.id)).toEqual([
+      "demo-image-cell-a",
+      "demo-image-cell-b",
+    ]);
+  });
+
+  it("preserves unrelated confirmed stages when an asset has no downstream result", () => {
+    const state = workflow();
+    const target = state.shots.find((shot) => shot.id === "shot-a")!;
+    target.firstFrames = [];
+    target.videos = [];
+    const unrelated = state.shots.find((shot) => shot.id === "shot-b")!;
+    unrelated.firstFrames = [
+      {
+        id: "first-b",
+        value: { kind: "demo-image", id: "demo-image-first-b" },
+        source: "demo",
+      },
+    ];
+
+    const edited = editAsset(state, "asset-a", { name: "阿遥" });
+
+    expect(edited.reviews.storyboard).toBe("confirmed");
+    expect(edited.reviews.video).toBe("confirmed");
+  });
+
+  it("preserves an unrelated confirmed video stage when adopting a frame", () => {
+    const state = workflow();
+    const target = state.shots.find((shot) => shot.id === "shot-a")!;
+    target.videos = [];
+    target.selectedVideoId = null;
+    target.firstFrames.push({
+      id: "first-new",
+      value: { kind: "demo-image", id: "demo-image-first-new" },
+      source: "demo",
+    });
+
+    const edited = adoptFrame(state, "shot-a", "first", "first-new");
+
+    expect(edited.reviews.video).toBe("confirmed");
+    expect(edited.shots.find((shot) => shot.id === "shot-b")?.videoReview).toBe(
+      "confirmed",
+    );
   });
 });

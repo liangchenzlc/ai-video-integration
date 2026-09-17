@@ -87,14 +87,33 @@ export type EpisodeWorkflow = {
 
 const staleWhenPresent = (review: Review, hasResult: boolean): Review =>
   hasResult ? "stale" : "not_started";
+const staleStageWhenAffected = (review: Review, hasResult: boolean): Review =>
+  hasResult ? "stale" : review;
 
 const hasStoryboardResult = (shot: ShotItem) =>
   shot.firstFrames.length > 0 || shot.endFrames.length > 0;
 const hasVideoResult = (shot: ShotItem) => shot.videos.length > 0;
-const hasGridResult = (state: EpisodeWorkflow) =>
+const hasGridResult = (state: EpisodeWorkflow, shotIds?: ReadonlySet<string>) =>
   state.gridBatches.some((batch) =>
-    batch.cells.some((cell) => cell.ref !== null),
+    batch.cells.some(
+      (cell) => cell.ref !== null && (!shotIds || shotIds.has(cell.shotId)),
+    ),
   );
+const staleGridCells = (
+  state: EpisodeWorkflow,
+  affectsShot: (shotId: string) => boolean,
+) =>
+  state.gridBatches.map((batch) => ({
+    ...batch,
+    cells: batch.cells.map((cell) =>
+      affectsShot(cell.shotId)
+        ? {
+            ...cell,
+            review: staleWhenPresent(cell.review, cell.ref !== null),
+          }
+        : cell,
+    ),
+  }));
 
 export function editScript(
   state: EpisodeWorkflow,
@@ -120,12 +139,16 @@ export function editScript(
       ),
       videoReview: staleWhenPresent(shot.videoReview, hasVideoResult(shot)),
     })),
+    gridBatches: staleGridCells(state, () => true),
     reviews: {
       ...state.reviews,
       script: "review",
-      assets: staleWhenPresent(state.reviews.assets, hasAssets),
-      storyboard: staleWhenPresent(state.reviews.storyboard, hasStoryboard),
-      video: staleWhenPresent(state.reviews.video, hasVideos),
+      assets: staleStageWhenAffected(state.reviews.assets, hasAssets),
+      storyboard: staleStageWhenAffected(
+        state.reviews.storyboard,
+        hasStoryboard,
+      ),
+      video: staleStageWhenAffected(state.reviews.video, hasVideos),
     },
   };
 }
@@ -138,8 +161,10 @@ export function editAsset(
   const affectedShots = state.shots.filter((shot) =>
     shot.assetIds.includes(id),
   );
+  const affectedShotIds = new Set(affectedShots.map((shot) => shot.id));
   const hasStoryboard =
-    affectedShots.some(hasStoryboardResult) || hasGridResult(state);
+    affectedShots.some(hasStoryboardResult) ||
+    hasGridResult(state, affectedShotIds);
   const hasVideos = affectedShots.some(hasVideoResult);
   return {
     ...state,
@@ -161,11 +186,15 @@ export function editAsset(
           }
         : shot,
     ),
+    gridBatches: staleGridCells(state, (shotId) => affectedShotIds.has(shotId)),
     reviews: {
       ...state.reviews,
       assets: "review",
-      storyboard: staleWhenPresent(state.reviews.storyboard, hasStoryboard),
-      video: staleWhenPresent(state.reviews.video, hasVideos),
+      storyboard: staleStageWhenAffected(
+        state.reviews.storyboard,
+        hasStoryboard,
+      ),
+      video: staleStageWhenAffected(state.reviews.video, hasVideos),
     },
   };
 }
@@ -202,10 +231,14 @@ export function editShot(
           }
         : shot,
     ),
+    gridBatches: staleGridCells(state, (shotId) => shotId === id),
     reviews: {
       ...state.reviews,
-      storyboard: staleWhenPresent(state.reviews.storyboard, hasStoryboard),
-      video: staleWhenPresent(state.reviews.video, hasVideos),
+      storyboard: staleStageWhenAffected(
+        state.reviews.storyboard,
+        hasStoryboard || hasGridResult(state, new Set([id])),
+      ),
+      video: staleStageWhenAffected(state.reviews.video, hasVideos),
     },
   };
 }
@@ -240,7 +273,7 @@ export function adoptFrame(
     ),
     reviews: {
       ...state.reviews,
-      video: staleWhenPresent(state.reviews.video, hasVideoResult(shot)),
+      video: staleStageWhenAffected(state.reviews.video, hasVideoResult(shot)),
     },
   };
 }
@@ -250,9 +283,12 @@ export function stageStatus(state: EpisodeWorkflow, id: StageId): Review {
     return "stale";
   if (
     id === "storyboard" &&
-    state.shots.some(
+    (state.shots.some(
       (shot) => shot.review === "stale" || shot.frameReview === "stale",
-    )
+    ) ||
+      state.gridBatches.some((batch) =>
+        batch.cells.some((cell) => cell.review === "stale"),
+      ))
   )
     return "stale";
   if (

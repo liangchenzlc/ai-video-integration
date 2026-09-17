@@ -15,6 +15,12 @@ describe("nine-grid batches", () => {
     ).toEqual([9, 1]);
   });
 
+  it("does not create duplicate cells when input repeats a shot ID", () => {
+    expect(groupShotIds(["shot-a", "shot-b", "shot-a"])).toEqual([
+      ["shot-a", "shot-b"],
+    ]);
+  });
+
   it("captures stable shot identity at generation time despite later reordering", () => {
     const batches = createGridBatches(["shot-a", "shot-b"], (index) => ({
       kind: "demo-image",
