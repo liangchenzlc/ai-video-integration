@@ -162,12 +162,19 @@ function isAspect(value: unknown): value is "16:9" | "9:16" {
 function isMediaRef(value: unknown): value is MediaRef {
   if (!value || typeof value !== "object") return false;
   const media = value as Partial<MediaRef>;
-  return (
-    typeof media.id === "string" &&
-    ["demo-image", "demo-motion", "project-image", "project-video"].includes(
-      media.kind ?? "",
-    )
-  );
+  if (typeof media.id !== "string") return false;
+  if (media.kind === "demo-image") {
+    return /^demo-image-[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/.test(media.id);
+  }
+  if (media.kind === "demo-motion") {
+    return /^demo-motion-[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/.test(media.id);
+  }
+  if (media.kind === "project-image" || media.kind === "project-video") {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      media.id,
+    );
+  }
+  return false;
 }
 
 function isCandidate(value: unknown, validValue: (value: unknown) => boolean) {
@@ -232,19 +239,34 @@ function isShot(value: unknown): value is ShotItem {
 function isGridBatch(value: unknown): value is GridBatch {
   if (!value || typeof value !== "object") return false;
   const batch = value as Partial<GridBatch>;
-  return (
-    typeof batch.id === "string" &&
-    isMediaRef(batch.sheet) &&
-    Array.isArray(batch.cells) &&
-    batch.cells.every(
-      (cell) =>
-        typeof cell?.index === "number" &&
-        Number.isInteger(cell.index) &&
-        typeof cell.shotId === "string" &&
-        (cell.ref === null || isMediaRef(cell.ref)) &&
-        isReview(cell.review),
-    )
-  );
+  if (
+    typeof batch.id !== "string" ||
+    !isMediaRef(batch.sheet) ||
+    !Array.isArray(batch.cells) ||
+    batch.cells.length > 9
+  ) {
+    return false;
+  }
+  const shotIds = new Set<string>();
+  const indexes = new Set<number>();
+  return batch.cells.every((cell) => {
+    if (
+      typeof cell?.index !== "number" ||
+      !Number.isInteger(cell.index) ||
+      cell.index < 0 ||
+      cell.index > 8 ||
+      indexes.has(cell.index) ||
+      typeof cell.shotId !== "string" ||
+      shotIds.has(cell.shotId) ||
+      (cell.ref !== null && !isMediaRef(cell.ref)) ||
+      !isReview(cell.review)
+    ) {
+      return false;
+    }
+    indexes.add(cell.index);
+    shotIds.add(cell.shotId);
+    return true;
+  });
 }
 
 function hasModels(value: unknown): value is EpisodeWorkflow["models"] {
