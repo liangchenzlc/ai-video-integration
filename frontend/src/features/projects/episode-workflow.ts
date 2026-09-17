@@ -370,6 +370,9 @@ export function saveWorkflow(
   value: EpisodeWorkflow,
   storage: WriteStore = localStorage,
 ) {
+  if (!isWorkflow(value)) {
+    return { ok: false, error: "本集内容无效，未保存。" } as const;
+  }
   try {
     storage.setItem(workflowKey(projectId, episodeId), JSON.stringify(value));
     return { ok: true } as const;

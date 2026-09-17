@@ -130,4 +130,50 @@ describe("episode workflow persistence", () => {
 
     expect(readWorkflow("p", "e", { aspect: "16:9", style: "写实" }, storage).scriptDraft).toBe("");
   });
+
+  it("refuses to save a workflow containing an unsafe media reference", () => {
+    const storage = new MemoryStorage();
+    const state = emptyWorkflow({ aspect: "16:9", style: "写实" });
+    state.assets = [
+      {
+        id: "asset-1",
+        kind: "character",
+        name: "阿遥",
+        description: "雨夜的旅人",
+        linkedResourceId: null,
+        imageCandidates: [
+          {
+            id: "candidate-1",
+            source: "import",
+            value: { kind: "project-image", id: "data:image/png;base64,binary" },
+          },
+        ],
+        selectedImageId: null,
+        review: "review",
+      },
+    ];
+
+    expect(saveWorkflow("p", "e", state, storage)).toMatchObject({ ok: false });
+    expect(storage.values).toHaveLength(0);
+  });
+
+  it("refuses to save a workflow with an oversized grid batch", () => {
+    const storage = new MemoryStorage();
+    const state = emptyWorkflow({ aspect: "16:9", style: "写实" });
+    state.gridBatches = [
+      {
+        id: "grid-1",
+        sheet: { kind: "demo-image", id: "demo-image-sheet-1" },
+        cells: Array.from({ length: 10 }, (_, index) => ({
+          index,
+          shotId: `shot-${index}`,
+          ref: null,
+          review: "review" as const,
+        })),
+      },
+    ];
+
+    expect(saveWorkflow("p", "e", state, storage)).toMatchObject({ ok: false });
+    expect(storage.values).toHaveLength(0);
+  });
 });
